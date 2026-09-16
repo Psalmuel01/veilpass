@@ -14,6 +14,7 @@ apps/web/public/zk/
 
 .next-dev/
 .next-e2e/
+.next-recording/
 logs/
 midnight-level-db/
 

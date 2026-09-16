@@ -30,6 +30,13 @@ export async function browserAuthorization(wallet: MidnightWalletProvider, confi
     };
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
+    // safe-error.ts redacts failures before they reach the UI, so a failing run
+    // shows nothing useful. VEILPASS_DEBUG=1 surfaces the browser-side detail.
+    if (process.env.VEILPASS_DEBUG === '1') {
+      page.on('console', m => console.log(`[browser:${m.type()}] ${m.text()}`));
+      page.on('requestfailed', r => console.log(`[requestfailed] ${r.url()} :: ${r.failure()?.errorText}`));
+      page.on('response', r => { if (!r.ok()) console.log(`[http ${r.status()}] ${r.url()}`); });
+    }
     // Real funded local wallet. This transports connector calls, not proof results.
     await page.exposeFunction('veilpassWalletCall', async (method: string, args: unknown[]) => {
       switch (method) {
@@ -87,7 +94,9 @@ export async function browserAuthorization(wallet: MidnightWalletProvider, confi
     await scene('Now select the ineligible graduate sample.\nAuthenticity alone is insufficient: the private year must satisfy the policy.',14);
     await page.getByLabel('Vault passphrase').fill('local-test-vault-passphrase');
     await page.getByRole('button',{name:'Replace with demo credential'}).click();
-    await expect(page.getByRole('button',{name:'Replace with demo credential'})).toBeEnabled();
+    // A successful issue clears the passphrase field, which disables the button
+    // again. Wait for that confirmation rather than for the button to re-enable.
+    await expect(page.getByLabel('Vault passphrase')).toHaveValue('',{timeout:60000});
     await page.getByRole('button',{name:'Prove my eligibility'}).click();
     await page.getByRole('button',{name:'Generate Private Proof',exact:true}).click();
     await expect(page.locator('.alert.error')).toContainText('Eligibility Not Verified', {timeout:60000});
