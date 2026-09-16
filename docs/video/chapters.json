@@ -1,0 +1,45 @@
+{
+  "chapters": [
+    {
+      "seconds": 5.903,
+      "text": "VeilPass • Phase 1 demo\nProve eligibility without disclosing the underlying academic record."
+    },
+    {
+      "seconds": 22.061,
+      "text": "Two shared demo credentials. One fixed policy.\nThis walkthrough uses a real, disposable local Midnight network."
+    },
+    {
+      "seconds": 38.041,
+      "text": "The credential is encrypted in this browser with a passphrase.\nStudent ID, subject, degree, and exact year remain private inputs."
+    },
+    {
+      "seconds": 53.092,
+      "text": "Policy: approved university and graduation year ≥ 2020.\nThe public authorization contains a scoped nullifier, not the credential."
+    },
+    {
+      "seconds": 69.139,
+      "text": "A funded development wallet connects through the Midnight connector adapter.\nIt auto-approves local transactions; this is not an installed wallet extension."
+    },
+    {
+      "seconds": 83.27,
+      "text": "Real proof generation, wallet balancing, submission, and confirmation.\nNo simulated proof result. The local prover receives private witness data."
+    },
+    {
+      "seconds": 112.61,
+      "text": "Authorization confirmed on the local Midnight chain.\nThe receipt shows the actual transaction and block, not a public Preprod deployment."
+    },
+    {
+      "seconds": 130.843,
+      "text": "Now select the ineligible graduate sample.\nAuthenticity alone is insufficient: the private year must satisfy the policy."
+    },
+    {
+      "seconds": 145.618,
+      "text": "The circuit rejects the ineligible credential. No success receipt is issued.\nReplay protection is also checked in the integration test."
+    },
+    {
+      "seconds": 161.711,
+      "text": "Demo limits: shared bearer credentials, small anonymity set, and a trusted local prover.\nProduction identity, revocation, recovery, and independent audit are future work."
+    }
+  ],
+  "duration": 179.713
+}

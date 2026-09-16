@@ -1,9 +1,9 @@
 {
   "network": "undeployed",
-  "contractAddress": "2435a826a6fbbb368feeb5ae2c88626a3f3d3f186f46d88055226466a2ff3886",
-  "deployTxId": "0052a764ca5a6430675262e10be776b20a44fc3e79f7d021ac42761bda149eecb7",
-  "authorizeTxId": "0020128ba06f0e9a4052bffe82402ae50a998a0a625d0c68cc5281c95d8b9c3798",
-  "blockHeight": 17,
+  "contractAddress": "c66cd0d2b1ab2ea60a523ebaccc9d161c8b29ba096eddb8f8ebb65882bb526ab",
+  "deployTxId": "0056e9bbf18027c585580cacb63d1e14315d5f5c48d8329f1b5a78e9324c3852b2",
+  "authorizeTxId": "00aae297f5e5d748d52e63bc4a785ab7c27eb2b03a1b47a9c688787ca78b76fb21",
+  "blockHeight": 29,
   "publicLedgerFields": [
     "credentialRoot",
     "approvedIssuer",
