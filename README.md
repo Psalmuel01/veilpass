@@ -2,87 +2,83 @@
 
 **Prove what matters. Keep the rest private.**
 
-VeilPass is a Midnight-native prototype for privacy-preserving credential authorization. A holder proves possession of an issuer-approved university credential with graduation year ≥ 2020. Compact enforces authenticity and eligibility; the public contract records an application-scoped nullifier instead of credential attributes.
-
-**Implemented and tested:** Compact compilation and key generation, real local Midnight deployment and proof-backed authorization, rejection of ineligible credentials and replay, encrypted browser storage, wallet connector integration, frontend, and automated tests. Local network transaction evidence is in [`docs/evidence/local-e2e.json`](docs/evidence/local-e2e.json). **There is no public Preprod deployment supplied.** Local test environments are ephemeral.
+A Midnight-native prototype for privacy-preserving credential authorization. A holder proves they hold a university credential from an approved issuer with a graduation year of 2020 or later. Compact enforces authenticity and eligibility; public state records an application-scoped nullifier instead of credential attributes.
 
 ![VeilPass overview](docs/screenshots/overview.png)
 
-## Problem and solution
+## Status
 
-Applications often collect full credentials to answer a narrow eligibility question. VeilPass evaluates that question privately and publishes only the authorization evidence required by the application.
+Working and tested: Compact compilation and key generation, local Midnight deployment, proof-backed authorization, rejection of ineligible credentials and replays, encrypted browser storage, wallet connector integration, and the frontend. Evidence from local runs is in [`docs/evidence/local-e2e.json`](docs/evidence/local-e2e.json).
+
+There's no public Preprod deployment. Local test chains are ephemeral, so their transaction IDs don't resolve on an explorer. [`docs/acceptance.md`](docs/acceptance.md) tracks what's verified against what isn't.
+
+## Problem
+
+Applications collect whole credentials to answer narrow eligibility questions. VeilPass answers the question privately and publishes only what the application needs to act on.
 
 ## Why Midnight
 
-The Compact `authorize` circuit consumes private witnesses, verifies a salted credential commitment against an issuer batch root, checks the fixed graduation policy, and inserts a nullifier into Midnight public state. The frontend uses Midnight.js to construct, prove, balance, submit and observe actual transactions. Running the generated JavaScript checks is useful for tests but is **not** represented as generating a ZK proof.
+The `authorize` circuit takes private witnesses, verifies a salted credential commitment against the issuer batch root, checks the graduation policy, and inserts a nullifier into public state. The frontend uses Midnight.js to build, prove, balance, submit and confirm real transactions.
 
-## Demo
-
-Two issuer-generated samples are available: 2024 (eligible) and 2018 (ineligible). They use independently generated random secrets and identifiers. The batch is fixed at deployment. The issuer endpoint distributes these samples; it is not a production university identity service.
-
-See [`docs/demo.md`](docs/demo.md) for the 2–4 minute walkthrough and [`docs/acceptance.md`](docs/acceptance.md) for completion evidence and limitations.
+Running the generated JavaScript is useful in tests, but it isn't a ZK proof and isn't presented as one.
 
 ## Architecture
 
 ```text
 Demo issuer (.private/issuer-batch.json)
-    ├─ private sample credential + membership path → holder encrypted vault
-    └─ public root + approved issuer + app scope → Compact constructor
+    ├─ sample credential + membership path → holder's encrypted vault
+    └─ root + approved issuer + app scope   → Compact constructor
 
 Holder vault → private witnesses → local proof server → wallet → Midnight
-                                                             └─ public nullifier
+                                                            └─ public nullifier
 ```
 
-[`docs/architecture.md`](docs/architecture.md) describes the actual components. No arbitrary policy engine, issuer registry, or revocation service is implemented.
+[`docs/architecture.md`](docs/architecture.md) covers the components. There's no policy engine, issuer registry or revocation service.
 
 ## Privacy model
 
 | Information | Private / public |
 |---|---|
-| Student ID and subject | Private: issuer, holder, trusted local prover |
-| Exact graduation year and degree | Private: issuer, holder, trusted local prover |
-| Credential contents and secret | Private: issuer, holder, trusted local prover |
-| Eligibility result | Public / verifier-visible |
+| Student ID and subject | Private: issuer, holder, local prover |
+| Graduation year and degree | Private: issuer, holder, local prover |
+| Credential contents and secret | Private: issuer, holder, local prover |
+| Eligibility result | Public |
 | Policy and approved issuer | Public |
 | Batch root and application scope | Public |
 | Authorization nullifier | Public |
-| Transaction metadata | Public as required by Midnight |
 
-The local prover receives witness material. “Local” is a trust boundary, not a cryptographic promise against a malicious prover. The issuer knows the demo samples. Browser code can see unlocked credentials. See [`docs/privacy-model.md`](docs/privacy-model.md) for traffic boundaries, metadata leakage and test limitations.
+The local prover sees witness material — "local" is a trust boundary, not a cryptographic guarantee. The issuer knows both demo samples, and browser code can read an unlocked credential. [`docs/privacy-model.md`](docs/privacy-model.md) has the details.
 
 ## Credential lifecycle
 
-`issuer:setup` generates two random bearer credentials and commits every field, including a 256-bit secret. It refuses to overwrite an existing batch. The issuer initializes the contract with the batch root. The browser receives one sample through a no-store same-origin POST and encrypts it with AES-256-GCM using a locally derived PBKDF2 key. The vault passphrase is never sent to the server. Locking removes the active credential from React state; refreshing requires unlocking again.
+`issuer:setup` generates two bearer credentials with independent 256-bit secrets and commits every field. It won't overwrite an existing batch. The issuer initializes the contract with the resulting root.
+
+The browser fetches one sample over a same-origin POST and encrypts it with AES-256-GCM under a PBKDF2 key derived locally. The passphrase never goes to the server. Locking drops the credential from React state.
 
 ## Verification lifecycle
 
-1. Connect a Midnight connector v4-compatible wallet on the configured network.
-2. Load and unlock a sample credential.
-3. Confirm the on-chain root and application scope match the credential.
-4. Execute Compact witnesses and constraints, then request an actual local proof.
-5. Ask the wallet to balance and sign; submit the transaction.
-6. Wait for indexer confirmation **and check the authorization in public contract state**.
+1. Connect a Midnight connector v4 wallet on the configured network.
+2. Load and unlock a credential.
+3. Check the on-chain root and application scope match it.
+4. Run the witnesses and constraints, then request a proof from the local prover.
+5. Have the wallet balance and sign, then submit.
+6. Wait for indexer confirmation and verify the authorization landed in public state.
 
-UI stages follow provider calls, not timers. Errors do not become success. SDK exception payloads are not displayed or logged by the application.
+UI stages follow provider calls rather than timers. Errors never render as success, and SDK exception payloads aren't displayed or logged.
 
 ## Contract
 
 Source: [`contracts/veilpass/veilpass.compact`](contracts/veilpass/veilpass.compact).
 
-- Immutable application-level issuer batch root, approved issuer, and application scope.
-- Private two-leaf Merkle membership verification. Individual commitments/path direction are not disclosed.
-- All credential fields bound to one persistent hash.
-- `graduationYear >= 2020`, schema version and issuer equality constrained in circuit.
-- Domain-separated application nullifier; duplicate authorizations rejected.
-- Public state contains only root, issuer, application ID and authorization set.
+The batch root, approved issuer and application scope are immutable. Two-leaf Merkle membership runs privately, so individual commitments and path direction stay hidden. All credential fields bind to one persistent hash. Schema, issuer equality and `graduationYear >= 2020` are constrained in-circuit. The nullifier is domain-separated per application, and duplicates are rejected.
 
-The deployer's maintenance authority is trusted; application code has no root-update circuit. A verifier must pin the correct contract address. An arbitrary holder-created contract is not a trusted issuer deployment.
+Public state holds only the root, issuer, application ID and authorization set.
+
+The deployer is trusted — there's no root-update circuit. Verifiers must pin the correct contract address; a contract deployed by a holder isn't a trusted issuer deployment.
 
 ## Running locally
 
-Requirements: Node **22.22.0+**, npm, `unzip`; Docker Desktop for actual proofs/network tests; Chrome for browser checks. macOS and Linux compiler downloads are supported. Windows users should use WSL.
-
-From the repository root:
+Needs Node 22.22.0+, npm and `unzip`. Docker for real proofs and network tests, Chrome for browser checks. macOS and Linux only; use WSL on Windows.
 
 ```bash
 nvm use
@@ -94,11 +90,11 @@ npm test
 npm run dev
 ```
 
-Open http://127.0.0.1:3000. Credential and vault flows work immediately. Network verification requires either the full local E2E command below or your configured wallet/deployment.
+Then open http://127.0.0.1:3000. Credential and vault flows work right away; network verification needs either the E2E command below or your own wallet and deployment.
 
-Compiler download checks a pinned SHA-256 digest. The first compile/prover start may download public parameters. `.toolchain`, generated proof assets and `.private` are ignored by Git. Never commit the issuer batch or wallet material.
+The compiler download is checked against a pinned SHA-256. The first compile or prover start may fetch public parameters. `.toolchain`, generated proof assets and `.private` are gitignored — don't commit the issuer batch or wallet material.
 
-### Pinned baseline
+### Pinned versions
 
 | Component | Version |
 |---|---|
@@ -107,68 +103,65 @@ Compiler download checks a pinned SHA-256 digest. The first compile/prover start
 | Compact runtime | 0.16.0 |
 | Compact JS | 2.5.1 |
 | Midnight.js | 4.1.1 |
-| Ledger v8 | 8.1.0 (single npm override) |
+| Ledger v8 | 8.1.0 (npm override) |
 | DApp connector | 4.0.1 |
 | Proof server | 8.1.0 |
 | Local node | 1.0.2 |
 | Local indexer | 4.3.3-hotfix |
 | Next.js | 15.5.25 |
 
-`package-lock.json` locks transitive dependencies. Multiple ledger WASM package instances are incompatible; retain the override and use `npm ci`. Research and official sources: [`docs/midnight-research.md`](docs/midnight-research.md).
+Two ledger WASM instances are incompatible, so keep the override and install with `npm ci`. Sources are in [`docs/midnight-research.md`](docs/midnight-research.md).
 
 ## Testing
 
 ```bash
-npm run contract:check       # generated execution only; no keys
-npm test                    # compiled-contract constraints and state privacy
+npm run contract:check                    # generated execution, no keys
+npm test                                  # contract constraints and state privacy
 npm run typecheck
 npm run build
-npm run test:ui              # dev server at :3000; requires Chrome
-npm run test:e2e             # real disposable local chain, funded test wallet, ZK proof
-VEILPASS_BROWSER_E2E=1 npm run test:e2e  # same plus real browser/connector flow
+npm run test:ui                           # dev server on :3000, needs Chrome
+npm run test:e2e                          # local chain, funded wallet, real proof
+VEILPASS_BROWSER_E2E=1 npm run test:e2e   # same, plus the browser connector flow
 ```
 
-Always run `contract:compile` before proving. `test:e2e` creates its own Docker environment, waits for a funded genesis wallet, deploys, authorizes, rejects the invalid credential and replay, inspects public output, writes public evidence and tears down its own chain. It does not spend production funds. Browser E2E bridges a **real local funded wallet** through the official connector adapter; it does not mock proofs or acceptance.
+Run `contract:compile` before proving.
 
-`test:ui` tests encryption, unlocking, no-wallet state and responsive layout without pretending to authorize. Full network tests take minutes. ZK proofs are CPU intensive.
+`test:e2e` spins up its own Docker chain, deploys, runs the valid and invalid cases, checks public state, writes evidence, then tears the chain down. It spends no real funds. The browser variant drives a real local funded wallet through the official adapter — proofs and confirmations aren't mocked.
+
+`test:ui` covers encryption, unlocking, the no-wallet state and responsive layout without pretending to authorize. Network tests take minutes; proving is CPU-heavy.
 
 ## Deployment
 
-For an interactive Preprod session:
+For a Preprod session:
 
-1. Copy `.env.example` to `apps/web/.env.local` and retain `NEXT_PUBLIC_NETWORK=preprod`.
-2. Run `npm run proof-server` (binds loopback port 6300), then `npm run dev`.
-3. Obtain a compatible wallet, choose Preprod, and fund it using the [official Preprod faucet](https://midnight-tmnight-preprod.nethermind.dev/). Wait for spendable DUST.
-4. In the UI, get a demo credential, connect the wallet, open **Verify eligibility → Developer setup**, and deploy the batch.
-5. Save the returned address in `NEXT_PUBLIC_CONTRACT_ADDRESS` and restart the frontend. Verifiers must trust this issuer deployment, not an arbitrary address supplied by a holder.
-6. Generate a private proof. A successful result includes the actual confirmed transaction ID.
+1. Copy `.env.example` to `apps/web/.env.local`, keeping `NEXT_PUBLIC_NETWORK=preprod`.
+2. Run `npm run proof-server` (loopback :6300), then `npm run dev`.
+3. Fund a Preprod wallet from the [faucet](https://midnight-tmnight-preprod.nethermind.dev/) and wait for spendable DUST.
+4. Get a demo credential, connect the wallet, then deploy the batch from **Verify eligibility → Developer setup**.
+5. Put the returned address in `NEXT_PUBLIC_CONTRACT_ADDRESS` and restart. Verifiers trust this deployment, not an address a holder hands them.
+6. Generate a proof. Success includes the confirmed transaction ID.
 
-No Preprod wallet, credentials or funds are embedded. Browser extension approvals remain in the user's wallet. The local E2E test is a reproducible deployment to a real **local** Midnight environment, not evidence of public Preprod deployment.
+No wallet, credentials or funds are embedded in the repo. The local E2E test is a reproducible deployment to a real local environment — it isn't evidence of a public one.
 
-## Security & trust assumptions
+## Security and trust
 
-Trusted: demo issuer and deployment authority; Midnight cryptography; correctly compiled contract; frontend and holder device; local proof service. The frontend can steal unlocked witness data if compromised, but cannot make the pinned contract accept altered committed fields without violating cryptographic assumptions.
+Trusted: the demo issuer and deployer, Midnight's cryptography, the compiled contract, the holder's device and frontend, and the local prover. A compromised frontend can steal unlocked witness data, but it can't make the pinned contract accept altered fields without breaking the hash assumptions.
 
-Not given credential attributes by the protocol: the public ledger and verifier. The issuer is also the web host in this development demo and already knows its shared samples. This deployment arrangement does not demonstrate organizational separation between issuer and verifier.
+The ledger and verifier never receive credential attributes. In this demo the issuer also hosts the web app and already knows both samples, so it doesn't demonstrate issuer/verifier separation.
 
-## Current limitations
+## Limitations
 
-- Two shared bearer credentials, not unique per-user credentials; no identity validation or non-transferability.
-- Exactly one successful authorization per credential and application scope. Replaying the demo requires a new deployment/batch scope if another success is needed.
-- Tiny, known demo batch does not provide meaningful anonymity against inference or issuer correlation.
-- Transaction timing, wallet-related metadata and public nullifiers remain observable.
-- No revocation, expiry enforcement, recovery, audited production deployment or access-session token.
-- Positive ledger/transaction inspections are not a full privacy audit. Exact-year byte scanning would be meaningless for a small integer; circuit disclosure and state structure are the relevant checks.
-- Browser extension interoperability and public Preprod deployment require validation with the user's installed wallet.
+- Two shared bearer credentials, not per-user ones. No identity validation, no non-transferability.
+- One successful authorization per credential and application scope. Repeating the demo needs a fresh deployment.
+- The batch is two known records, which is not a meaningful anonymity set.
+- Transaction timing, wallet metadata and nullifiers stay observable.
+- No revocation, expiry, recovery, session tokens or audit.
+- Browser extension interop and Preprod deployment still need validation against an installed wallet.
 
-## Buildathon roadmap
+## Roadmap
 
-Wave 1 delivers the constrained credential primitive and documents its limits. Public Preprod deployment and external-wallet walkthrough remain deployment tasks for an operator with a funded wallet.
+Wave 1 delivers the primitive and documents its limits. Public Preprod deployment and an external-wallet walkthrough are operator tasks needing a funded wallet.
 
-### Wave 2
+**Wave 2** — issuer registry, revocation, more schemas, reusable policies, holder-bound credentials.
 
-Issuer registry, revocation, more schemas, reusable policies, production issuance and holder-bound credentials.
-
-### Wave 3
-
-Policy composition, cross-application use, developer integrations and production hardening.
+**Wave 3** — policy composition, cross-application use, developer integrations, production hardening.

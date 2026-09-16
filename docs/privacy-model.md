@@ -1,48 +1,52 @@
-# Privacy model and limits
+# Privacy model
 
 ## Data flow
 
 ```mermaid
 flowchart LR
-  I[Demo issuer: knows both sample records] -->|private issuance response| H[Holder browser]
-  H -->|AES-GCM ciphertext| V[Local browser vault]
-  H -->|private witnesses| P[Trusted loopback proof server]
-  I -->|batch root / issuer / app scope| C[Midnight contract]
+  I[Demo issuer: knows both records] -->|issuance response| H[Holder browser]
+  H -->|AES-GCM ciphertext| V[Local vault]
+  H -->|private witnesses| P[Loopback proof server]
+  I -->|root / issuer / app scope| C[Midnight contract]
   P -->|proof| W[Wallet balances and submits]
   W --> C
-  C -->|nullifier and public confirmation| A[Application / observers]
+  C -->|nullifier + confirmation| A[Application / observers]
 ```
 
-## Who knows what?
+## Who knows what
 
 | Party | Knowledge |
 |---|---|
-| Issuer | All sample fields, credential secret, commitments and batch mapping |
-| Holder | Selected credential, secret, sibling path, public root and app scope |
-| Browser frontend | Plaintext while unlocked; can exfiltrate it if malicious |
-| Local prover | Witness material needed to generate the proof |
-| Wallet | Proven transaction and wallet/fee metadata; not the original issuer JSON |
-| Verifier | Approved issuer, policy, batch root, scope, accepted nullifier, public transaction metadata |
-| External observer | Public chain data, timing and potential correlations |
+| Issuer | Every field, the secret, both commitments and the batch mapping |
+| Holder | Their credential, secret, sibling path, root and app scope |
+| Frontend | Plaintext while unlocked, and can exfiltrate it if compromised |
+| Local prover | The witness material needed to prove |
+| Wallet | The proven transaction and fee metadata, not the issuer payload |
+| Verifier | Issuer, policy, root, scope, accepted nullifier, transaction metadata |
+| Observer | Public chain data, timing, and whatever correlates with it |
 
 ## Storage and transmission
 
-Private issuer files reside under `.private/` with restrictive permissions and Git exclusions. Delivery is a same-origin POST body selecting a sample; private fields are returned with `Cache-Control: no-store`. URLs never include credentials. Development is bound to loopback; non-local deployment requires HTTPS.
+Issuer files sit under `.private/` with restrictive permissions and are gitignored. Delivery is a same-origin POST returning the sample with `Cache-Control: no-store`. Credentials never appear in URLs. Development binds to loopback; anything non-local needs HTTPS.
 
-The holder vault is encrypted in localStorage. The passphrase is not stored. While active, plaintext is present in memory, as required by witnesses. Locking drops application references; JavaScript cannot guarantee immediate secure memory erasure. A compromised browser, XSS, extension, OS or frontend can read plaintext or the passphrase. Offline guessing resistance depends on passphrase strength.
+The vault is encrypted in localStorage and the passphrase is never stored. While unlocked, plaintext is in memory because the witnesses need it. Locking drops the references, though JavaScript can't guarantee immediate erasure. A compromised browser, extension, OS or frontend can read the plaintext or the passphrase, and offline guessing resistance comes down to passphrase strength.
 
-The only proof provider allowed by the frontend is loopback. This does not prevent a malicious local process from reading secrets. Do not substitute an untrusted hosted prover. No application analytics or raw SDK transaction/error logging is installed.
+The frontend only accepts a loopback prover. That doesn't stop a malicious local process from reading secrets, and a hosted prover shouldn't be substituted.
+
+No analytics are installed, and raw SDK transaction or error payloads are never logged.
 
 ## What the circuit reveals
 
-The public ledger has exactly `credentialRoot`, `approvedIssuer`, `applicationId`, and `authorizations`. The `authorize` circuit has private witnesses and discloses only its nullifier. Constructor inputs are public. Credential fields and Merkle path are hashed/constrained privately. Hashes have a random secret in the committed record to avoid a simple dictionary attack on low-entropy attributes.
+Public state is exactly `credentialRoot`, `approvedIssuer`, `applicationId` and `authorizations`. `authorize` discloses only its nullifier. Constructor inputs are public. Credential fields and the Merkle path stay hashed and constrained privately, and the committed record includes a random secret so low-entropy attributes can't be brute-forced from the commitment.
 
-A nullifier is stable for the same secret and app scope. It prevents a second authorization; it is not a general anti-tracking solution or an authorization token for a specific web session. Credential sharing is possible. Neither identity nor exclusive ownership is established.
+A nullifier is stable for a given secret and scope. It blocks a second authorization — it isn't an anti-tracking measure or a session token. Credentials can still be shared, so this establishes neither identity nor exclusive ownership.
 
 ## Evidence and its limits
 
-Compiled-contract tests inspect exposed ledger fields and reject tampering. The real local network test proves and submits a valid authorization, queries its ledger, rejects invalid/repeated calls, and scans the finalized transaction serialization for known private strings and the full secret. Evidence contains only public IDs and assertion outcomes.
+Contract tests inspect the exposed ledger fields and reject tampering. The local network test proves and submits a valid authorization, queries the ledger, rejects the invalid and repeated cases, and scans the finalized transaction for known private strings and the secret. Evidence files contain only public IDs and assertion outcomes.
 
-This is stronger than naming a variable “private,” but it is not a formal or comprehensive privacy audit. Absence of literal text cannot exclude alternative encodings or metadata leaks. A two-byte graduation year can occur accidentally in arbitrary binary data, so its confidentiality relies on the circuit's witness/disclosure boundary and proof system, not a substring scan.
+The scan catches obvious leaks. It won't catch alternative encodings or metadata, and it isn't an audit. A two-byte graduation year turns up in arbitrary binary data by chance, so its confidentiality rests on the witness boundary and the proof system, not on a substring search.
 
-The two public demo scenarios make attribute inference possible: everyone knows the eligible sample is 2024. Do not confuse hidden witness bytes with an anonymity guarantee. The issuer can correlate its own samples with observed authorizations. Larger independent issuance and privacy analysis are future work.
+Both demo scenarios are public knowledge, so attribute inference is trivial — everyone knows the eligible sample is 2024. Hidden witness bytes aren't an anonymity guarantee, and the issuer can correlate its own samples against observed authorizations. Larger independent issuance is future work.
+
+Repo-wide limitations are listed in the README.

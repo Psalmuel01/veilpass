@@ -1,33 +1,37 @@
-# Demo walkthrough (2–4 minutes)
+# Demo walkthrough
+
+Runs 2–4 minutes.
 
 ## Before recording
 
-Run the README setup and tests. Keep Docker running. For a public-wallet walkthrough, fund a Preprod wallet, connect it, deploy the issuer batch once and save the address. Never describe a local test as a Preprod transaction. Check the proof server is reachable at the configured loopback URL.
+Run the README setup and tests, and keep Docker up. Check the proof server responds on the configured loopback URL. For a public walkthrough, fund a Preprod wallet, connect it, deploy the batch once and save the address.
 
-For an automated real local demonstration, run:
+Never describe a local test transaction as a Preprod one.
+
+To rehearse the whole thing automatically:
 
 ```bash
 VEILPASS_BROWSER_E2E=1 npm run test:e2e
 ```
 
-It uses a real funded local wallet through the official connector adapter. No proof or confirmation is mocked. Screenshots of confirmed and rejected UI states are written to `docs/screenshots`. The chain is ephemeral and removed afterward. A fresh environment can repeat this without a faucet.
+That drives a real funded local wallet through the official connector adapter — nothing is mocked. Screenshots of the confirmed and rejected states land in `docs/screenshots`. The chain is disposable, so a fresh environment can repeat it without a faucet.
 
 ## Script
 
-**0:00 — Problem.** Show the overview. “An application needs to know whether I qualify, not collect my whole academic record.”
+**0:00 — Problem.** Open the overview. "An application needs to know whether I qualify, not collect my whole academic record."
 
-**0:25 — Credential.** Choose My credential, select the eligible sample, enter a vault passphrase and get the demo credential. Reveal the fields briefly. Explain that the issuer knows the sample, but the verifier does not receive the credential JSON. Hide the fields again.
+**0:25 — Credential.** Under My credential, pick the eligible sample, set a vault passphrase, and get the credential. Show the fields briefly. Point out that the issuer knows this sample but the verifier never receives the JSON. Hide them again.
 
-**0:55 — Requirement.** Open Verify eligibility. Show approved university AND graduation year ≥ 2020. Review the disclosure list. Mention the public application nullifier and private local prover.
+**0:55 — Requirement.** Open Verify eligibility. Show the policy: approved university AND graduation year ≥ 2020. Walk the disclosure list — the public nullifier, the private local prover.
 
-**1:20 — Proof.** Connect the wallet and generate the proof. The stages are actual SDK/prover/wallet/network events. Approve the wallet prompt. Proof generation may take longer on a slow machine; do not replace it with a timer.
+**1:20 — Proof.** Connect the wallet and generate. The stages are real SDK, prover, wallet and network events, so approve the prompt when it appears. Proving is slow on a modest machine; don't swap it for a timer.
 
-**2:00 — Result.** Show Eligibility Verified, actual transaction ID, block and network. For a Preprod deployment use the explorer link. Explain that public state contains the batch root and authorization nullifier, not the credential fields.
+**2:00 — Result.** Eligibility Verified, with the real transaction ID, block and network. On Preprod, open the explorer link. Note that public state holds the root and nullifier, not credential fields.
 
-**2:30 — Negative case.** Return to My credential, replace with the ineligible sample, then prove. The circuit rejects the credential. Show Eligibility Not Verified; no successful receipt is created.
+**2:30 — Negative case.** Back to My credential, switch to the ineligible sample, prove again. The circuit rejects it. Eligibility Not Verified, and no receipt.
 
-**3:00 — Vision and limits.** “This is one fixed policy and two shared demo credentials. The same private-computation primitive can support richer authorization policies later.” Do not imply production identity verification, revocation, a large anonymity set, or a public deployment that has not occurred.
+**3:00 — Vision.** "This is one fixed policy and two shared demo credentials. The same primitive extends to richer authorization." Don't imply production identity verification, revocation, a large anonymity set, or a deployment that hasn't happened.
 
-## Repeating the demo
+## Repeating it
 
-Each sample may authorize once per application scope. A second use of the same valid sample is a replay and should fail. The local E2E command creates a fresh chain. For an independent public demo, create a new issuer batch in a separate checkout and deploy it; do not overwrite an existing deployed batch's private file.
+Each sample authorizes once per application scope — reusing a valid sample is a replay and should fail. `test:e2e` gets a fresh chain each run. For an independent public demo, create a new batch in a separate checkout; don't overwrite the private file of a batch you've already deployed.
