@@ -1,0 +1,17 @@
+{
+  "network": "undeployed",
+  "contractAddress": "884d1eeb7c46585c5fe9e04e931f7408a5d626d5be90d493449b1acd6402bb16",
+  "deployTxId": "0079003b5f1ab6ccfd203a86e58858b00ab3ccafaeb7e46e4ef8df79e9b3d41d4d",
+  "authorizeTxId": "00527fc0e27bec18e288cebf8749329a46219e918ed8db8bf1193913d0f3906bbd",
+  "blockHeight": 15,
+  "publicLedgerFields": [
+    "credentialRoot",
+    "approvedIssuer",
+    "applicationId",
+    "authorizations"
+  ],
+  "invalidRejected": true,
+  "replayRejected": true,
+  "privateTextAbsentFromSerializedTransaction": true,
+  "note": "Local ephemeral network. Not a public preprod deployment. Byte scanning complements, but does not prove, full privacy."
+}
