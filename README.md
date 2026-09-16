@@ -80,6 +80,8 @@ The deployer is trusted — there's no root-update circuit. Verifiers must pin t
 
 Needs Node 22.22.0+, npm and `unzip`. Docker for real proofs and network tests, Chrome for browser checks. macOS and Linux only; use WSL on Windows.
 
+Run `nvm use` in every new terminal. The Midnight stack calls Node 22 APIs, and on an older runtime it fails during module loading with an error that doesn't mention the version. The scripts that need it check first and say so.
+
 ```bash
 nvm use
 npm ci
@@ -111,6 +113,16 @@ The compiler download is checked against a pinned SHA-256. The first compile or 
 | Next.js | 15.5.25 |
 
 Two ledger WASM instances are incompatible, so keep the override and install with `npm ci`. Sources are in [`docs/midnight-research.md`](docs/midnight-research.md).
+
+## Interactive local demo (no faucet required)
+
+```bash
+npm run demo:local
+```
+
+After issuer setup and contract compilation, this starts a fresh real Midnight chain, a local proof server and a funded development wallet, deploys VeilPass, then opens Chrome. Choose **Funded local test wallet** in the UI. Wallet calls use the official connector adapter backed by that real wallet; proofs and confirmations are not mocked. The development wallet auto-approves local transactions. No production wallet secrets or funds are used.
+
+Use this Chrome window for the demo: its wallet bridge is not injected into other browsers or tabs. Closing it stops the temporary network. Each fresh run allows one new valid authorization. Public Preprod use still requires your own wallet.
 
 ## Testing
 

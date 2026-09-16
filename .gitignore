@@ -16,3 +16,6 @@ apps/web/public/zk/
 .next-e2e/
 logs/
 midnight-level-db/
+
+.cache/
+submission.md

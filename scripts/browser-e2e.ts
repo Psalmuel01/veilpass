@@ -5,11 +5,12 @@ import { mkdir } from 'node:fs/promises';
 import { DAppConnectorWalletAdapter, type MidnightWalletProvider, type EnvironmentConfiguration } from '@midnight-ntwrk/testkit-js';
 
 export async function browserAuthorization(wallet: MidnightWalletProvider, config: EnvironmentConfiguration, contractAddress: string) {
+  const interactive = process.env.VEILPASS_INTERACTIVE === '1';
   const adapter = new DAppConnectorWalletAdapter(wallet, config);
   const output = createWriteStream('/tmp/veilpass-browser-next.log');
   const server = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'dev', 'apps/web', '--hostname', '127.0.0.1', '--port', '3001'], { env: { ...process.env, NEXT_PUBLIC_NETWORK: 'undeployed', NEXT_PUBLIC_CONTRACT_ADDRESS: contractAddress, NEXT_PUBLIC_PROOF_SERVER: config.proofServer, VEILPASS_BUILD_DIR: '.next-e2e' }, stdio: ['ignore','pipe','pipe'] });
   server.stdout.pipe(output); server.stderr.pipe(output);
-  const browser = await chromium.launch({ channel: 'chrome', headless: true });
+  const browser = await chromium.launch({ channel: 'chrome', headless: !interactive });
   try {
     for (let i = 0; i < 120; i++) {
       try { const r = await fetch('http://127.0.0.1:3001/api/config'); if (r.ok) break; } catch {}
@@ -39,6 +40,12 @@ export async function browserAuthorization(wallet: MidnightWalletProvider, confi
       } } };
     `);
     await page.goto('http://127.0.0.1:3001');
+    if (interactive) {
+      console.log('Interactive local demo ready in Chrome at http://127.0.0.1:3001.');
+      console.log('Choose Funded local test wallet. Transactions use real local Midnight proofs; no mainnet funds are involved. Close this Chrome window to stop the demo.');
+      await new Promise<void>(resolve => browser.once('disconnected', () => resolve()));
+      return null;
+    }
     await page.getByRole('button',{name:'Launch demo',exact:true}).click();
     await page.getByLabel('Vault passphrase').fill('local-test-vault-passphrase');
     await page.getByRole('button',{name:'Get Demo Credential',exact:true}).click();
@@ -51,7 +58,7 @@ export async function browserAuthorization(wallet: MidnightWalletProvider, confi
     await page.getByRole('button',{name:'Generate Private Proof',exact:true}).click();
     await Promise.race([
       page.getByRole('heading',{name:'Eligibility Verified',exact:true}).waitFor({timeout:300000}),
-      page.getByRole('alert').waitFor({timeout:300000}).then(async()=>{ throw new Error(`Browser verification failed: ${await page.getByRole('alert').innerText()}`); }),
+      page.locator('.alert.error').waitFor({timeout:300000}).then(async()=>{ throw new Error(`Browser verification failed: ${await page.locator('.alert.error').innerText()}`); }),
     ]);
     const txId = await page.locator('.receipt dd.mono').innerText();
     await mkdir('docs/screenshots',{recursive:true});
@@ -63,7 +70,7 @@ export async function browserAuthorization(wallet: MidnightWalletProvider, confi
     await expect(page.getByRole('button',{name:'Replace with demo credential'})).toBeEnabled();
     await page.getByRole('button',{name:'Prove my eligibility'}).click();
     await page.getByRole('button',{name:'Generate Private Proof',exact:true}).click();
-    await expect(page.getByRole('alert')).toContainText('Eligibility Not Verified', {timeout:60000});
+    await expect(page.locator('.alert.error')).toContainText('Eligibility Not Verified', {timeout:60000});
     await page.screenshot({path:'docs/screenshots/rejected-local.png',fullPage:true});
     if(errors.length) throw new Error(`Browser runtime errors: ${errors.join('; ')}`);
     console.log('Browser real-wallet E2E passed: confirmed authorization and ineligible rejection.');

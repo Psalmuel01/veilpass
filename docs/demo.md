@@ -16,6 +16,10 @@ VEILPASS_BROWSER_E2E=1 npm run test:e2e
 
 That drives a real funded local wallet through the official connector adapter — nothing is mocked. Screenshots of the confirmed and rejected states land in `docs/screenshots`. The chain is disposable, so a fresh environment can repeat it without a faucet.
 
+## Interactive local recording
+
+`npm run demo:local` opens a Chrome window connected to a fresh local chain and funded development wallet. Select **Funded local test wallet** when prompted. This wallet automatically approves local transactions; it is not your browser extension or a mainnet account. Keep the visible network label in the recording. Closing Chrome shuts down the disposable network.
+
 ## Script
 
 **0:00 — Problem.** Open the overview. "An application needs to know whether I qualify, not collect my whole academic record."

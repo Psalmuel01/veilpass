@@ -3,13 +3,22 @@ services:
     image: midnightntwrk/proof-server:8.1.0
     container_name: veilpass-proof-server_${TESTCONTAINERS_UID:-local}
     command: ['midnight-proof-server']
+    environment:
+      XDG_CACHE_HOME: /cache
+    volumes: ['./.cache/proof-server:/cache']
     ports: ['127.0.0.1::6300']
   node:
     image: midnightntwrk/midnight-node:1.0.2
     container_name: veilpass-node_${TESTCONTAINERS_UID:-local}
     ports: ['127.0.0.1::9944']
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:9944/health']
+      # The indexer's SPO component requires block 1, not merely a listening RPC.
+      test:
+        - CMD-SHELL
+        - >-
+          curl -fsS -H 'Content-Type: application/json'
+          --data '{"jsonrpc":"2.0","id":1,"method":"chain_getBlockHash","params":[1]}'
+          http://localhost:9944 | grep -q '"result":"0x'
       interval: 2s
       timeout: 5s
       retries: 45

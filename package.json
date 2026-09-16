@@ -10,12 +10,13 @@
     "contract:compile": "node scripts/compile.mjs",
     "contract:check": "node scripts/compile.mjs --skip-zk",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit -p apps/web/tsconfig.json",
-    "issuer:setup": "tsx scripts/issuer-setup.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p apps/web/tsconfig.json",
+    "issuer:setup": "node scripts/check-node.mjs && tsx scripts/issuer-setup.ts",
     "proof-server": "docker compose up -d proof-server",
     "toolchain:install": "node scripts/install-compact.mjs",
-    "test:e2e": "tsx scripts/local-e2e.ts",
-    "test:ui": "node scripts/ui-check.mjs"
+    "test:e2e": "node scripts/check-node.mjs && tsx scripts/local-e2e.ts",
+    "test:ui": "node scripts/check-node.mjs && node scripts/ui-check.mjs",
+    "demo:local": "node scripts/check-node.mjs && VEILPASS_INTERACTIVE=1 tsx scripts/local-e2e.ts"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-js": "2.5.1",

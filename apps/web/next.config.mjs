@@ -8,6 +8,7 @@ const config = {
   devIndicators: false,
   experimental: { externalDir: true },
   webpack(config, { isServer }) {
+    config.output.environment = { ...config.output.environment, asyncFunction: true };
     config.experiments = { ...config.experiments, asyncWebAssembly: true, layers: true };
     if (!isServer) config.resolve.alias = { ...config.resolve.alias, 'isomorphic-ws$': path.join(webRoot, 'lib/browser-websocket.ts') };
     if (!isServer) config.resolve.fallback = { ...config.resolve.fallback, fs: false, path: false, crypto: false, net: false, tls: false };
