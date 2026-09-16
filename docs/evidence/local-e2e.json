@@ -1,9 +1,9 @@
 {
   "network": "undeployed",
-  "contractAddress": "884d1eeb7c46585c5fe9e04e931f7408a5d626d5be90d493449b1acd6402bb16",
-  "deployTxId": "0079003b5f1ab6ccfd203a86e58858b00ab3ccafaeb7e46e4ef8df79e9b3d41d4d",
-  "authorizeTxId": "00527fc0e27bec18e288cebf8749329a46219e918ed8db8bf1193913d0f3906bbd",
-  "blockHeight": 15,
+  "contractAddress": "2435a826a6fbbb368feeb5ae2c88626a3f3d3f186f46d88055226466a2ff3886",
+  "deployTxId": "0052a764ca5a6430675262e10be776b20a44fc3e79f7d021ac42761bda149eecb7",
+  "authorizeTxId": "0020128ba06f0e9a4052bffe82402ae50a998a0a625d0c68cc5281c95d8b9c3798",
+  "blockHeight": 17,
   "publicLedgerFields": [
     "credentialRoot",
     "approvedIssuer",
@@ -13,5 +13,6 @@
   "invalidRejected": true,
   "replayRejected": true,
   "privateTextAbsentFromSerializedTransaction": true,
+  "browserVerified": true,
   "note": "Local ephemeral network. Not a public preprod deployment. Byte scanning complements, but does not prove, full privacy."
 }
