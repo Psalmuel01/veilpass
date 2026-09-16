@@ -1,0 +1,424 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>VeilPass composition</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+  .scene { position: absolute; inset: 0; display: none; }
+  .scene.active { display: block; }
+
+  /* A subtle vignette keeps the eye on the centre without looking like a filter. */
+  #stage::after {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none; z-index: 60;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.45) 100%);
+  }
+
+  .grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(127,176,105,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(127,176,105,.045) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  /* ---------- title / outro ---------- */
+  .centered { position: absolute; inset: 0; display: flex; flex-direction: column;
+              align-items: center; justify-content: center; text-align: center; gap: 22px; }
+  .eyebrow { font-size: 22px; letter-spacing: .38em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .headline { font-size: 104px; font-weight: 700; letter-spacing: -.03em; line-height: 1.02; }
+  .subhead { font-size: 38px; color: var(--muted); font-weight: 400; }
+
+  .mark { display: flex; align-items: center; gap: 20px; margin-bottom: 8px; }
+  .mark-dot { width: 66px; height: 66px; border-radius: 19px; background: var(--accent);
+              display: grid; place-items: center; }
+  .mark-dot svg { width: 36px; height: 36px; }
+  .mark-text { font-size: 54px; font-weight: 700; letter-spacing: -.02em; }
+
+  /* ---------- oversharing scene ---------- */
+  /* Both columns start at the same y so their labels share a baseline; the
+     answer panel is centred against the list rather than the viewport. */
+  .split { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 190px 1fr;
+           align-items: start; justify-items: center; align-content: center; padding: 0 150px 110px; }
+  .split > div { width: 100%; max-width: 620px; }
+  .split .arrow { align-self: center; height: 100%; }
+  .split .need { align-self: stretch; display: flex; flex-direction: column; }
+  .split .need .answer { flex: 1; }
+  .col-label { font-size: 21px; letter-spacing: .2em; text-transform: uppercase;
+               color: var(--muted); margin-bottom: 26px; font-weight: 600; }
+  .field-list { display: flex; flex-direction: column; gap: 13px; }
+  .field {
+    display: flex; align-items: center; gap: 15px;
+    background: var(--panel); border: 1px solid rgba(255,255,255,.07);
+    border-radius: 13px; padding: 17px 22px; font-size: 26px;
+  }
+  .field .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--danger); flex: none; }
+  .field.kept .dot { background: var(--accent); }
+  .field.struck { color: var(--muted); }
+  .field.struck .label { text-decoration: line-through; text-decoration-color: var(--danger); }
+  .answer {
+    background: rgba(127,176,105,.1); border: 1px solid var(--accent);
+    border-radius: 17px; padding: 54px 34px; text-align: center;
+    display: flex; flex-direction: column; justify-content: center; gap: 4px;
+  }
+  .answer .q { font-size: 25px; color: var(--muted); margin-bottom: 18px; }
+  .answer .a { font-size: 62px; font-weight: 700; color: var(--accent); letter-spacing: -.02em; }
+  .arrow { display: grid; place-items: center; }
+  .arrow svg { width: 88px; height: 88px; }
+
+  /* ---------- circuit flow scene ---------- */
+  .flow {
+    position: absolute; inset: 0; display: grid;
+    grid-template-columns: 335px 60px 400px 60px 335px;
+    grid-auto-rows: 340px;
+    align-content: center; justify-content: center;
+    gap: 0 20px; padding-bottom: 110px;
+  }
+  .node {
+    background: var(--panel); border: 1px solid rgba(255,255,255,.09);
+    border-radius: 19px; padding: 34px 30px; text-align: center;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .node.private { border-color: rgba(127,176,105,.4); }
+  .node.public { border-color: var(--accent); background: rgba(127,176,105,.09); }
+  .node h4 { font-size: 20px; letter-spacing: .16em; text-transform: uppercase;
+             color: var(--muted); margin-bottom: 19px; font-weight: 600; }
+  .node .row { font-size: 25px; padding: 9px 0; color: var(--ink); }
+  .node .row.lock::before { content: '🔒'; margin-right: 10px; font-size: 20px; }
+  .node .big { font-size: 46px; font-weight: 700; color: var(--accent); }
+  .chev { color: var(--accentDim); font-size: 60px; font-weight: 300; }
+
+  .circuit-box {
+    border: 2px dashed rgba(127,176,105,.55); border-radius: 22px;
+    padding: 34px 30px; background: rgba(127,176,105,.05);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .circuit-box h4 {
+    color: var(--accent); font-size: 20px; letter-spacing: .16em;
+    text-transform: uppercase; margin-bottom: 19px; font-weight: 600; text-align: center;
+  }
+  .check { display: flex; align-items: center; gap: 13px; font-size: 24px; padding: 8px 0; text-align: left; }
+  .check svg { width: 22px; height: 22px; flex: none; color: var(--accent); }
+  .chev { display: flex; align-items: center; }
+
+  /* ---------- screen-recording scene ---------- */
+  .screen-wrap { position: absolute; inset: 0; display: grid; place-items: center; padding: 28px 40px 148px; }
+  .device {
+    position: relative; border-radius: 15px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,.12);
+    box-shadow: 0 34px 90px rgba(0,0,0,.6);
+    background: #000;
+  }
+  .device canvas { display: block; }
+
+  .callout {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    bottom: 38px; z-index: 40;
+    background: rgba(14,18,16,.93);
+    border: 1px solid rgba(127,176,105,.42);
+    border-radius: 15px; padding: 19px 34px;
+    font-size: 30px; font-weight: 500;
+    display: flex; align-items: center; gap: 15px;
+    backdrop-filter: blur(9px);
+  }
+  .callout .pip { width: 11px; height: 11px; border-radius: 50%; background: var(--accent); flex: none; }
+  .callout.warn { border-color: rgba(199,106,90,.5); }
+  .callout.warn .pip { background: var(--danger); }
+
+  .caption {
+    position: absolute; left: 50%; transform: translateX(-50%); bottom: 56px; z-index: 40;
+    font-size: 33px; color: var(--muted); letter-spacing: .01em;
+  }
+
+  .badge {
+    position: absolute; top: 44px; right: 54px; z-index: 40;
+    display: flex; align-items: center; gap: 11px;
+    font-size: 21px; color: var(--muted);
+    border: 1px solid rgba(255,255,255,.12); border-radius: 100px;
+    padding: 11px 21px; background: rgba(14,18,16,.75);
+  }
+  .badge .pip { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+
+  .progress { position: absolute; left: 0; bottom: 0; height: 4px; background: var(--accent); z-index: 70; }
+</style>
+
+<div id="stage"><div class="grid-bg"></div></div>
+
+<script type="module">
+  // The renderer drives this page one frame at a time: it sets the brand
+  // variables, builds the scenes, then calls seek(t) and screenshots. Nothing
+  // animates on its own, so every frame is deterministic.
+  const stage = document.getElementById('stage');
+  let SCENES = [], TOTAL = 0, video = null;
+
+  const svgCheck = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+  const svgArrow = `<svg viewBox="0 0 24 24" fill="none" stroke="#3d5c3a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>`;
+  const svgShield = `<svg viewBox="0 0 24 24" fill="none" stroke="#0e1210" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
+
+  const ease = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  const clamp01 = v => Math.min(1, Math.max(0, v));
+
+  function el(html) {
+    const d = document.createElement('div');
+    d.innerHTML = html.trim();
+    return d.firstElementChild;
+  }
+
+  // Appends every top-level element in the markup, not just the first — scenes
+  // return a panel plus its caption/badge siblings.
+  function appendAll(parent, html) {
+    const d = document.createElement('div');
+    d.innerHTML = html.trim();
+    while (d.firstElementChild) parent.appendChild(d.firstElementChild);
+  }
+
+  window.__setup = (config) => {
+    const { brand, scenes, videoSize } = config;
+    for (const [k, v] of Object.entries(brand)) {
+      document.documentElement.style.setProperty(`--${k}`, v);
+    }
+    SCENES = scenes;
+    TOTAL = scenes.reduce((s, x) => s + x.duration, 0);
+
+    for (const scene of scenes) {
+      const node = el(`<div class="scene" data-id="${scene.id}"></div>`);
+      node.appendChild(buildScene(scene, videoSize));
+      stage.appendChild(node);
+    }
+    const bar = el(`<div class="progress" id="bar"></div>`);
+    stage.appendChild(bar);
+    return TOTAL;
+  };
+
+  function buildScene(scene, videoSize) {
+    const frag = document.createElement('div');
+    frag.style.position = 'absolute';
+    frag.style.inset = '0';
+
+    if (scene.kind === 'title' || scene.kind === 'outro') {
+      const isOutro = scene.kind === 'outro';
+      appendAll(frag, `
+        <div class="centered">
+          ${isOutro ? `<div class="mark"><div class="mark-dot">${svgShield}</div><div class="mark-text">veilpass.</div></div>`
+                    : `<div class="eyebrow">Veilpass</div>`}
+          <div class="headline">${scene.title}</div>
+          <div class="subhead">${scene.subtitle}</div>
+        </div>`);
+    }
+
+    if (scene.kind === 'oversharing') {
+      appendAll(frag, `
+        <div class="split">
+          <div>
+            <div class="col-label">What they ask for</div>
+            <div class="field-list">
+              ${['Full name','Date of birth','Student ID','Degree','Graduation year','Home address']
+                .map(f => `<div class="field struck"><span class="dot"></span><span class="label">${f}</span></div>`).join('')}
+            </div>
+          </div>
+          <div class="arrow">${svgArrow}</div>
+          <div class="need">
+            <div class="col-label">What they need</div>
+            <div class="answer">
+              <div class="q">Approved university<br/>AND graduated ≥ 2020?</div>
+              <div class="a">true</div>
+            </div>
+          </div>
+        </div>
+        <div class="caption">${scene.caption}</div>`);
+    }
+
+    if (scene.kind === 'flow') {
+      appendAll(frag, `
+        <div class="flow">
+          <div class="node private">
+            <h4>Private inputs</h4>
+            <div class="row lock">Student ID</div>
+            <div class="row lock">Graduation year</div>
+            <div class="row lock">Degree · subject</div>
+          </div>
+          <div class="chev">›</div>
+          <div class="circuit-box">
+            <h4>Compact circuit</h4>
+            <div class="check">${svgCheck}<span>Issuer is approved</span></div>
+            <div class="check">${svgCheck}<span>Credential is authentic</span></div>
+            <div class="check">${svgCheck}<span>Year ≥ 2020</span></div>
+            <div class="check">${svgCheck}<span>Not already used</span></div>
+          </div>
+          <div class="chev">›</div>
+          <div class="node public">
+            <h4>Public result</h4>
+            <div class="big">Authorized</div>
+            <div class="row" style="color:var(--muted);font-size:21px;margin-top:10px">+ one-time nullifier</div>
+          </div>
+        </div>
+        <div class="caption">${scene.caption}</div>`);
+    }
+
+    if (scene.kind === 'still') {
+      const w = 1440, h = 1050;
+      const scale = Math.min((1920 - 80) / w, (1080 - 190) / h);
+      const cw = Math.round(w * scale), ch = Math.round(h * scale);
+      appendAll(frag, `
+        <div class="screen-wrap">
+          <div class="device" style="width:${cw}px;height:${ch}px">
+            <img class="still" src="${scene.still}" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block"/>
+          </div>
+        </div>
+        <div class="badge"><span class="pip"></span> Local Midnight network</div>
+        <div class="callout ${scene.id === 'rejected' ? 'warn' : ''}">
+          <span class="pip"></span>${scene.callout}
+        </div>`);
+    }
+
+    if (scene.kind === 'screen') {
+      const w = 1440, h = 1050;
+      const scale = Math.min((1920 - 80) / w, (1080 - 190) / h);
+      const cw = Math.round(w * scale), ch = Math.round(h * scale);
+      appendAll(frag, `
+        <div class="screen-wrap">
+          <div class="device" style="width:${cw}px;height:${ch}px">
+            <canvas width="${cw}" height="${ch}"></canvas>
+          </div>
+        </div>
+        <div class="badge"><span class="pip"></span> Local Midnight network</div>
+        <div class="callout ${scene.id === 'rejected' ? 'warn' : ''}">
+          <span class="pip"></span>${scene.callout}
+        </div>`);
+    }
+
+    return frag;
+  }
+
+  window.__attachVideo = (el) => { video = el; };
+
+  // Extracts each screen scene's clip into ImageBitmaps once, before capture
+  // begins. Seeking during capture is what destroys the renderer, so all the
+  // seeking happens here, in one pass, at a lower frame rate than the output.
+  window.__preload = async (stripFps = 12) => {
+    const strips = {};
+    const scratch = document.createElement('canvas');
+    for (const scene of SCENES.filter(s => s.kind === 'screen')) {
+      const span = scene.clip.end - scene.clip.start;
+      const count = Math.max(1, Math.round(span * stripFps));
+      const frames = [];
+      for (let i = 0; i < count; i++) {
+        const t = scene.clip.start + (i / count) * span;
+        await new Promise(res => {
+          let settled = false;
+          const done = () => { if (!settled) { settled = true; video.removeEventListener('seeked', done); res(); } };
+          video.addEventListener('seeked', done);
+          try { video.currentTime = t; } catch { done(); }
+          setTimeout(done, 500);
+        });
+        scratch.width = video.videoWidth;
+        scratch.height = video.videoHeight;
+        scratch.getContext('2d').drawImage(video, 0, 0);
+        frames.push(await createImageBitmap(scratch));
+      }
+      strips[scene.id] = frames;
+    }
+    window.__strips = strips;
+    return Object.fromEntries(Object.entries(strips).map(([k, v]) => [k, v.length]));
+  };
+
+  // Seeks the composition to absolute time t and paints that exact frame.
+  window.__seek = async (t) => {
+    let acc = 0, current = null, local = 0;
+    for (const s of SCENES) {
+      if (t < acc + s.duration) { current = s; local = t - acc; break; }
+      acc += s.duration;
+    }
+    // Past the end of the timeline, hold the final scene's last frame.
+    if (!current) {
+      current = SCENES[SCENES.length - 1];
+      local = current.duration - 0.001;
+    }
+    local = Math.max(0, local);
+
+    for (const node of stage.querySelectorAll('.scene')) {
+      node.classList.toggle('active', node.dataset.id === current.id);
+    }
+
+    const active = stage.querySelector('.scene.active');
+    // Fade + lift in over the first 0.6s, hold, then fade out over the last 0.4s.
+    const inP = ease(clamp01(local / 0.6));
+    const outP = 1 - ease(clamp01((local - (current.duration - 0.4)) / 0.4));
+    const opacity = Math.min(inP, outP);
+    active.style.opacity = opacity;
+
+    const lift = (1 - inP) * 26;
+    const centered = active.querySelector('.centered, .split, .flow');
+    if (centered) centered.style.transform = `translateY(${lift}px)`;
+
+    // Callouts and captions arrive a beat after the scene so they read as
+    // annotation rather than competing with the opening frame.
+    for (const note of active.querySelectorAll('.callout, .caption')) {
+      const cp = ease(clamp01((local - 0.8) / 0.5));
+      note.style.opacity = cp;
+      note.style.transform = `translateX(-50%) translateY(${(1 - cp) * 14}px)`;
+    }
+
+    if (current.kind === 'oversharing') {
+      // Strike the unneeded fields one by one.
+      const fields = active.querySelectorAll('.field');
+      fields.forEach((f, i) => {
+        const on = local > 1.2 + i * 0.28;
+        f.style.opacity = on ? 1 : 0.28;
+        f.querySelector('.label').style.textDecorationLine = on ? 'line-through' : 'none';
+      });
+      const ans = active.querySelector('.answer');
+      const ap = ease(clamp01((local - 3.2) / 0.7));
+      ans.style.opacity = ap;
+      ans.style.transform = `scale(${0.94 + ap * 0.06})`;
+    }
+
+    if (current.kind === 'flow') {
+      const checks = active.querySelectorAll('.check');
+      checks.forEach((c, i) => {
+        const p = ease(clamp01((local - (1.4 + i * 0.45)) / 0.4));
+        c.style.opacity = 0.2 + p * 0.8;
+        c.querySelector('svg').style.opacity = p;
+      });
+      const pub = active.querySelector('.node.public');
+      const pp = ease(clamp01((local - 3.6) / 0.6));
+      pub.style.opacity = 0.25 + pp * 0.75;
+    }
+
+    if (current.kind === 'still') {
+      // A very slow push-in so a held frame still feels like moving footage.
+      const img = active.querySelector('.still');
+      if (img) {
+        const p = clamp01(local / current.duration);
+        img.style.transform = `scale(${1 + p * 0.035})`;
+        img.style.transformOrigin = 'center top';
+      }
+    }
+
+    if (current.kind === 'screen') {
+      // Frames were extracted once up front (see __preload). Seeking the video
+      // on every frame crashes the renderer partway through a long capture.
+      const canvas = active.querySelector('canvas');
+      const strip = window.__strips?.[current.id];
+      if (strip && strip.length) {
+        const span = current.clip.end - current.clip.start;
+        const idx = Math.min(strip.length - 1, Math.floor((Math.min(local, span) / span) * strip.length));
+        const bmp = strip[idx];
+        if (bmp) {
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+        }
+      }
+    }
+
+    document.getElementById('bar').style.width = `${(t / TOTAL) * 1920}px`;
+  };
+</script>

@@ -25,3 +25,6 @@ midnight-level-db/
 
 .cache/
 submission.md
+
+# Intermediate render artifacts
+.cache/
