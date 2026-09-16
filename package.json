@@ -16,7 +16,8 @@
     "toolchain:install": "node scripts/install-compact.mjs",
     "test:e2e": "node scripts/check-node.mjs && tsx scripts/local-e2e.ts",
     "test:ui": "node scripts/check-node.mjs && node scripts/ui-check.mjs",
-    "demo:local": "node scripts/check-node.mjs && VEILPASS_INTERACTIVE=1 tsx scripts/local-e2e.ts"
+    "demo:local": "node scripts/check-node.mjs && VEILPASS_INTERACTIVE=1 tsx scripts/local-e2e.ts",
+    "demo:record": "node scripts/check-node.mjs && VEILPASS_RECORD=1 VEILPASS_BROWSER_E2E=1 tsx scripts/local-e2e.ts"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-js": "2.5.1",
