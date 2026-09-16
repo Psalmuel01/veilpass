@@ -1,0 +1,56 @@
+pragma language_version 0.23;
+import CompactStandardLibrary;
+
+// Wave 1: immutable two-leaf issuer batch. The trusted issuer creates the
+// root at deployment. Neither holders nor subsequent transactions can change it.
+export ledger credentialRoot: Bytes<32>;
+export ledger approvedIssuer: Bytes<32>;
+export ledger applicationId: Bytes<32>;
+export ledger authorizations: Set<Bytes<32>>;
+
+export struct Credential {
+  schemaVersion: Uint<8>;
+  issuer: Bytes<32>;
+  subject: Bytes<32>;
+  degree: Bytes<32>;
+  graduationYear: Uint<16>;
+  studentId: Bytes<32>;
+  issuedAt: Uint<64>;
+  secret: Bytes<32>;
+}
+
+witness credential(): Credential;
+witness sibling(): Bytes<32>;
+witness isRight(): Boolean;
+
+constructor(root: Bytes<32>, issuer: Bytes<32>, app: Bytes<32>) {
+  credentialRoot = disclose(root);
+  approvedIssuer = disclose(issuer);
+  applicationId = disclose(app);
+}
+
+export circuit credentialCommitment(c: Credential): Bytes<32> {
+  return persistentHash<Credential>(c);
+}
+
+export circuit batchRoot(left: Bytes<32>, right: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<3, Bytes<32>>>([pad(32, "veilpass:batch:v1"), left, right]);
+}
+
+export circuit authorizationNullifier(secret: Bytes<32>, app: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<3, Bytes<32>>>([pad(32, "veilpass:graduate-2020:v1"), app, secret]);
+}
+
+export circuit authorize(): [] {
+  const c = credential();
+  assert(c.schemaVersion == 1, "Unsupported credential schema");
+  assert(c.issuer == approvedIssuer, "Issuer is not approved");
+  const leaf = credentialCommitment(c);
+  const other = sibling();
+  const root = isRight() ? batchRoot(other, leaf) : batchRoot(leaf, other);
+  assert(root == credentialRoot, "Credential authenticity check failed");
+  assert(c.graduationYear >= 2020, "Credential does not satisfy policy");
+  const nullifier = disclose(authorizationNullifier(c.secret, applicationId));
+  assert(!authorizations.member(nullifier), "Credential already authorized for this application");
+  authorizations.insert(nullifier);
+}
