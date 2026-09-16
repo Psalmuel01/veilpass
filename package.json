@@ -1,0 +1,59 @@
+{
+  "name": "veilpass",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev apps/web --hostname 127.0.0.1",
+    "build": "next build apps/web",
+    "start": "next start apps/web --hostname 127.0.0.1",
+    "contract:compile": "node scripts/compile.mjs",
+    "contract:check": "node scripts/compile.mjs --skip-zk",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p apps/web/tsconfig.json",
+    "issuer:setup": "tsx scripts/issuer-setup.ts",
+    "proof-server": "docker compose up -d proof-server",
+    "toolchain:install": "node scripts/install-compact.mjs",
+    "test:e2e": "tsx scripts/local-e2e.ts",
+    "test:ui": "node scripts/ui-check.mjs"
+  },
+  "dependencies": {
+    "@midnight-ntwrk/compact-js": "2.5.1",
+    "@midnight-ntwrk/compact-runtime": "0.16.0",
+    "@midnight-ntwrk/dapp-connector-api": "4.0.1",
+    "@midnight-ntwrk/ledger-v8": "8.1.0",
+    "@midnight-ntwrk/midnight-js": "4.1.1",
+    "@midnight-ntwrk/midnight-js-fetch-zk-config-provider": "4.1.1",
+    "@midnight-ntwrk/midnight-js-http-client-proof-provider": "4.1.1",
+    "@midnight-ntwrk/midnight-js-indexer-public-data-provider": "4.1.1",
+    "@midnight-ntwrk/midnight-js-node-zk-config-provider": "4.1.1",
+    "@midnight-ntwrk/midnight-js-protocol": "4.1.1",
+    "@midnight-ntwrk/wallet-sdk-address-format": "3.1.2",
+    "lucide-react": "0.468.0",
+    "next": "15.5.25",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@midnight-ntwrk/testkit-js": "4.1.1",
+    "@playwright/test": "1.55.1",
+    "@tailwindcss/postcss": "4.1.18",
+    "@types/node": "22.19.0",
+    "@types/react": "19.1.10",
+    "@types/react-dom": "19.1.9",
+    "@types/ws": "8.18.1",
+    "pino": "10.3.1",
+    "tailwindcss": "4.1.18",
+    "testcontainers": "12.1.0",
+    "tsx": "4.20.5",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4",
+    "ws": "8.20.0"
+  },
+  "overrides": {
+    "@midnight-ntwrk/ledger-v8": "8.1.0"
+  },
+  "engines": {
+    "node": ">=22.22.0"
+  }
+}
