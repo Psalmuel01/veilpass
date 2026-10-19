@@ -77,7 +77,7 @@ Check your actual endpoint with `docker context inspect` before adapting this to
 
 ## Public Vercel preview
 
-Public URL: **https://veilpass-beryl.vercel.app**
+Public URL: **https://useveilpass.vercel.app**
 
 This deployment hosts the product interface and developer guide. The UI labels it as a public preview and links to the local setup. Local-only sample controls are disabled in the hosted workspace/reference applications. The workbench API remains disabled, and no live-chain or issuer configuration is uploaded. It does not provide a public proof-backed Midnight or Preprod deployment.
 

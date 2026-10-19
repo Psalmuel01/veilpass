@@ -98,7 +98,7 @@ Suggested YouTube description:
 
 ## Live demo
 
-https://veilpass-beryl.vercel.app
+https://useveilpass.vercel.app
 
 This is the public product preview. Sample sessions and real proof-backed authorization run locally using the repository setup. The hosted preview is not a public Midnight/Preprod deployment.
 

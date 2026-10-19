@@ -1,6 +1,6 @@
 import { chromium, expect } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
-const origin=process.env.VEILPASS_PUBLIC_ORIGIN || 'https://veilpass-beryl.vercel.app';
+const origin=process.env.VEILPASS_PUBLIC_ORIGIN || 'https://useveilpass.vercel.app';
 const browser=await chromium.launch({channel:'chrome',headless:true});
 const page=await browser.newPage({viewport:{width:1440,height:1000},colorScheme:'light'});const errors=[];page.on('pageerror',e=>errors.push(e.message));const results=[];
 try{

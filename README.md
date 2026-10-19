@@ -34,7 +34,7 @@ npm run build
 VEILPASS_WORKBENCH=1 npm run dev
 ```
 
-Open [V2 lifecycle](http://127.0.0.1:3000/lifecycle), [developer portal](http://127.0.0.1:3000/developers), [hackathon sample](http://127.0.0.1:3000/hackathon), or [community sample](http://127.0.0.1:3000/community). Workbench writes require opt-in, same-origin loopback access and an isolated sample session. State expires after one hour/restart. The [public product preview](https://veilpass-beryl.vercel.app) is hosted on Vercel. Its local-only sample sessions and proof-backed flow require the local setup; it is not a public Midnight deployment.
+Open [V2 lifecycle](http://127.0.0.1:3000/lifecycle), [developer portal](http://127.0.0.1:3000/developers), [hackathon sample](http://127.0.0.1:3000/hackathon), or [community sample](http://127.0.0.1:3000/community). Workbench writes require opt-in, same-origin loopback access and an isolated sample session. State expires after one hour/restart. The [public product preview](https://useveilpass.vercel.app) is hosted on Vercel. Its local-only sample sessions and proof-backed flow require the local setup; it is not a public Midnight deployment.
 
 The [original wallet demo](http://127.0.0.1:3000/wallet) is preserved. Its setup/real local-chain instructions are in [legacy README](docs/LEGACY_README.md); its historical evidence is [local-e2e.json](docs/evidence/local-e2e.json). Old evidence does not validate V2 or a currently live deployment.
 
