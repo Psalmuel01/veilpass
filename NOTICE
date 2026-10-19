@@ -1,0 +1,10 @@
+VeilPass V2 preparation
+
+New V2 implementation additions are licensed under the Apache License, Version
+2.0, at the repository owner's request. This notice does not change the license
+of pre-existing code or third-party dependencies/generated code. Preserve their
+applicable copyright, license and NOTICE files. The owner must confirm prior
+repository licensing provenance before distributing the combined work.
+
+Apache-2.0 license text is included in LICENSE. No competitor implementation
+was vendored. Public primary sources consulted are cited in documentation.

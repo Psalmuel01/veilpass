@@ -1,0 +1,23 @@
+{
+  "recordedAt": "2026-10-19T05:05:51.299Z",
+  "mode": "generated-execution",
+  "environment": {
+    "platform": "darwin",
+    "architecture": "arm64",
+    "cpu": "Apple M2",
+    "node": "v22.22.0"
+  },
+  "generatedConstraintEvaluation": {
+    "samples": 20,
+    "medianMs": 18.666584000000057,
+    "p95Ms": 20.792875000000038
+  },
+  "sdkVerificationWithDurableStore": {
+    "samples": 20,
+    "medianMs": 10.765125000000012,
+    "p95Ms": 16.073499999999967
+  },
+  "proofGenerationMs": null,
+  "transactionConfirmationMs": null,
+  "note": "Generated JS constraint execution only; not ZK proving or blockchain verification benchmarks. Includes local filesystem sync in SDK verification."
+}

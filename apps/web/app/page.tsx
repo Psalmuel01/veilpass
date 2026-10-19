@@ -79,8 +79,10 @@ export default function Home() {
   return <div className="app-shell">
     <aside className="sidebar">
       <a className="brand" href="#" onClick={e => { e.preventDefault(); navigate('overview'); }}><span className="brand-mark"><Fingerprint size={23}/></span>veilpass<span className="brand-dot">.</span></a>
-      <div className="workspace-label">WORKSPACE <span>WAVE 01</span></div>
+      <div className="workspace-label">WORKSPACE <span>V2 PREPARATION</span></div>
       <nav aria-label="Main navigation">
+        <a className="nav-item" href="/lifecycle"><Layers3 size={18}/>V2 lifecycle workbench<ArrowUpRight size={14}/></a>
+        <a className="nav-item" href="/developers"><Terminal size={18}/>Developer portal</a>
         {([{ key: 'overview', label: 'Overview', icon: Layers3 }, { key: 'credential', label: 'My credential', icon: GraduationCap }, { key: 'verification', label: 'Verify eligibility', icon: ShieldCheck }, { key: 'privacy', label: 'Privacy model', icon: Fingerprint }] as const).map(item => <button key={item.key} className={`nav-item ${tab === item.key ? 'active' : ''}`} onClick={() => navigate(item.key)} disabled={busy}><item.icon size={18}/>{item.label}{item.key === 'credential' && credential && <span className="nav-count">1</span>}</button>)}
       </nav>
       <div className="sidebar-bottom"><div className="privacy-note"><ShieldCheck size={20}/><strong>Your data stays yours.</strong><p>Prove eligibility.<br/>Keep your identity out of it.</p><button onClick={() => navigate('privacy')}>Explore the privacy model <ArrowUpRight size={13}/></button></div><div className="powered"><span className="midnight-mark">M▍</span><span>Built on <b>Midnight</b></span><ArrowUpRight size={13}/></div></div>
