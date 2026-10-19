@@ -2,11 +2,10 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { existsSync } from 'node:fs';
 export function livePrivateRoot() { return existsSync(path.resolve(process.cwd(),'contracts/lifecycle')) ? path.resolve('.private') : path.resolve('../..','.private'); }
-import { fromHex } from '../../../packages/lifecycle/index';
 export interface LiveConfig { network: string; contractAddress: string; root: string; domain: string; appA: string; appB: string; indexerUri: string; indexerWsUri: string; proofServer: string }
 export async function liveConfig(): Promise<LiveConfig> {
   const input = JSON.parse(await readFile(process.env.VEILPASS_LIVE_CONFIG || path.join(livePrivateRoot(),'lifecycle-public.json'), 'utf8')) as LiveConfig;
-  for (const key of ['contractAddress','root','domain','appA','appB'] as const) fromHex(input[key]);
+  for (const key of ['contractAddress','root','domain','appA','appB'] as const) { if (typeof input[key] !== 'string' || !/^[0-9a-f]{64}$/.test(input[key])) throw new Error('Expected canonical lowercase 32-byte hex'); }
   if (!['undeployed','preprod'].includes(input.network)) throw new Error('Unsupported live network');
   for (const key of ['indexerUri','proofServer'] as const) {const url=new URL(input[key]);if (!['http:','https:'].includes(url.protocol) || url.username || url.password) throw new Error('Invalid public service URL');}
   const websocket=new URL(input.indexerWsUri);

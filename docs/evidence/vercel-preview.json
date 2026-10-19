@@ -1,0 +1,40 @@
+{
+  "url": "https://veilpass-beryl.vercel.app",
+  "checkedAt": "2026-10-19T15:08:41.108Z",
+  "routes": [
+    {
+      "route": "/",
+      "status": 200
+    },
+    {
+      "route": "/lifecycle",
+      "status": 200
+    },
+    {
+      "route": "/developers",
+      "status": 200
+    },
+    {
+      "route": "/hackathon",
+      "status": 200
+    },
+    {
+      "route": "/community",
+      "status": 200
+    },
+    {
+      "route": "/live",
+      "status": 200
+    },
+    {
+      "route": "/wallet",
+      "status": 200
+    }
+  ],
+  "themePersistence": true,
+  "mobileOverflow": false,
+  "hostedWorkbenchDisabled": true,
+  "unconfiguredLiveApiStatus": 503,
+  "publicLiveWritesRejected": true,
+  "browserRuntimeErrors": []
+}

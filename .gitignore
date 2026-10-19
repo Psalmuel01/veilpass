@@ -41,3 +41,4 @@ apps/web/public/zk-lifecycle/
 .next-live-demo/
 .next-video-build/
 scripts/video-v2/__pycache__/
+.vercel

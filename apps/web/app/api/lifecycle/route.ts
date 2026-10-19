@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomBytes } from 'node:crypto';
 import path from 'node:path';
-import { Workbench } from '../../../../../packages/lifecycle/workbench';
-import { FileChallengeStore } from '../../../../../packages/sdk/file-store';
-import { VeilPassError, type PolicyId } from '../../../../../packages/sdk';
+import type { Workbench } from '../../../../../packages/lifecycle/workbench';
+import type { PolicyId } from '../../../../../packages/sdk';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 type Session = { engine: Workbench; expires: number; calls: number; window: number };
@@ -16,6 +15,7 @@ export async function POST(request: NextRequest) {
   let origin: URL;
   try { origin = new URL(request.headers.get('origin') || ''); } catch { return NextResponse.json({error:'Origin required'}, {status:403,headers}); }
   if (origin.host !== request.headers.get('host') || !['localhost','127.0.0.1','[::1]'].includes(origin.hostname)) return NextResponse.json({error:'Workbench requires same-origin loopback access'}, {status:403,headers});
+  const [{ Workbench }, { FileChallengeStore }, { VeilPassError }] = await Promise.all([import('../../../../../packages/lifecycle/workbench'), import('../../../../../packages/sdk/file-store'), import('../../../../../packages/sdk')]);
   try {
     const reader = request.body?.getReader();
     if (!reader) throw new Error('Body required');

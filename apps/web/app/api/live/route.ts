@@ -2,9 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import path from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { liveConfig, livePrivateRoot } from '../../../lib/live-config';
-import { createVeilPassVerifier, VeilPassError } from '../../../../../packages/sdk';
-import { FileChallengeStore } from '../../../../../packages/sdk/file-store';
-import { MidnightChainAdapter } from '../../../../../packages/sdk/midnight-adapter';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 const rateGlobal = globalThis as typeof globalThis & { veilpassLiveRate?: { start:number; count:number } };
@@ -20,6 +17,7 @@ export async function POST(request: NextRequest) {
   const rate = rateGlobal.veilpassLiveRate ??= { start:Date.now(),count:0 };
   if(Date.now()-rate.start>60000){rate.start=Date.now();rate.count=0;}
   if(++rate.count>60)return NextResponse.json({error:'Too many live requests; retry in one minute'},{status:429,headers});
+  const [{ createVeilPassVerifier, VeilPassError }, { FileChallengeStore }, { MidnightChainAdapter }] = await Promise.all([import('../../../../../packages/sdk'), import('../../../../../packages/sdk/file-store'), import('../../../../../packages/sdk/midnight-adapter')]);
   try {
     const reader = request.body?.getReader(); if (!reader) throw new Error('Body required');
     const chunks: Uint8Array[] = []; let size=0;

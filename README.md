@@ -14,7 +14,7 @@ For a complete feature inventory, browser walkthrough, test commands and priorit
 - **Verifier SDK:** strongly typed challenges, contextual binding, expiry/current-status checks, atomic durable replay consumption and explicit execution modes. Default mode refuses generated-execution results.
 - **Product/reference surfaces:** local lifecycle workbench, hackathon/community reference pages, developer portal and a two-origin HTTP integration harness. These use generated Compact execution and the SDK; they do not generate V2 ZK proofs.
 
-**Not complete:** official signed credentials, holder-owned key binding, scalable authenticated issuance/issuer registry, Preprod deployment, installed-wallet acceptance for V2, external pilot and finished submission media. This is a tested protocol extension, not a production credential platform. Workbench server knows the sample witnesses.
+**Not complete:** official signed credentials, holder-owned key binding, scalable authenticated issuance/issuer registry, Preprod deployment, installed-wallet acceptance for V2, external pilot and a finished submission package. This is a tested protocol extension, not a production credential platform. Workbench server knows the sample witnesses.
 
 The interface now includes persistent system-aware dark mode and self-hosted Space Grotesk typography. It has been rebuilt with a dedicated public website, an ivory/ink/ultramarine workspace, responsive navigation, focused verification, and a restyled wallet. See [UI rebuild notes](docs/UI_REDESIGN.md).
 
@@ -34,7 +34,7 @@ npm run build
 VEILPASS_WORKBENCH=1 npm run dev
 ```
 
-Open [V2 lifecycle](http://127.0.0.1:3000/lifecycle), [developer portal](http://127.0.0.1:3000/developers), [hackathon sample](http://127.0.0.1:3000/hackathon), or [community sample](http://127.0.0.1:3000/community). Workbench writes require opt-in, same-origin loopback access and an isolated sample session. State expires after one hour/restart. No public hosted V2 demo is deployed.
+Open [V2 lifecycle](http://127.0.0.1:3000/lifecycle), [developer portal](http://127.0.0.1:3000/developers), [hackathon sample](http://127.0.0.1:3000/hackathon), or [community sample](http://127.0.0.1:3000/community). Workbench writes require opt-in, same-origin loopback access and an isolated sample session. State expires after one hour/restart. The [public product preview](https://veilpass-beryl.vercel.app) is hosted on Vercel. Its local-only sample sessions and proof-backed flow require the local setup; it is not a public Midnight deployment.
 
 The [original wallet demo](http://127.0.0.1:3000/wallet) is preserved. Its setup/real local-chain instructions are in [legacy README](docs/LEGACY_README.md); its historical evidence is [local-e2e.json](docs/evidence/local-e2e.json). Old evidence does not validate V2 or a currently live deployment.
 

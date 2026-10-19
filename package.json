@@ -27,7 +27,8 @@
     "test:theme:ui": "node scripts/check-node.mjs && node scripts/theme-ui-check.mjs",
     "test:live:browser": "node scripts/check-node.mjs && VEILPASS_BUILD_DIR=.next-live-demo npm run build && VEILPASS_BROWSER_E2E=1 tsx scripts/lifecycle-e2e.ts",
     "demo:live": "node scripts/check-node.mjs && VEILPASS_BUILD_DIR=.next-live-demo npm run build && VEILPASS_LIVE_DEMO=1 tsx scripts/lifecycle-e2e.ts",
-    "test:live:ui": "node scripts/check-node.mjs && node scripts/live-ui-check.mjs"
+    "test:live:ui": "node scripts/check-node.mjs && node scripts/live-ui-check.mjs",
+    "test:hosted:ui": "node scripts/vercel-ui-check.mjs"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-js": "2.5.1",
@@ -68,6 +69,6 @@
     "postcss": "8.5.28"
   },
   "engines": {
-    "node": ">=22.22.0"
+    "node": "22.x"
   }
 }

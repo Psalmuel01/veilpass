@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowUpRight, ArrowLeft, LayoutGrid, WalletCards, ShieldCheck, Building2, Code2, LifeBuoy, Menu, X, ChevronRight, LockKeyhole } from 'lucide-react';
 import { Brand } from './brand';
 import { ThemeToggle } from './theme-toggle';
+import { HostedNotice } from './hosted-notice';
 export function AppShell({ children, section = 'Overview', environment = 'Local sandbox' }: { children: React.ReactNode; section?: string; environment?: string }) {
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(section);
@@ -49,6 +50,6 @@ export function AppShell({ children, section = 'Overview', environment = 'Local 
       <Link className="vp-sidebar-link" href="/wallet"><WalletCards size={18}/>Midnight wallet<ArrowUpRight size={13}/></Link>
       <div className="vp-sidebar-bottom"><div className="vp-sidebar-privacy"><LockKeyhole size={18}/><strong>A little less disclosure.<br/>A lot more control.</strong><Link href="/#privacy">Meet the privacy model <ArrowUpRight size={14}/></Link></div><Link className="vp-sidebar-link" href="/developers#security"><LifeBuoy size={18}/>Security & support</Link><Link className="vp-sidebar-home" href="/"><ArrowLeft size={14}/> Back to website</Link></div>
     </aside>
-    <div className="vp-app-body"><header className="vp-app-topbar"><button ref={menuButton} className="vp-menu-toggle" aria-label="Open workspace navigation" aria-expanded={open} onClick={() => setOpen(!open)}><Menu size={21}/></button><div className="vp-breadcrumb">Workspace <ChevronRight size={13}/><span>{section}</span></div><div className="vp-topbar-right"><ThemeToggle/><span className="vp-environment"><i/>{environment}</span><Link href="/wallet" className="vp-button vp-button-outline vp-button-small">Wallet demo <ArrowUpRight size={14}/></Link><span className="vp-user-avatar" aria-label="Personal workspace">P</span></div></header>{children}</div>
+    <div className="vp-app-body"><header className="vp-app-topbar"><button ref={menuButton} className="vp-menu-toggle" aria-label="Open workspace navigation" aria-expanded={open} onClick={() => setOpen(!open)}><Menu size={21}/></button><div className="vp-breadcrumb">Workspace <ChevronRight size={13}/><span>{section}</span></div><div className="vp-topbar-right"><ThemeToggle/><span className="vp-environment"><i/>{process.env.NEXT_PUBLIC_HOSTED_PREVIEW === '1' ? 'Public preview' : environment}</span><Link href="/wallet" className="vp-button vp-button-outline vp-button-small">Wallet demo <ArrowUpRight size={14}/></Link><span className="vp-user-avatar" aria-label="Personal workspace">P</span></div></header><HostedNotice/>{children}</div>
   </div>;
 }

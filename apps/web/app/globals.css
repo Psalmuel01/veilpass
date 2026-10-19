@@ -732,3 +732,5 @@ html[data-theme="dark"] .legacy-wallet .flow-card-top > span { background: #232e
 .vp-live-address { max-width: 100%; word-break: break-all; }
 .vp-live .vp-docs-callout > .vp-live-address { flex: 1 1 100%; }
 @media(max-width:480px) { .vp-topbar-right .vp-environment { display: none; } .vp-breadcrumb { min-width: 0; } .vp-breadcrumb > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
+
+.vp-hosted-notice{display:flex;align-items:center;gap:12px 20px;flex-wrap:wrap;margin:20px clamp(18px,4vw,64px);padding:16px 20px;border:1px solid var(--vp-line,#53647e);border-radius:10px;background:var(--vp-paper,#f7f6f2);color:var(--vp-ink,#10151f);font-size:13px;line-height:1.6}.vp-hosted-notice strong{font-size:13px}.vp-hosted-notice span{flex:1;min-width:200px}.vp-hosted-notice a{color:var(--vp-blue,#3155e7);font-weight:600;text-decoration:underline;text-underline-offset:3px}

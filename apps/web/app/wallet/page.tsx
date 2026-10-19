@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { ThemeToggle } from '../../components/theme-toggle';
+import { HostedNotice } from '../../components/hosted-notice';
 import { ArrowUpRight, ArrowRight, Check, ChevronRight, Fingerprint, ShieldCheck, LockKeyhole, GraduationCap, Eye, EyeOff, Wallet, X, CircleHelp, FileCheck2, Layers3, Globe2, LoaderCircle, Copy, ExternalLink, Terminal, RefreshCw } from 'lucide-react';
 import type { ConnectedAPI } from '@midnight-ntwrk/dapp-connector-api';
 import type { CredentialEnvelope } from '../../../../packages/credential/index';
@@ -90,7 +91,7 @@ export default function Home() {
     </aside>
     <div className="main-shell">
       <header className="topbar"><div className="breadcrumb">Workspace <ChevronRight size={13}/> <span>{tab === 'overview' ? 'Overview' : tab === 'credential' ? 'My credential' : tab === 'verification' ? 'Verify eligibility' : 'Privacy model'}</span></div><div className="header-actions"><ThemeToggle/><span className="network"><i/>{network === 'undeployed' ? 'Local network' : 'Midnight Preprod'}</span><button className="wallet-button" onClick={showWallets} disabled={busy}><Wallet size={15}/>{api ? walletName : 'Connect wallet'}{api && <i className="connected-dot"/>}</button></div></header>
-      <main>
+      <HostedNotice/><main>
         {error && !walletModal && <div role="alert" className="alert error"><CircleHelp size={18}/><span>{error}</span><button aria-label="Dismiss error" onClick={() => setError('')}><X size={16}/></button></div>}
         {notice && <div role="status" className="alert notice"><Check size={17}/><span>{notice}</span><button aria-label="Dismiss notice" onClick={() => setNotice('')}><X size={16}/></button></div>}
         {tab === 'overview' && <>

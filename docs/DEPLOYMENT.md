@@ -74,3 +74,26 @@ npm run test:lifecycle:e2e
 ```
 
 Check your actual endpoint with `docker context inspect` before adapting this to another installation. The harness separates image preparation (up to 30 minutes for the first download) from runtime health startup (180-second Compose readiness window). It uses only a funded disposable development wallet, records success after all assertions, and tears down its own chain. Initial download attempts timed out before this successful cached-image run; they are not presented as successful tests.
+
+## Public Vercel preview
+
+Public URL: **https://veilpass-beryl.vercel.app**
+
+This deployment hosts the product interface and developer guide. The UI labels it as a public preview and links to the local setup. Local-only sample controls are disabled in the hosted workspace/reference applications. The workbench API remains disabled, and no live-chain or issuer configuration is uploaded. It does not provide a public proof-backed Midnight or Preprod deployment.
+
+The Vercel project is `veilpass` under `psalmuel01s-projects`. It uses Node 22, the repository root, `vercel.json`, and a custom build hook at `scripts/vercel-build.mjs`. Fresh checkouts install the checksum-verified Compact 0.31.1 compiler and generate contract JavaScript with `--skip-zk` before building Next.js. The public preview does not need proof keys; generate them separately for local proofs.
+
+`.vercelignore` excludes local credentials, environment files, caches, recordings, compiler/proof artifacts and node_modules. Do not upload `.private` or turn the loopback workbench into an unrestricted public service.
+
+Redeploy from the repository root using an authenticated Vercel CLI:
+
+```sh
+nvm use
+vercel deploy --prod --yes --build-env NEXT_PUBLIC_HOSTED_PREVIEW=1 --env NEXT_PUBLIC_HOSTED_PREVIEW=1 --env VEILPASS_WORKBENCH=0
+```
+
+The production URL is appropriate for the submission's Live demo field when described as the public product preview. The separate recorded video demonstrates the complete real local-network lifecycle.
+
+Validation: `npm run test:hosted:ui` checks all seven public routes, preview notices, dark-mode persistence, mobile overflow, disabled workbench response, unconfigured live response and rejection of public live writes. The latest successful result is recorded in `docs/evidence/vercel-preview.json`.
+
+The local-only API guards run before proof-library initialization, so the hosted preview can report disabled/unconfigured status without loading local-only WebAssembly dependencies.

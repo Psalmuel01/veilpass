@@ -2,10 +2,11 @@ import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Check, Fingerprint, ShieldCheck, LockKeyhole, EyeOff, Code2, Plus, GraduationCap, ArrowDown } from 'lucide-react';
 import { SiteHeader } from '../components/site-header';
 import { Brand } from '../components/brand';
+import { HostedNotice } from '../components/hosted-notice';
 export default function Home() {
   return <div className="vp vp-site">
     <SiteHeader/>
-    <main className="vp-site-main">
+    <main className="vp-site-main"><HostedNotice/>
       <section className="vp-landing-hero">
         <div className="vp-hero-copy"><div className="vp-eyebrow"><span className="vp-blue-dot"/> THE FREEDOM TO REVEAL LESS</div><h1>Your credentials.<br/>Only <em>your</em><br/>business.</h1><p>Open doors with your qualifications.<br/>Keep the details to yourself.</p><div className="vp-hero-actions"><Link className="vp-button vp-button-blue" href="/lifecycle">Explore VeilPass <ArrowUpRight size={18}/></Link><Link className="vp-quiet-link" href="#how-it-works">See how it works <ArrowDown size={15}/></Link></div><div className="vp-hero-caption"><span className="vp-midnight-symbol">◒</span> Privacy infrastructure. Built with Midnight.</div></div>
         <div className="vp-hero-art" aria-label="Illustration of a private qualification becoming a minimal eligibility result">
@@ -28,7 +29,7 @@ export default function Home() {
       <section className="vp-faq"><div className="vp-eyebrow">A LITTLE MORE CLARITY</div><h2>Good questions.</h2><div>{[
         ['What can I try today?','The lifecycle sandbox runs actual generated Compact constraints and SDK verification, including two policies, expiry, replay rejection and revocation. The wallet demo preserves the existing proof-backed Midnight workflow.'],
         ['Does the sandbox generate zero-knowledge proofs?','No. It uses server-known sample credentials and generated circuit execution. This mode is labeled throughout the app. Compiled proof artifacts and a deployed proof-backed workflow are separate milestones.'],
-        ['Is this a production credential service?','VeilPass is a developer preview. Signed VC issuance, holder-owned key binding, the finalized V2 chain adapter and public deployment remain outstanding. Use sample data only.'],
+        ['Is this a production credential service?','VeilPass is a developer preview. Signed VC issuance, holder-owned key binding and public proof-backed deployment remain outstanding. The V2 chain adapter has been validated on a real local network. Use sample data only.'],
         ['What happens when a credential is revoked?','New eligibility requests fail. The SDK also rejects an old authorization when it observes changed credential status. This does not revoke an access token already issued by a separate application.'],
       ].map(([q,a])=><details key={q}><summary>{q}<Plus size={18}/></summary><p>{a}</p></details>)}</div></section>
       <section className="vp-final-cta"><span className="vp-eyebrow">LESS REVEALED. MORE AHEAD.</span><h2>Let your qualifications<br/><em>do the talking.</em></h2><Link className="vp-button vp-button-blue" href="/lifecycle">Open VeilPass <ArrowUpRight size={18}/></Link></section>
