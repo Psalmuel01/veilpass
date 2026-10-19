@@ -36,7 +36,7 @@ for index,scene in enumerate(plan['scenes']):
   if scene['id'] in stable: end=min(end,start+stable[scene['id']])
   available=end-start
   if scene.get('proof'):
-   cut=min(5.8,available/2); tail=max(start+cut,end-cut)
+   cut=min(5.8,available/2,duration/2); tail=max(start+cut,end-cut)
    shot=WORK/f'{scene["id"]}-shortened.mkv'
    run(['ffmpeg','-hide_banner','-loglevel','error','-y','-filter_complex_threads','2','-ss',start,'-t',cut,'-i',track['path'],'-ss',tail,'-t',end-tail,'-i',track['path'],'-filter_complex',f'[0:v]fps=30,setpts=PTS-STARTPTS[a];[1:v]fps=30,setpts=PTS-STARTPTS[b];[a][b]concat=n=2:v=1:a=0[out]','-map','[out]','-an','-c:v','libx264','-preset','fast','-crf','18',shot])
    source=shot;source_start=0;source_duration=cut+end-tail
@@ -58,16 +58,17 @@ for index,scene in enumerate(plan['scenes']):
  print(f'Rendering {index+1}/{len(plan["scenes"])}: {scene["id"]} ({duration:.1f}s)',flush=True);run(args);render_scenes.append(destination);cursor+=duration
 concat=WORK/'concat.txt';concat.write_text('\n'.join("file '"+str(p)+"'" for p in render_scenes)+'\n')
 run(['ffmpeg','-hide_banner','-loglevel','error','-y','-f','concat','-safe','0','-i',concat,'-c','copy',WORK/'assembled.mkv'])
-metadata=WORK/'chapters.ffmeta';parts=[';FFMETADATA1','title=VeilPass — Prove what qualifies you','artist=VeilPass','comment=Real local Midnight browser footage. Generated sandbox sections and shortened waits are labeled. Narration is synthesized.']
+metadata=WORK/'chapters.ffmeta';parts=[';FFMETADATA1','title=VeilPass — Prove what qualifies you','artist=VeilPass','comment=Real local Midnight browser footage. Generated sandbox sections and shortened waits are labeled. Narration is synthesized with '+plan.get('voice','an unspecified voice')+'.']
 for i,c in enumerate(chapters):
  end=chapters[i+1]['seconds'] if i+1<len(chapters) else cursor
  title=c['title'].replace('=','\\=').replace(';','\\;').replace('#','\\#')
  parts+=['[CHAPTER]','TIMEBASE=1/1000',f'START={round(c["seconds"]*1000)}',f'END={round(end*1000)}',f'title={title}']
 metadata.write_text('\n'.join(parts)+'\n')
 output=OUT/'veilpass-v2-demo.mp4'
-run(['ffmpeg','-hide_banner','-loglevel','info','-y','-i',WORK/'assembled.mkv','-i',WORK/'music.wav','-f','ffmetadata','-i',metadata,'-filter_complex',f'[0:a]highpass=f=70,asplit=2[voice][side];[1:a]volume=0.12,lowpass=f=5500,afade=t=in:d=2,afade=t=out:st={cursor-4}:d=4[music];[music][side]sidechaincompress=threshold=0.02:ratio=5:attack=20:release=250[duck];[voice][duck]amix=inputs=2:duration=first:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=9[audio]','-map','0:v','-map','[audio]','-map_metadata','2','-map_chapters','2','-c:v','copy','-c:a','aac','-b:a','192k','-ar','48000','-ac','2','-t',str(cursor),'-movflags','+faststart',output])
+run(['ffmpeg','-hide_banner','-loglevel','info','-y','-i',WORK/'assembled.mkv','-i',WORK/'music.wav','-f','ffmetadata','-i',metadata,'-filter_complex',f'[0:a]highpass=f=70,asplit=2[voice][side];[1:a]volume=0.025,lowpass=f=5500,afade=t=in:d=2,afade=t=out:st={cursor-4}:d=4[music];[music][side]sidechaincompress=threshold=0.02:ratio=5:attack=20:release=250[duck];[voice][duck]amix=inputs=2:duration=first:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=9[audio]','-map','0:v','-map','[audio]','-map_metadata','2','-map_chapters','2','-c:v','copy','-c:a','aac','-b:a','192k','-ar','48000','-ac','2','-t',str(cursor),'-movflags','+faststart',output])
 (OUT/'veilpass-v2-demo.srt').write_text('\n'.join(srt));(OUT/'chapters.json').write_text(json.dumps(chapters,indent=2));(OUT/'narration.txt').write_text('\n\n'.join(scene['title'].replace('\n',' ')+ '\n'+ '\n'.join(scene['lines']) for scene in plan['scenes'])+'\n')
 shutil.copy2(ROOT/'docs/evidence/lifecycle-network.json',OUT/'recording-evidence.json')
 (WORK/'render-plan.json').write_text(json.dumps({'durationSeconds':cursor,'scenes':plan['scenes']},indent=2))
 run(['ffmpeg','-hide_banner','-loglevel','error','-y','-ss','2','-i',output,'-frames:v','1',OUT/'poster.png'])
 info=probe(output);(OUT/'media-info.json').write_text(json.dumps(info,indent=2));print(f'Finished: {output} ({cursor:.2f}s)',flush=True)
+(OUT/'audio-production.json').write_text(json.dumps({'voice':plan.get('voice'),'rate':plan.get('voiceRate'),'musicGain':0.025,'loudnessTargetLUFS':-16,'durationSeconds':cursor},indent=2))

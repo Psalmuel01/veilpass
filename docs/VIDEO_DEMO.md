@@ -1,6 +1,6 @@
 # VeilPass V2 demo video
 
-The finished film is `docs/video/veilpass-v2-demo.mp4`: 2 minutes 59 seconds, 1920×1080, 30 fps, H.264 video and stereo AAC audio. It includes synthesized Samantha narration, burned-in captions, a separate SRT, chapter metadata, and original synthesized ambient music. Media is generated locally and excluded from Git.
+The finished film is `docs/video/veilpass-v2-demo.mp4`: approximately 3 minutes 39 seconds, 1920×1080, 30 fps, H.264 video and stereo AAC audio. The revised narration uses the Nigerian English neural voice `en-NG-AbeoNeural`, replacing the original macOS Samantha voice. It includes burned-in captions, a separate SRT, chapter metadata, and a very quiet original ambient track. Media is generated locally and excluded from Git.
 
 ## What the film demonstrates
 
@@ -29,10 +29,12 @@ The final card states the remaining scope: signed issuance, holder-owned keys, i
 | `chapters.json` | Chapter times |
 | `recording-evidence.json` | Real chain/browser evidence for the recorded run |
 | `media-info.json` | Codec and container information |
+| `audio-production.json` | Voice, pace, music gain and loudness target |
+| `nigerian-voice-preview.mp3` | Short preview of the revised voice |
 
 ## Reproduce on macOS
 
-Requirements: Node 22.22+, installed project dependencies, Chrome, Docker, generated lifecycle proof artifacts, Python 3, FFmpeg/ffprobe with libx264, and macOS `say` with the Samantha voice. Run the existing lifecycle compilation/setup instructions first if artifacts are absent. Allow several minutes for proving and rendering. Use an available Docker context/configuration.
+Requirements: Node 22.22+, installed project dependencies, Chrome, Docker, generated lifecycle proof artifacts, Python 3, FFmpeg/ffprobe with libx264, and `edge-tts` with network access. The demo narration text is sent to the speech service; no credential or witness data is sent. Run the existing lifecycle compilation/setup instructions first if artifacts are absent. Allow several minutes for proving and rendering. Use an available Docker context/configuration.
 
 1. Start the product preview in a separate terminal:
 
@@ -60,10 +62,14 @@ Requirements: Node 22.22+, installed project dependencies, Chrome, Docker, gener
 4. Generate narration, graphics, evidence overlays, and render:
 
    ```sh
+   python3 -m venv .cache/video-voice-venv
+   .cache/video-voice-venv/bin/pip install edge-tts==7.3.1
    node scripts/video-v2/prepare-assets.mjs
    node scripts/video-v2/finish-overlays.mjs
    python3 scripts/video-v2/render.py
    ```
+
+   The default is Nigerian English at a measured pace (`en-NG-AbeoNeural`, rate `-8%`). Set `VEILPASS_VIDEO_VOICE=en-US-AndrewMultilingualNeural` for an American alternative, `VEILPASS_VIDEO_RATE` to change pace, or `VEILPASS_EDGE_TTS` to use another executable location. Service voice availability may change; synthesis errors stop the build rather than falling back to the old voice.
 
    Edit `scripts/video-v2/story.mjs` to change the story. Use `prepare-assets.mjs --graphics-only` to redraw graphics while retaining existing synthesized narration and timing. Full narration changes require normal asset generation.
 

@@ -6,13 +6,16 @@ import { scenes } from './story.mjs';
 const directory=path.resolve('.cache/video-v2');await mkdir(directory,{recursive:true});
 function wav(pcm,rate=48000,channels=1){const header=Buffer.alloc(44);header.write('RIFF');header.writeUInt32LE(36+pcm.length,4);header.write('WAVE',8);header.write('fmt ',12);header.writeUInt32LE(16,16);header.writeUInt16LE(1,20);header.writeUInt16LE(channels,22);header.writeUInt32LE(rate,24);header.writeUInt32LE(rate*channels*2,28);header.writeUInt16LE(channels*2,32);header.writeUInt16LE(16,34);header.write('data',36);header.writeUInt32LE(pcm.length,40);return Buffer.concat([header,pcm]);}
 const graphicsOnly=process.argv.includes('--graphics-only');
-if(graphicsOnly){const existing=JSON.parse(await readFile(path.join(directory,'film-plan.json'),'utf8'));for(const scene of scenes)Object.assign(scene,existing.scenes.find(s=>s.id===scene.id));}
+let voice=process.env.VEILPASS_VIDEO_VOICE || 'en-NG-AbeoNeural';
+let rate=process.env.VEILPASS_VIDEO_RATE || '-8%';
+const edgeTts=process.env.VEILPASS_EDGE_TTS || path.resolve('.cache/video-voice-venv/bin/edge-tts');
+if(graphicsOnly){const existing=JSON.parse(await readFile(path.join(directory,'film-plan.json'),'utf8'));voice=existing.voice || voice;rate=existing.voiceRate || rate;for(const scene of scenes)Object.assign(scene,existing.scenes.find(s=>s.id===scene.id));}
 if(!graphicsOnly)for(const [sceneIndex,scene] of scenes.entries()){
  const parts=[Buffer.alloc(Math.round(.45*48000)*2)];let seconds=.45;scene.captions=[];
  for(const [lineIndex,line] of scene.lines.entries()){
   const base=path.join(directory,`${scene.id}-${lineIndex}`);const spoken=line.replaceAll('VeilPass','Veil Pass').replaceAll('SDK','S D K').replaceAll('API','A P I').replaceAll('Preprod','pre-production').replaceAll('’',"'");
-  await writeFile(base+'.txt',spoken);execFileSync('say',['-v','Samantha','-r','158','-o',base+'.aiff','-f',base+'.txt']);
-  execFileSync('ffmpeg',['-hide_banner','-loglevel','error','-y','-i',base+'.aiff','-ar','48000','-ac','1','-f','s16le',base+'.pcm']);const pcm=await readFile(base+'.pcm');if(pcm.length<10000)throw new Error('Empty narration');
+  await writeFile(base+'.txt',spoken);execFileSync(edgeTts,['--voice',voice,'--rate='+rate,'--file',base+'.txt','--write-media',base+'.mp3'],{timeout:90000});
+  execFileSync('ffmpeg',['-hide_banner','-loglevel','error','-y','-i',base+'.mp3','-ar','48000','-ac','1','-f','s16le',base+'.pcm']);const pcm=await readFile(base+'.pcm');if(pcm.length<10000)throw new Error('Empty narration');
   const length=pcm.length/96000;scene.captions.push({start:seconds,end:seconds+length,text:line});parts.push(pcm,Buffer.alloc(7200*2));seconds+=length+.15;
  }
  parts.push(Buffer.alloc(38400*2));scene.durationSeconds=seconds+.8;scene.audio=path.join(directory,scene.id+'.wav');await writeFile(scene.audio,wav(Buffer.concat(parts)));console.log(`Narration ${sceneIndex+1}/${scenes.length}: ${scene.id} ${scene.durationSeconds.toFixed(1)}s`);
@@ -33,8 +36,8 @@ for(const scene of scenes){
  for(const [index,caption]of scene.captions.entries()){caption.image=path.join(directory,`${scene.id}-caption-${index}.png`);await screenshot(caption.image,`<div class="caption"><div><div class="text">${escape(caption.text)}</div></div></div>`,true);}
 }
 await browser.close();
-let cursor=0;for(const scene of scenes){scene.startSeconds=cursor;cursor+=scene.durationSeconds;}await writeFile(path.join(directory,'film-plan.json'),JSON.stringify({title:'VeilPass — Prove what qualifies you',width:1920,height:1080,fps:30,durationSeconds:cursor,scenes},null,2));
+let cursor=0;for(const scene of scenes){scene.startSeconds=cursor;cursor+=scene.durationSeconds;}await writeFile(path.join(directory,'film-plan.json'),JSON.stringify({title:'VeilPass — Prove what qualifies you',voice,voiceRate:rate,width:1920,height:1080,fps:30,durationSeconds:cursor,scenes},null,2));
 // Original, restrained ambient bed. No third-party music or samples.
-const rate=44100,length=Math.ceil(cursor*rate),pcm=Buffer.alloc(length*4);const chords=[[146.832,174.614,220],[116.541,146.832,174.614],[130.813,164.814,195.998],[130.813,174.614,220]];
-for(let i=0;i<length;i++){const t=i/rate,phase=(t%12)/12,chord=chords[Math.floor(t/12)%chords.length],previous=chords[(Math.floor(t/12)+3)%chords.length];const blend=Math.min(1,phase*6);let sample=0;for(let j=0;j<3;j++){sample+=(Math.sin(2*Math.PI*chord[j]*t)+.25*Math.sin(2*Math.PI*chord[j]*2*t))*.035*blend;sample+=(Math.sin(2*Math.PI*previous[j]*t)+.25*Math.sin(2*Math.PI*previous[j]*2*t))*.035*(1-blend);}sample*=Math.min(1,t/3,(cursor-t)/4);const side=Math.sin(t*.33)*.08;pcm.writeInt16LE(Math.round(sample*(1+side)*32767),i*4);pcm.writeInt16LE(Math.round(sample*(1-side)*32767),i*4+2);}
-await writeFile(path.join(directory,'music.wav'),wav(pcm,rate,2));console.log(`Film assets ready: ${cursor.toFixed(1)} seconds.`);
+const musicRate=44100,length=Math.ceil(cursor*musicRate),pcm=Buffer.alloc(length*4);const chords=[[146.832,174.614,220],[116.541,146.832,174.614],[130.813,164.814,195.998],[130.813,174.614,220]];
+for(let i=0;i<length;i++){const t=i/musicRate,phase=(t%12)/12,chord=chords[Math.floor(t/12)%chords.length],previous=chords[(Math.floor(t/12)+3)%chords.length];const blend=Math.min(1,phase*6);let sample=0;for(let j=0;j<3;j++){sample+=(Math.sin(2*Math.PI*chord[j]*t)+.25*Math.sin(2*Math.PI*chord[j]*2*t))*.035*blend;sample+=(Math.sin(2*Math.PI*previous[j]*t)+.25*Math.sin(2*Math.PI*previous[j]*2*t))*.035*(1-blend);}sample*=Math.min(1,t/3,(cursor-t)/4);const side=Math.sin(t*.33)*.08;pcm.writeInt16LE(Math.round(sample*(1+side)*32767),i*4);pcm.writeInt16LE(Math.round(sample*(1-side)*32767),i*4+2);}
+await writeFile(path.join(directory,'music.wav'),wav(pcm,musicRate,2));console.log(`Film assets ready: ${cursor.toFixed(1)} seconds. Voice: ${voice}.`);
