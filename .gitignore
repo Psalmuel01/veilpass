@@ -34,3 +34,8 @@ apps/web/public/zk-lifecycle/
 .next-redesign-build/
 
 .next-theme-build/
+
+.next-live-e2e/
+.next-live-build/
+
+.next-live-demo/

@@ -53,7 +53,7 @@ export function createVeilPassVerifier(options: VerifierOptions) {
     async verifyPresentation(value: unknown) {
       if (!value || typeof value !== 'object' || Array.isArray(value)) fail('MALFORMED', 'Presentation must be an object');
       const p = value as Presentation;
-      if (p.version !== 2 || typeof p.challengeId !== 'string' || !/^[0-9a-f]{64}$/.test(p.challengeId) || typeof p.transactionReference !== 'string' || !/^[0-9a-f]{64}$/.test(p.transactionReference)) fail('MALFORMED', 'Incompatible presentation');
+      if (p.version !== 2 || typeof p.challengeId !== 'string' || !/^[0-9a-f]{64}$/.test(p.challengeId) || typeof p.transactionReference !== 'string' || !/^(?:00)?[0-9a-f]{64}$/.test(p.transactionReference)) fail('MALFORMED', 'Incompatible presentation');
       const c = await o.store.get(p.challengeId);
       if (!c) return fail('CHALLENGE', 'Unknown challenge');
       if (c.version !== 2 || c.policyId !== o.policyId || !eq(c.audience, o.audience) || !eq(c.networkDomain, o.networkDomain) || !eq(c.contractAddress, o.contractAddress)) fail('CONTEXT', 'Challenge belongs to another verifier, policy or network');

@@ -20,7 +20,7 @@ The public summary requires material Midnight progress during the applicable wav
 
 ## Release/submission gaps
 
-Integrate official signed credentials/holder keys, scalable authenticated issuance and issuer/status lifecycle. Complete confirmed V2 chain adapter, Preprod deployment and two independently deployed verifier applications. Keep dependency audit current (the latest recorded audit has zero known advisories). Conduct external pilot. Create and verify pitch deck and demo video. Confirm official rubric, eligible contribution window, team eligibility/registration, repository topic and third-party license provenance. Do not claim those items complete.
+Integrate official signed credentials/holder keys, scalable authenticated issuance and issuer/status lifecycle. Independently review the implemented V2 chain adapter/browser flow, deploy on Preprod and operate two independently deployed verifier applications. Keep dependency audit current (the latest recorded audit has zero known advisories). Conduct external pilot. Create and verify pitch deck and demo video. Confirm official rubric, eligible contribution window, team eligibility/registration, repository topic and third-party license provenance. Do not claim those items complete.
 
 ## Licensing
 

@@ -3,14 +3,14 @@ import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
 const origin = process.env.VEILPASS_UI_ORIGIN || 'http://127.0.0.1:3003';
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
-const context = await browser.newContext({ colorScheme: 'dark', viewport: { width: 1440, height: 1100 } });
+const context = await browser.newContext({ colorScheme: 'dark', reducedMotion: 'reduce', viewport: { width: 1440, height: 1100 } });
 const page = await context.newPage();
 const errors = []; page.on('pageerror', error => errors.push(error.message));
 page.on('console', message => { if (message.type() === 'error' && /hydration|hydrated|didn.t match/i.test(message.text())) errors.push(message.text()); });
 await mkdir('docs/screenshots/theme', { recursive: true });
 const theme = () => page.locator('html').getAttribute('data-theme');
 async function capture(name) {
-  await page.evaluate(async () => { await document.fonts.ready; scrollTo(0, 0); await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))); });
+  await page.evaluate(async () => { await document.fonts.ready; document.documentElement.style.scrollBehavior='auto'; scrollTo({top:0,left:0,behavior:'instant'}); await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))); });
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `Horizontal overflow: ${name}`);
   await page.screenshot({ path: `docs/screenshots/theme/${name}.png`, fullPage: true });
 }
@@ -27,7 +27,7 @@ try {
   await page.reload(); assert.equal(await theme(), 'light', 'Explicit choice survives reload and overrides system');
   await capture('landing-light');
   await page.getByRole('button', { name: 'Dark mode', exact: true }).click();
-  for (const route of ['/lifecycle', '/developers', '/hackathon', '/community', '/wallet']) {
+  for (const route of ['/lifecycle', '/developers', '/hackathon', '/community', '/wallet', '/live']) {
     await page.goto(origin + route);
     assert.equal(await theme(), 'dark', `Appearance survives navigation to ${route}`);
     await page.getByRole('button', { name: 'Dark mode', exact: true }).waitFor();

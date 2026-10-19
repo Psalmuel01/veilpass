@@ -1,16 +1,28 @@
 {
-  "recordedAt": "2026-10-19T06:08:26.410Z",
+  "recordedAt": "2026-10-19T13:15:21.234Z",
   "mode": "confirmed-midnight",
   "network": "undeployed",
-  "contractAddress": "9e2bd6aa8bfb7e359a6624074d2ea5cb8233a84f6fbabcc55d2564cabf3aa367",
-  "deployTxId": "005b463c1298683bcca7bbb1624f731b35c5b8167d4d64cf78942b3849d2bd3d48",
+  "contractAddress": "7c450647f315cab3d03073d216d145830d00fb4b9f81675bea4632bb503cbf8d",
+  "deployTxId": "00d7da0ba0ca2e5e30a92f03815b24e9e15c7ca9d608c9312e8e502b13d19cd969",
   "authorizeTxIds": [
-    "0076e42ff0e85a441d95075eaddfab146884034cdbd93b8be83b27179ab78cc68c",
-    "008d95d245a5d2bb4af5d4177f4bb2dd1443879255ef60e80b50a9de9e2ae72561"
+    "00da6fe1407f450fab4d1fae0bb9db8c0a52367e831e8db9a46403e134d4852858",
+    "00af068a01d6aebb00b470d89201abf13f939458c5af7111bd11e9f567adf06526"
   ],
-  "revokeTxId": "000140a063c0f67165883d1d81ec3f4631969f4b0a0580bfa13869becb18823251",
+  "revokeTxId": "00d8500a9544b02bcaf8f948d3f74e29e30f6e1bd282a0cc0f6c4c1505555a3a03",
   "twoPoliciesVerified": true,
   "replayRejected": true,
   "revocationRejectedByBothPolicies": true,
+  "sdkConfirmedVerification": true,
+  "sdkReplayRejected": true,
+  "sdkRevocationRejected": true,
+  "browser": {
+    "twoPoliciesConfirmed": true,
+    "sdkReplayRejected": true,
+    "transactionIds": [
+      "00da6fe1407f450fab4d1fae0bb9db8c0a52367e831e8db9a46403e134d4852858",
+      "00af068a01d6aebb00b470d89201abf13f939458c5af7111bd11e9f567adf06526"
+    ],
+    "connector": "Funded testkit wallet through connector bridge, not an installed extension"
+  },
   "note": "Ephemeral local network, not Preprod. No external adoption or cryptographic unlinkability claim."
 }

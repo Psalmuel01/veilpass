@@ -1,5 +1,14 @@
 # Changelog
 
+## Live V2 wallet and confirmed verifier — 19 October 2026
+
+- Add `/live` with in-memory credential import, connector-v4 wallet discovery, local proving, wallet balancing/submission, chain confirmation and independent server SDK verification.
+- Add an operator-configured Midnight indexer adapter with deployment/root/domain and three circuit-key pins, typed public-transcript request binding and indexed-head freshness.
+- Accept the pinned ledger’s actual versioned transaction identifiers while keeping generated sandbox references explicit.
+- Add an interactive disposable funded local-wallet demo, real browser/network harness, captured public wire-format fixture, adapter regressions, API origin/body protections and setup documentation.
+- Fix wallet network-change recovery messages and long mobile workspace header labels. Keep generated reference applications separate; no installed-wallet or Preprod acceptance is claimed.
+
+
 ## Appearance and feature guide — 19 October 2026
 
 - Add persistent, system-aware light/dark appearance across the website, V2 workspace, reference apps, developer portal and retained wallet, including cross-tab updates and storage-denied handling.

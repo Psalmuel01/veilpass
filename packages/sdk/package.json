@@ -3,6 +3,6 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "exports": { ".": "./index.ts", "./file-store": "./file-store.ts" },
+  "exports": { ".": "./index.ts", "./file-store": "./file-store.ts", "./midnight-adapter": "./midnight-adapter.ts" },
   "description": "Unpublished source-only VeilPass verifier SDK; use inside this repository."
 }

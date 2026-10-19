@@ -63,3 +63,15 @@ This validates the contract's local network lifecycle. The browser sandbox still
 ## Appearance follow-up
 
 Persistent system-aware light/dark mode and self-hosted Space Grotesk pass the production build and strict TypeScript checks; all 42 unit/integration tests remain passing. Chrome appearance acceptance covers every product route, 360px mobile overflow, system default, explicit override, reload/navigation persistence, cross-tab updates, font loading, and denied local storage. The full V2 lifecycle and retained encrypted-wallet journeys also pass in dark mode. The two-origin verifier harness passed again. Screenshots are in `screenshots/theme/`. Real-network proofs were not rerun for this UI-only change; the prior successful network evidence remains the relevant contract evidence.
+
+## Live V2 implementation follow-up
+
+The separate `/live` page and `/api/live` verifier route implement actual V2 wallet/prover/submission/confirmation and independent confirmed-mode SDK verification. The live adapter pins deployment root/domain and all three circuit verifier keys; it deserializes real ledger-v8 transactions and binds the exact typed public consumed-key insertion. The SDK now accepts version-prefixed real transaction identifiers.
+
+All 50 tests pass, including seven wire-format/indexer regression scenarios and trailing-zero VM encoding. Strict root/web TypeScript and the production build pass. Production Chrome checks pass for the explicit unconfigured state, 360/390/480/768/1440px layouts, local origin/body restrictions and appearance persistence across all product pages, including `/live`. The compiler-specific parser and trusted-indexer boundary are documented in `LIVE_V2.md`.
+
+Integration debugging found and fixed the 33-byte transaction-identifier format mismatch, exact-block versus as-of historical indexer lookup semantics, wallet network-change message masking and mobile header overflow. Public transcript binding replaces the historical-state lookup approach. A captured public local-chain transaction/state fixture covers the real deserialization format without requiring proving-key generation for unit tests.
+
+The complete real-chain browser run passed: actual deployment; both policies proved, submitted and confirmed through Chrome; default-mode SDK acceptance; SDK and contract replay rejection; real issuer revocation; SDK rejection of the earlier receipt and fresh rejection for both policies. Evidence records actual transaction identifiers and explicitly labels the funded testkit connector bridge. The disposable services were cleaned up. This is local-chain evidence, not an installed wallet-extension or Preprod acceptance result.
+
+The browser harness uses an isolated production server and disables motion for deterministic screenshot capture. Its dedicated demo build directory avoids rebuilding the ordinary preview output while that preview is running.

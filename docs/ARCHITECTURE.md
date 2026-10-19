@@ -8,6 +8,7 @@ VeilPass targets developer/professional eligibility. Two implementations coexist
 | `contracts/lifecycle` | V2 batch authentication, trusted ledger-time window, two policies, one-shot request, issuer authorization, irreversible revocation/deactivation | Generated constraints plus a passing real local-network lifecycle; see evidence/lifecycle-network.json |
 | `packages/lifecycle` | Strict parsing, canonical encodings, witnesses, sample fixtures | Generated bindings, security tests |
 | `packages/sdk` | Challenge creation, context verification, current-status comparison, atomic durable consumption | Compiled-circuit integration tests; default confirmed mode fails closed |
+| `/live` + `/api/live` | Browser-owned witness memory, real wallet/local prover, independent pinned indexer verification | Real Chrome/local-chain evidence; trusted canonical indexer and compiler-specific typed parser |
 | `/lifecycle`, `/hackathon`, `/community` | Local developer workbench and two reference pages using SDK | Generated execution; same-origin server knows samples |
 | `scripts/two-verifiers.ts` | Two independent HTTP listeners/stores and challenge domains | Generated execution, not independent organizations |
 | `scripts/lifecycle-e2e.ts` | Deploy/prove/revoke on Docker Midnight network | Passed: real local deploy, two proof-backed policies, replay, confirmed revocation and fresh rejection |
@@ -35,3 +36,7 @@ The current lifecycle uses issuer-pinned membership, **not signatures or standar
 ## Public site and workspace rebuild
 
 The public site now occupies `/`; the existing proof-backed wallet workflow moved intact to `/wallet`. Shared brand, site navigation and responsive workspace components live under `apps/web/components`. The lifecycle, developer and reference pages use the rebuilt visual system. See `UI_REDESIGN.md`. Full V2 proving/verification keys have been generated; this does not change the sandbox execution mode.
+
+## Live V2 path
+
+`/live` keeps an imported qualification in browser memory and uses `lifecycle-midnight.ts` for real wallet/prover/transaction operations. `/api/live` only receives policy/challenge/presentation context; operator configuration pins deployment, network, root, endpoints and local verifier artifacts. `MidnightChainAdapter` binds a successful indexed transaction to its exact typed consumed-key insertion and checks current canonical root/status/head freshness. See [LIVE_V2.md](LIVE_V2.md) for the compiler-specific parsing boundary, trusted indexer model and reproduction commands. The generated workbench and reference pages remain separate.

@@ -10,10 +10,11 @@ For a complete feature inventory, browser walkthrough, test commands and priorit
 
 - **Existing proof-backed path (`/wallet`):** approved university batch, private graduation predicate, scoped replay protection, encrypted browser vault, wallet/provider integration and historical local Midnight network evidence.
 - **New V2 lifecycle:** real local-network deployment and proof-backed two-policy authorization/revocation are now recorded in [V2 network evidence](docs/evidence/lifecycle-network.json). The separate Compact contract enforces two developer-qualification policies, pinned issuer/admin/audience/domain, ledger-time validity, irreversible revocation/deactivation and one-time request state.
+- **Live V2 browser (`/live`):** local credential import, connector wallet, real proving/submission/confirmation and independent chain-backed SDK verification. Run `npm run demo:live` for a disposable funded local-wallet demo; see [live setup](docs/LIVE_V2.md).
 - **Verifier SDK:** strongly typed challenges, contextual binding, expiry/current-status checks, atomic durable replay consumption and explicit execution modes. Default mode refuses generated-execution results.
 - **Product/reference surfaces:** local lifecycle workbench, hackathon/community reference pages, developer portal and a two-origin HTTP integration harness. These use generated Compact execution and the SDK; they do not generate V2 ZK proofs.
 
-**Not complete:** official signed credentials, holder-owned key binding, scalable authenticated issuance/issuer registry, V2 finalized-chain adapter, Preprod deployment, production wallet wiring for V2, external pilot and finished submission media. This is a tested protocol extension, not a production credential platform. Workbench server knows the sample witnesses.
+**Not complete:** official signed credentials, holder-owned key binding, scalable authenticated issuance/issuer registry, Preprod deployment, installed-wallet acceptance for V2, external pilot and finished submission media. This is a tested protocol extension, not a production credential platform. Workbench server knows the sample witnesses.
 
 The interface now includes persistent system-aware dark mode and self-hosted Space Grotesk typography. It has been rebuilt with a dedicated public website, an ivory/ink/ultramarine workspace, responsive navigation, focused verification, and a restyled wallet. See [UI rebuild notes](docs/UI_REDESIGN.md).
 

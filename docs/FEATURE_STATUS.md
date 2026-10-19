@@ -2,6 +2,8 @@
 
 Updated 19 October 2026. This is a local developer preview with a real, separately tested Midnight contract lifecycle. The V2 browser sandbox uses generated Compact execution; it does not generate a ZK proof or submit a V2 transaction.
 
+The separate `/live` page now provides real browser proving, submission, confirmation and chain-backed SDK verification against a configured deployment. See [live V2 setup](LIVE_V2.md); the ordinary preview reports unconfigured until a live deployment is supplied.
+
 ## Working features
 
 | Feature | Available now | How to exercise it |
@@ -23,6 +25,7 @@ Updated 19 October 2026. This is a local developer preview with a real, separate
 | Legacy Midnight integration | Connector v4 discovery, network checks, local proving, wallet balancing, submission, confirmation/receipt | Requires wallet, prover, valid contract and network configuration; see LEGACY_README.md |
 | V2 Compact contract | Authenticity via pinned two-leaf batch; validity constrained by ledger time; approved policy/audience/network; replay state; private leaf selection; revoke/deactivate | `npm test`; actual network reproduction below |
 | Proving artifacts | Real proving and verification keys for authorize, revoke and deactivate | `npm run lifecycle:compile`; inspect evidence/lifecycle-artifacts.json |
+| Live V2 browser | In-memory qualification import, connector wallet, local prover, real submission/confirmation and SDK chain verification | `npm run demo:live` or `npm run test:live:browser`; both policies, replay and real revocation passed |
 | Real local V2 network lifecycle | Confirmed deployment, two proof-backed policy authorizations, replay rejection, confirmed revocation, fresh rejection under both policies | `npm run test:lifecycle:e2e`; recorded evidence/lifecycle-network.json |
 | Verifier SDK | Typed short-lived challenges, strict context binding, current-state/expiry checks, conservative status invalidation, atomic durable replay consumption | `npm test` and `npm run demo:verifiers` |
 | Two-origin integration | Actual HTTP verifiers on ports 4101/4102, independent durable stores, reuse/negative/revocation scenarios | `npm run demo:verifiers`; generated execution, not proofs |
@@ -78,7 +81,7 @@ The harness creates a funded disposable local wallet, node, indexer and prover; 
 
 ## Remaining work, in recommended order
 
-1. **Connect V2 to the real browser wallet and finalized chain state.** Implement a verifier adapter that checks confirmed authorization and current revocation/issuer status, and wire the browser through proving, wallet approval, submission, confirmation and recoverable errors. Keep explicit execution-mode labels.
+1. **Expand real-wallet acceptance and review.** The live browser and chain adapter are implemented. Validate installed wallet extensions, declined approvals, disconnect/slow-prover recovery, independent transcript-parser review and deployment operations. The tested local wallet is a funded connector bridge.
 2. **Establish real issuance and holder control.** Integrate compatible official credential signing/verification libraries, define holder-owned keys and recovery, authenticated issuer administration and key rotation. Today authenticity is a fixed issuer-pinned Merkle batch, and the sample issuer knows bearer secrets.
 3. **Expand the bounded protocol deliberately.** Replace the two-record development batch with an authenticated scalable issuance/status model, select supported policy configuration, and assess privacy leakage at realistic anonymity-set sizes.
 4. **Deploy and validate on Preprod.** Provision a funded operator wallet, persistent services and safe configuration; confirm both real application flows with the same holder credential and after revocation. Add wallet disconnect, declined approval, slow prover, stale indexer and retry coverage.
