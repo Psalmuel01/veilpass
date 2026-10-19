@@ -25,3 +25,9 @@ The layout adapts to narrow mobile, tablet and wide desktop screens. Primary app
 The production build, 42 existing protocol/vault/SDK tests and strict typecheck pass. Chrome checks verify the public/mobile navigation, sample initialization, both reference applications, SDK portal and absence of horizontal overflow. The full lifecycle browser suite verifies both policies, insufficient qualification, replay and revocation. The retained wallet suite verifies issuance, encrypted persistence, wrong-passphrase rejection, unlock, missing-wallet feedback and mobile layout.
 
 Screenshots are in `docs/screenshots/redesign`. `scripts/redesign-review.mjs` reproduces the visual review against `VEILPASS_UI_ORIGIN`. Technical boundaries remain visible: the V2 UI uses generated execution and server-known sample witnesses, even though proving/verification keys have now been generated successfully. A public deployment is not implied.
+
+## Appearance follow-up
+
+All product pages now offer persistent light/dark appearance. Initial appearance follows the system; a sun/moon toggle saves an explicit choice, synchronizes tabs and remains usable if storage is unavailable. A pre-hydration script sets appearance before rendering the body. Dark surfaces, borders, feedback states and retained-wallet typography are adjusted together.
+
+Space Grotesk variable (300–700) is bundled through Next local fonts, so pages make no Google Fonts request. Editorial italic accents remain serif. The font and OFL license come from the [Google Fonts source repository](https://github.com/google/fonts/tree/main/ofl/spacegrotesk). Theme evidence is in `screenshots/theme/`; `npm run test:theme:ui` exercises system defaults, persistence/navigation, tab sync, blocked storage and 360px layouts.

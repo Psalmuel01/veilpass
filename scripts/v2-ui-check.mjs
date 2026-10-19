@@ -3,7 +3,7 @@ import { mkdir } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const origin=process.env.VEILPASS_UI_ORIGIN || 'http://127.0.0.1:3000';
 const browser=await chromium.launch({channel:'chrome',headless:true});
-const page=await browser.newPage({viewport:{width:1440,height:1100}});
+const page=await browser.newPage({colorScheme: process.env.VEILPASS_UI_THEME === 'dark' ? 'dark' : 'light',viewport:{width:1440,height:1100}});
 const errors=[];page.on('pageerror',e=>errors.push(e.message));
 try{
  await page.goto(`${origin}/lifecycle`);

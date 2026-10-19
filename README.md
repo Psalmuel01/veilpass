@@ -4,6 +4,8 @@
 
 VeilPass explores reusable developer qualifications: a training issuer commits a credential, and a holder demonstrates application-specific eligibility without handing each application a full personal record. Midnight provides private witnesses and ledger-enforced proof constraints.
 
+For a complete feature inventory, browser walkthrough, test commands and prioritized roadmap, see [feature status and testing guide](docs/FEATURE_STATUS.md).
+
 ## What actually works
 
 - **Existing proof-backed path (`/wallet`):** approved university batch, private graduation predicate, scoped replay protection, encrypted browser vault, wallet/provider integration and historical local Midnight network evidence.
@@ -13,7 +15,7 @@ VeilPass explores reusable developer qualifications: a training issuer commits a
 
 **Not complete:** official signed credentials, holder-owned key binding, scalable authenticated issuance/issuer registry, V2 finalized-chain adapter, Preprod deployment, production wallet wiring for V2, external pilot and finished submission media. This is a tested protocol extension, not a production credential platform. Workbench server knows the sample witnesses.
 
-The interface has been rebuilt with a dedicated public website, an ivory/ink/ultramarine workspace, responsive navigation, focused verification, and a restyled wallet. See [UI rebuild notes](docs/UI_REDESIGN.md).
+The interface now includes persistent system-aware dark mode and self-hosted Space Grotesk typography. It has been rebuilt with a dedicated public website, an ivory/ink/ultramarine workspace, responsive navigation, focused verification, and a restyled wallet. See [UI rebuild notes](docs/UI_REDESIGN.md).
 
 ## Run it
 

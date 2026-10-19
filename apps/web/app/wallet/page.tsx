@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { ThemeToggle } from '../../components/theme-toggle';
 import { ArrowUpRight, ArrowRight, Check, ChevronRight, Fingerprint, ShieldCheck, LockKeyhole, GraduationCap, Eye, EyeOff, Wallet, X, CircleHelp, FileCheck2, Layers3, Globe2, LoaderCircle, Copy, ExternalLink, Terminal, RefreshCw } from 'lucide-react';
 import type { ConnectedAPI } from '@midnight-ntwrk/dapp-connector-api';
 import type { CredentialEnvelope } from '../../../../packages/credential/index';
@@ -88,7 +89,7 @@ export default function Home() {
       <div className="sidebar-bottom"><div className="privacy-note"><ShieldCheck size={20}/><strong>Your data stays yours.</strong><p>Prove eligibility.<br/>Keep your identity out of it.</p><button onClick={() => navigate('privacy')}>Explore the privacy model <ArrowUpRight size={13}/></button></div><div className="powered"><span className="midnight-mark">M▍</span><span>Built on <b>Midnight</b></span><ArrowUpRight size={13}/></div></div>
     </aside>
     <div className="main-shell">
-      <header className="topbar"><div className="breadcrumb">Workspace <ChevronRight size={13}/> <span>{tab === 'overview' ? 'Overview' : tab === 'credential' ? 'My credential' : tab === 'verification' ? 'Verify eligibility' : 'Privacy model'}</span></div><div className="header-actions"><span className="network"><i/>{network === 'undeployed' ? 'Local network' : 'Midnight Preprod'}</span><button className="wallet-button" onClick={showWallets} disabled={busy}><Wallet size={15}/>{api ? walletName : 'Connect wallet'}{api && <i className="connected-dot"/>}</button></div></header>
+      <header className="topbar"><div className="breadcrumb">Workspace <ChevronRight size={13}/> <span>{tab === 'overview' ? 'Overview' : tab === 'credential' ? 'My credential' : tab === 'verification' ? 'Verify eligibility' : 'Privacy model'}</span></div><div className="header-actions"><ThemeToggle/><span className="network"><i/>{network === 'undeployed' ? 'Local network' : 'Midnight Preprod'}</span><button className="wallet-button" onClick={showWallets} disabled={busy}><Wallet size={15}/>{api ? walletName : 'Connect wallet'}{api && <i className="connected-dot"/>}</button></div></header>
       <main>
         {error && !walletModal && <div role="alert" className="alert error"><CircleHelp size={18}/><span>{error}</span><button aria-label="Dismiss error" onClick={() => setError('')}><X size={16}/></button></div>}
         {notice && <div role="status" className="alert notice"><Check size={17}/><span>{notice}</span><button aria-label="Dismiss notice" onClick={() => setNotice('')}><X size={16}/></button></div>}

@@ -1,7 +1,7 @@
 import { chromium } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
-const page = await browser.newPage({ viewport: { width: 1440, height: 1080 } });
+const page = await browser.newPage({colorScheme: process.env.VEILPASS_UI_THEME === 'dark' ? 'dark' : 'light', viewport: { width: 1440, height: 1080 } });
 const errors = [];
 page.on('pageerror', e => errors.push(e.message));
 await page.goto(`${process.env.VEILPASS_UI_ORIGIN || 'http://127.0.0.1:3000'}/wallet`);

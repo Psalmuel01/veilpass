@@ -23,7 +23,8 @@
     "demo:verifiers": "node scripts/check-node.mjs && node --import tsx scripts/two-verifiers.ts",
     "test:lifecycle:e2e": "node scripts/check-node.mjs && tsx scripts/lifecycle-e2e.ts",
     "test:v2:ui": "node scripts/check-node.mjs && node scripts/v2-ui-check.mjs",
-    "benchmark:lifecycle": "node --import tsx scripts/lifecycle-benchmark.ts"
+    "benchmark:lifecycle": "node --import tsx scripts/lifecycle-benchmark.ts",
+    "test:theme:ui": "node scripts/check-node.mjs && node scripts/theme-ui-check.mjs"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-js": "2.5.1",

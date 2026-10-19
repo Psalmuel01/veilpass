@@ -1,5 +1,12 @@
 # Changelog
 
+## Appearance and feature guide — 19 October 2026
+
+- Add persistent, system-aware light/dark appearance across the website, V2 workspace, reference apps, developer portal and retained wallet, including cross-tab updates and storage-denied handling.
+- Self-host Space Grotesk variable typography with its OFL license.
+- Add Chrome appearance acceptance and a complete feature inventory, manual walkthrough, reproduction commands and prioritized roadmap.
+
+
 ## UI rebuild and proof-key generation — 19 October 2026
 
 - Generate real proving and verification artifacts for all three V2 circuits with Compact 0.31.1/runtime 0.16.0; record artifact sizes and SHA-256 hashes.

@@ -8,3 +8,7 @@ repository licensing provenance before distributing the combined work.
 
 Apache-2.0 license text is included in LICENSE. No competitor implementation
 was vendored. Public primary sources consulted are cited in documentation.
+
+Space Grotesk is bundled under the SIL Open Font License 1.1. Its copyright
+and full license are retained in apps/web/app/fonts/SpaceGrotesk-OFL.txt.
+Source: https://github.com/google/fonts/tree/main/ofl/spacegrotesk
