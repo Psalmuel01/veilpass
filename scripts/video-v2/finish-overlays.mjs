@@ -1,0 +1,12 @@
+import { chromium } from '@playwright/test';
+import { readFile, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+const dir=path.resolve('.cache/video-v2');const plan=JSON.parse(await readFile(path.join(dir,'film-plan.json'),'utf8'));const film=JSON.parse(await readFile(path.join(dir,'live-scenes.json'),'utf8'));const evidence=JSON.parse(await readFile('docs/evidence/lifecycle-network.json','utf8'));
+const font=(await readFile('apps/web/app/fonts/SpaceGrotesk.ttf')).toString('base64');const browser=await chromium.launch({channel:'chrome',headless:true});const page=await browser.newPage({viewport:{width:1920,height:1080}});
+for(const scene of plan.scenes.filter(s=>s.proof)){
+ const from=film.scenes.find(x=>x.name===scene.start).seconds,to=film.scenes.find(x=>x.name===scene.end).seconds;
+ await page.setContent(`<style>@font-face{font-family:Space;src:url(data:font/ttf;base64,${font})}html,body{margin:0;background:transparent}.note{position:absolute;right:180px;top:105px;border-radius:7px;background:#080d15ee;color:#d0dcf5;border:1px solid #53647e;font:19px Space;line-height:1.5;padding:10px 18px}.note strong{font-weight:600;color:#f1f5ff}.note small{display:block;font-size:15px;color:#aebbd3}</style><div class="note"><strong>Wait shortened · ${(to-from).toFixed(1)} seconds recorded</strong><small>Click to confirmation · local run, not a benchmark</small></div>`);await page.evaluate(()=>document.fonts.ready);await page.screenshot({path:path.join(dir,scene.id+'-proof-note.png'),omitBackground:true});
+}
+// Add the actual issuer transaction to the conceptual revocation title card.
+await page.setContent(`<style>@font-face{font-family:Space;src:url(data:font/ttf;base64,${font})}html,body{margin:0;background:transparent}.tx{position:absolute;left:138px;top:735px;color:#c7d5ef;font:19px Space;line-height:1.7;padding:17px 20px;border:1px solid #34445f;border-radius:6px;background:#162034}.tx b{font-size:15px;letter-spacing:1.6px;color:#91a8ff;font-weight:500}</style><div class="tx"><b>CONFIRMED LOCAL REVOCATION TRANSACTION</b><br>${evidence.revokeTxId}</div>`);await page.evaluate(()=>document.fonts.ready);await page.screenshot({path:path.join(dir,'revocation-tx.png'),omitBackground:true});
+await browser.close();await writeFile(path.join(dir,'proof-waits.json'),JSON.stringify(plan.scenes.filter(s=>s.proof).map(s=>({scene:s.id,seconds:film.scenes.find(x=>x.name===s.end).seconds-film.scenes.find(x=>x.name===s.start).seconds})),null,2));console.log('Evidence overlays ready.');

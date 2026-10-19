@@ -39,3 +39,5 @@ apps/web/public/zk-lifecycle/
 .next-live-build/
 
 .next-live-demo/
+.next-video-build/
+scripts/video-v2/__pycache__/
