@@ -7,5 +7,8 @@
   "env": {
     "NEXT_PUBLIC_HOSTED_PREVIEW": "1",
     "VEILPASS_WORKBENCH": "0"
+  },
+  "git": {
+    "deploymentEnabled": true
   }
 }

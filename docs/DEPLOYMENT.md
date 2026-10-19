@@ -97,3 +97,9 @@ The production URL is appropriate for the submission's Live demo field when desc
 Validation: `npm run test:hosted:ui` checks all seven public routes, preview notices, dark-mode persistence, mobile overflow, disabled workbench response, unconfigured live response and rejection of public live writes. The latest successful result is recorded in `docs/evidence/vercel-preview.json`.
 
 The local-only API guards run before proof-library initialization, so the hosted preview can report disabled/unconfigured status without loading local-only WebAssembly dependencies.
+
+### Automatic deployments from GitHub
+
+The Vercel project is connected to `Psalmuel01/veilpass`, with `main` as the production branch. `vercel.json` explicitly enables Git deployments. Pushes to `main` trigger a production build and update **https://useveilpass.vercel.app** after the build succeeds. Other branches receive preview deployments through the Vercel GitHub integration.
+
+The project build command is `node scripts/vercel-build.mjs`; it generates the ignored Compact contract JavaScript from a fresh checkout before building Next.js. `NEXT_PUBLIC_HOSTED_PREVIEW=1` is configured for both Production and Preview. No GitHub Actions workflow or deployment-token secret is needed for this integration.
