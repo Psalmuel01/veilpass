@@ -14,9 +14,15 @@ For a complete feature inventory, browser walkthrough, test commands and priorit
 - **Verifier SDK:** strongly typed challenges, contextual binding, expiry/current-status checks, atomic durable replay consumption and explicit execution modes. Default mode refuses generated-execution results.
 - **Product/reference surfaces:** local lifecycle workbench, hackathon/community reference pages, developer portal and a two-origin HTTP integration harness. These use generated Compact execution and the SDK; they do not generate V2 ZK proofs.
 
-**Not complete:** official signed credentials, holder-owned key binding, scalable authenticated issuance/issuer registry, Preprod deployment, installed-wallet acceptance for V2, external pilot and a finished submission package. This is a tested protocol extension, not a production credential platform. Workbench server knows the sample witnesses.
+**Not complete in the deployed/V2 proof flow:** official signed credentials, holder-owned key binding, scalable authenticated issuance/issuer registry, Preprod deployment, installed-wallet acceptance for V2, external pilot and a finished submission package. This is a tested protocol extension, not a production credential platform. Workbench server knows the sample witnesses.
 
 The interface now includes persistent system-aware dark mode and self-hosted Space Grotesk typography. It has been rebuilt with a dedicated public website, an ivory/ink/ultramarine workspace, responsive navigation, focused verification, and a restyled wallet. See [UI rebuild notes](docs/UI_REDESIGN.md).
+
+## Signed issuance and holder ownership — local milestone
+
+An isolated [Node 24 integration](integrations/issuance/README.md) now issues real issuer-signed qualifications bound to holder-generated keys, verifies contextual holder signatures, and supports encrypted backup/recovery and local revocation checks. It uses the official Midnight credential libraries and passes 27 security/behavior tests; see [validation evidence](docs/evidence/signed-issuance-local.json).
+
+This is generated Compact signature/constraint execution, not a new ZK transaction flow. It is not wired into `/live`, the V2 contract/SDK, or the hosted app. The new issuer/status/request stores are ephemeral local objects; authenticated public issuance, durable authority custody and new proof integration remain next. Root Node 22 workflows are unchanged.
 
 ## Run it
 

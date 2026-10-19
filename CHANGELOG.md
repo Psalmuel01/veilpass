@@ -1,5 +1,13 @@
 # Changelog
 
+## Signed issuance and holder ownership foundation — 20 October 2026
+
+- Add an isolated Node 24 integration using official credential-compact/model 0.3.0, Compact 0.31.1/runtime 0.16.0 and official DID key helpers.
+- Add issuer-approved, one-use enrollment, issuer-signed qualification bodies, holder-key binding and application-bound holder signatures.
+- Add owner-only encrypted holder backup files, lock/restore, local current-status revocation/deactivation checks and a bounded wire codec.
+- Validate 27 adversarial/behavior tests and a local issue/present/recover/revoke demo; retain the existing 50-test V2 suite.
+- This foundation is not integrated into the V2 proof-backed contract/SDK or public app. No new ZK transaction, public issuance service, durable status registry or lost-all-backups recovery is claimed.
+
 ## Live V2 wallet and confirmed verifier — 19 October 2026
 
 - Add `/live` with in-memory credential import, connector-v4 wallet discovery, local proving, wallet balancing/submission, chain confirmation and independent server SDK verification.

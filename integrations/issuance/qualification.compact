@@ -1,0 +1,69 @@
+// SPDX-License-Identifier: Apache-2.0
+pragma language_version 0.23;
+import CompactStandardLibrary;
+include "./node_modules/@midnight-ntwrk/credential-compact/dist/credentials/composable";
+
+export struct QualificationClaims {
+  program: Bytes<32>;
+  completed: Boolean;
+  level: Uint<8>;
+  holderPublicKey: JubjubPoint;
+}
+export struct RequestContext {
+  domain: Bytes<32>;
+  audience: Bytes<32>;
+  policy: Uint<8>;
+  challenge: Bytes<32>;
+  expiresAt: Uint<64>;
+  credentialRoot: Bytes<32>;
+}
+export struct Enrollment {
+  tag: Bytes<32>;
+  issuer: VerificationMethodRef;
+  holder: VerificationMethodRef;
+  holderPublicKey: JubjubPoint;
+  challenge: Bytes<32>;
+  expiresAt: Uint<64>;
+}
+import VC<NoPublicClaims, NoClaimCommitments, ExplicitHolderBinding, RegistryBoundStatusBinding> prefix Q_;
+import VP<RequestContext, ExplicitHolderBinding> prefix P_;
+import ExplicitHolderPresentationProof<NoPublicClaims, NoClaimCommitments, RequestContext, RegistryBoundStatusBinding> prefix H_;
+
+export pure circuit claimsRoot(claims: QualificationClaims): Bytes<32> { return persistentHash<QualificationClaims>(claims); }
+export pure circuit credentialRoot(credential: Q_Credential): Bytes<32> { return Q_credentialBodyRoot(credential); }
+export pure circuit presentationRoot(presentation: P_Presentation): Bytes<32> { return P_presentationBodyRoot(presentation); }
+export pure circuit enrollmentRoot(request: Enrollment): Bytes<32> {
+  assert(request.tag == pad(32, "veilpass:enrollment:v1"), "Wrong enrollment context");
+  return persistentHash<Enrollment>(request);
+}
+export pure circuit verifyQualification(
+  credential: Q_Credential, claims: QualificationClaims, proof: Proof,
+  acceptedIssuer: VerificationMethodRef, acceptedKey: JubjubPoint
+): [] {
+  assert(credential.schema.packageId == pad(32, "veilpass:qualification"), "Wrong credential family");
+  assert(credential.schema.schemaId == pad(32, "developer-training"), "Wrong credential schema");
+  assert(credential.schema.majorVersion == 1 && credential.schema.minorVersion == 0, "Wrong schema version");
+  assert(credential.issuerVerificationMethodRef.controllerAddress == acceptedIssuer.controllerAddress && credential.issuerVerificationMethodRef.methodId == acceptedIssuer.methodId, "Untrusted issuer method");
+  assert(jubjubPointX(proof.publicKey) == jubjubPointX(acceptedKey) && jubjubPointY(proof.publicKey) == jubjubPointY(acceptedKey), "Untrusted issuer key");
+  Q_assertValidCredentialEnvelope(credential, claimsRoot(claims));
+  assertValidExplicitHolderBinding(credential.holderBinding);
+  assertValidRegistryBoundStatusBinding(credential.statusBinding);
+  assert(credential.hasExpiration && credential.issuedAt < credential.expiresAt, "Credential expiry required");
+  assert(proof.createdAt == credential.issuedAt, "Issuance time mismatch");
+  assert(claims.program == pad(32, "developer-training") && claims.completed, "Unapproved qualification");
+  Q_assertValidCredentialProof(credential, proof);
+}
+export pure circuit verifyHolder(
+  credential: Q_Credential, claims: QualificationClaims, issuerProof: Proof,
+  acceptedIssuer: VerificationMethodRef, acceptedKey: JubjubPoint,
+  presentation: P_Presentation, holderProof: Proof
+): [] {
+  verifyQualification(credential, claims, issuerProof, acceptedIssuer, acceptedKey);
+  assert(presentation.disclosed.credentialRoot == credentialRoot(credential), "Presentation credential mismatch");
+  assert(presentation.disclosed.domain != pad(32, "") && presentation.disclosed.audience != pad(32, "") && presentation.disclosed.challenge != pad(32, ""), "Missing request context");
+  assert(presentation.disclosed.policy == 1 || presentation.disclosed.policy == 2, "Unsupported policy");
+  assert(claims.level >= (presentation.disclosed.policy == 1 ? 1 : 2), "Qualification level too low");
+  assert(holderProof.challengeHash == presentation.disclosed.challenge, "Holder challenge mismatch");
+  assert(holderProof.createdAt < presentation.disclosed.expiresAt, "Holder proof expired");
+  H_assertValidPresentationProof(credential, claims.holderPublicKey, presentation, holderProof);
+}

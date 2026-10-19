@@ -1,0 +1,42 @@
+{
+  "checkedAt": "2026-10-19T23:29:03.420Z",
+  "scope": "Isolated local signed-issuance foundation; not integrated with V2 proof flow or hosted app",
+  "node": "v24.22.0",
+  "compact": "0.31.1",
+  "dependencies": {
+    "@midnight-ntwrk/compact-runtime": "0.16.0",
+    "@midnight-ntwrk/credential-compact": "0.3.0",
+    "@midnight-ntwrk/credential-model": "0.3.0",
+    "@midnight-ntwrk/midnight-did-jubjub-schnorr": "0.7.0"
+  },
+  "qualificationSourceSha256": "966275345cd91d79085978ba94cb8ff47f188a694fdb7abb9c5c8af4b10f317d",
+  "tests": {
+    "total": 27,
+    "passed": 27,
+    "failed": 0
+  },
+  "mode": "local-signed-credential",
+  "issuerAndHolderSignatures": "Real Jubjub signatures checked with official credential-compact 0.3.0 and generated Compact constraints",
+  "zkTransaction": false,
+  "firstReceipt": {
+    "valid": true,
+    "eligible": true,
+    "policyId": "approved-training",
+    "verificationReference": "b84b62d35584debf72872ad5cab7112fd4694c6633918424952d9ee76cbfa6be",
+    "mode": "local-signed-credential"
+  },
+  "secondReceipt": {
+    "valid": true,
+    "eligible": true,
+    "policyId": "professional-level",
+    "verificationReference": "525c270848881fff91b506f471c3ee55c63d5b1ca1a54152affdf62fc0704b9c",
+    "mode": "local-signed-credential"
+  },
+  "replayRejected": true,
+  "encryptedBackupRestored": true,
+  "preRevocationPresentationRejected": true,
+  "freshRevokedPresentationRejected": true,
+  "holderSecretSentToIssuer": false,
+  "holderSecretInPresentationWitness": false,
+  "statusStorage": "Ephemeral local issuer registry; not a ledger status check"
+}

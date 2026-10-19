@@ -1,0 +1,30 @@
+{
+  "name": "@veilpass/issuance",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "node --import tsx --test tests/*.test.ts",
+    "demo": "node --import tsx demo.ts",
+    "compile": "node compile.mjs",
+    "pretest": "node compile.mjs",
+    "predemo": "node compile.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "validate": "node validate.mjs"
+  },
+  "dependencies": {
+    "@midnight-ntwrk/compact-runtime": "0.16.0",
+    "@midnight-ntwrk/credential-compact": "0.3.0",
+    "@midnight-ntwrk/credential-model": "0.3.0",
+    "@midnight-ntwrk/midnight-did-jubjub-schnorr": "0.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "tsx": "4.20.5",
+    "typescript": "5.9.3"
+  },
+  "license": "Apache-2.0"
+}

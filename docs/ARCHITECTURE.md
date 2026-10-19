@@ -33,6 +33,8 @@ Legacy plaintext is session-only in the browser, encrypted at rest in its existi
 
 The current lifecycle uses issuer-pinned membership, **not signatures or standards-compliant VCs**. No cryptographic signature implementation was invented. Integrating official `credential-compact` verification, holder-owned keys and scalable issuer/status infrastructure remains required. See `MIDNIGHT_COMPATIBILITY.md`. DID resolution is optional, not an MVP trust anchor.
 
+The separate [local signed-issuance foundation](../integrations/issuance/README.md), added on 20 October 2026, now exercises the official credential signature checks and holder-owned keys under Node 24. It uses generated Compact constraints and ephemeral local status/request stores. It does not change the current V2 ledger contract or verifier adapter; the proof-backed migration remains a separate integration gate.
+
 ## Public site and workspace rebuild
 
 The public site now occupies `/`; the existing proof-backed wallet workflow moved intact to `/wallet`. Shared brand, site navigation and responsive workspace components live under `apps/web/components`. The lifecycle, developer and reference pages use the rebuilt visual system. See `UI_REDESIGN.md`. Full V2 proving/verification keys have been generated; this does not change the sandbox execution mode.

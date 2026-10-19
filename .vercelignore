@@ -25,3 +25,6 @@ contracts/*/managed/compiler
 contracts/*/managed
 apps/web/public/zk
 apps/web/public/zk-lifecycle
+
+# Node 24 local integration; not part of the Node 22 hosted preview.
+integrations/issuance/

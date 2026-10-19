@@ -19,3 +19,9 @@ The identity documentation describes stable credential packages at 0.3.0, with 0
 On ledger 8, cross-contract synchronous DID resolution is unavailable. DID integration would require a resolved, authenticated method plus a freshness policy; it is not required for the current constructor-pinned issuer model. A future migration should pin one exact official version under Node 24, compile its public entrypoint, exercise real signed issue/present/verify fixtures and then compose it with the status/challenge logic.
 
 V2 uses the published `blockTimeGte` / `blockTimeLt` standard library operations. These constrain ledger execution time; local generated execution alone is not proof of network enforcement. Shared public batch validity prevents individual timestamps becoming authorization identifiers.
+
+## Local integration verified — 20 October 2026
+
+The isolated `integrations/issuance` package was installed and validated under Node 24.22.0 with exact `credential-compact`/`credential-model` 0.3.0, runtime 0.16.0 and `midnight-did-jubjub-schnorr` 0.7.0. Its credential-family source compiles with Compact 0.31.1. The tests exercise real context-bound issuer and holder signatures through generated Compact execution, including key substitution, identity-point enrollment, tampering, replay, expiration, local revocation and encrypted recovery.
+
+The library provides proof challenges and signature verification; the integration supplies the standard Schnorr response using the official context/challenge and key helpers. DID payload signing is not interchangeable with VC issuance/presentation signing. The adapter/application composition is not independently audited. Root app/Vercel workflows remain Node 22 and do not import the isolated package. See the integration README and `evidence/signed-issuance-local.json` for exact scope and results.
