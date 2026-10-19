@@ -1,5 +1,14 @@
 # Changelog
 
+## UI rebuild and proof-key generation — 19 October 2026
+
+- Generate real proving and verification artifacts for all three V2 circuits with Compact 0.31.1/runtime 0.16.0; record artifact sizes and SHA-256 hashes.
+- Rebuild the public site and app UI with an ivory/ink/ultramarine design, shared navigation/branding, responsive workspace, focused verification, receipts, issuer controls and activity.
+- Move the existing proof-backed wallet to `/wallet`, retain its provider/vault logic, update its browser harness and verify the original user journey.
+- Redesign developer portal and both SDK-driven reference applications; capture desktop/mobile review evidence.
+- Resolve stalled Docker pulls with an isolated anonymous test configuration without changing the operator’s Docker settings.
+- Pass the real V2 local-network lifecycle: confirmed deployment, two proof-backed policy authorizations, replay rejection, confirmed revocation and fresh post-revocation rejection. Record actual transaction evidence and separate image download/startup phases in the harness.
+
 ## V2 preparation — 19 October 2026 (unreleased)
 
 These changes predate the published October 27 Wave 3 start and are not represented as work completed during that wave.

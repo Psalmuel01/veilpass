@@ -20,8 +20,10 @@ The public summary requires material Midnight progress during the applicable wav
 
 ## Release/submission gaps
 
-Integrate official signed credentials/holder keys, scalable authenticated issuance and issuer/status lifecycle. Complete confirmed V2 chain adapter, real proof artifacts, fresh local-network run, Preprod deployment and two independently deployed verifier applications. Triage dependencies. Conduct external pilot. Create and verify pitch deck and demo video. Confirm official rubric, eligible contribution window, team eligibility/registration, repository topic and third-party license provenance. Do not claim those items complete.
+Integrate official signed credentials/holder keys, scalable authenticated issuance and issuer/status lifecycle. Complete confirmed V2 chain adapter, Preprod deployment and two independently deployed verifier applications. Keep dependency audit current (the latest recorded audit has zero known advisories). Conduct external pilot. Create and verify pitch deck and demo video. Confirm official rubric, eligible contribution window, team eligibility/registration, repository topic and third-party license provenance. Do not claim those items complete.
 
 ## Licensing
 
 New V2 code is offered under Apache-2.0 as requested; see `LICENSE` and `NOTICE`. No third-party project code was copied into implementation. Existing dependency and generated-artifact notices retain their own terms. Prior repository license provenance must be confirmed by the owner before relicensing pre-existing code; the notice explicitly scopes this addition to new work.
+
+Follow-up milestone: full V2 proof keys are generated and hashed in `evidence/lifecycle-artifacts.json`. The public website and application UI have been rebuilt; see `UI_REDESIGN.md`. A real disposable local-network lifecycle also passed, with actual references in `evidence/lifecycle-network.json`. These improvements remain dated October 19 and do not establish in-wave eligibility or public Preprod deployment.

@@ -1,0 +1,44 @@
+{
+  "recordedAt": "2026-10-19T05:51:04.267Z",
+  "compiler": "0.31.1",
+  "runtime": "0.16.0",
+  "operation": "proof-key-generation",
+  "success": true,
+  "files": [
+    {
+      "path": "contracts/lifecycle/managed/keys/authorize.prover",
+      "bytes": 9975190,
+      "sha256": "e695d193e6706e7f9897a65d8d3370e82d80e61a448186c8e20047651ae89dad"
+    },
+    {
+      "path": "contracts/lifecycle/managed/keys/authorize.verifier",
+      "bytes": 2119,
+      "sha256": "2fb9aff6341e8a4a61e21170ddd03f6afd1ba2b39aa6e17d2d8a2773101def9a"
+    },
+    {
+      "path": "contracts/lifecycle/managed/keys/revoke.prover",
+      "bytes": 2820259,
+      "sha256": "57b7b57892dd5d7897de5aa8548906554cb97d5cbe36935f8b13b2abb3cdd5bf"
+    },
+    {
+      "path": "contracts/lifecycle/managed/keys/revoke.verifier",
+      "bytes": 2119,
+      "sha256": "0b61c297d8c6d34ae0e392324fde5f195c6105b883af969d8435e37f74914b34"
+    },
+    {
+      "path": "contracts/lifecycle/managed/keys/deactivateIssuer.prover",
+      "bytes": 2820134,
+      "sha256": "bc7d3fd75e61a75e27e37708e570a4eedbdf68e06425e542930935048cbd518b"
+    },
+    {
+      "path": "contracts/lifecycle/managed/keys/deactivateIssuer.verifier",
+      "bytes": 2119,
+      "sha256": "b99b1ff9523343f5a2dda1cc4d02d1448e84c40a4cafd3ddc592530f32bfd056"
+    }
+  ],
+  "note": "Real compiler-generated proving and verification artifacts. This is not evidence of a generated transaction proof or a deployed contract.",
+  "contractSource": {
+    "path": "contracts/lifecycle/lifecycle.compact",
+    "sha256": "e414528c2e6d7d92ca3cb35459a31b58ba6243fde767783a83a81bd9b078d949"
+  }
+}

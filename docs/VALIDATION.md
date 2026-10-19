@@ -16,9 +16,9 @@ Environment: macOS arm64, Apple M2, Node 22.22.0. Compact 0.31.1, runtime 0.16.0
 | `npm run benchmark:lifecycle` | Passed, 20 measurements | Generated evaluation and durable SDK verification only; JSON evidence |
 | Final npm audit | 0 known advisories | `docs/evidence/npm-audit.json`; initial 9-advisory report retained separately |
 | `git diff --check` | Passed | Whitespace validation |
-| V2 proof-key generation | Blocked | Sandbox compiler operation not permitted; elevated automatic review hit capacity/deadline timeouts |
-| V2 local-network E2E | Not run successfully | Docker daemon unavailable; Docker Desktop application not installed |
-| V2 Preprod deployment | Not performed | No funded operator wallet, compiled proof artifacts or completed finalized-chain adapter |
+| V2 proof-key generation | Passed on approved follow-up | Six real compiler-generated prover/verifier artifacts; sizes/hashes in `evidence/lifecycle-artifacts.json`; no transaction proof implied |
+| V2 local-network E2E | Passed | Real generated proofs, confirmed deploy, two authorizations, replay rejection, confirmed revocation and fresh rejection under both policies; evidence/lifecycle-network.json |
+| V2 Preprod deployment | Not performed | No funded operator wallet or completed finalized-chain adapter |
 | External pilot | Not performed | No external participants or adoption evidence |
 
 ## Security scenarios exercised
@@ -42,4 +42,20 @@ VEILPASS_WORKBENCH=1 VEILPASS_BUILD_DIR=.next-validation npm run start -- --port
 VEILPASS_UI_ORIGIN=http://127.0.0.1:3003 npm run test:v2:ui
 ```
 
-All runs explicitly distinguish generated circuit evaluation, SDK verification, actual proofs, submission and confirmation. No V2 transaction IDs, pilot participants or proving benchmarks have been fabricated.
+All runs explicitly distinguish generated circuit evaluation, SDK verification, actual proofs, submission and confirmation. Actual V2 local transaction IDs are recorded only from the successful network run. No pilot participants or proving benchmark numbers have been fabricated.
+
+## Approved follow-up: interface rebuild and key generation
+
+The operator authorized continued proof-key generation and requested a complete UI overhaul. All three V2 circuits now have generated proving/verification artifacts. The public site was rebuilt at `/`, the original provider/vault workflow moved to `/wallet`, and the lifecycle workspace, developer portal and two reference application pages were redesigned. The production build includes all nine routes and passes type validation. The existing 42 tests remain passing.
+
+Chrome production checks passed for the complete V2 lifecycle (including negative policy, replay, and revocation in both apps), the redesigned website/mobile navigation and reference-app happy paths, and the retained encrypted-vault workflow. New screenshot evidence is in `docs/screenshots/redesign`. The visual pass enlarged application typography, strengthened secondary text contrast, removed an invisible duplicate policy select, and added focus management/Escape dismissal to the mobile workspace menu. Full-page screenshot capture scrolls to the top and waits for a rendered frame to avoid capture stitching during viewport changes.
+
+The redesigned homepage first-load JS is approximately 109 kB, lifecycle approximately 116 kB, and retained wallet approximately 113 kB as emitted by the production build. These bundle sizes are not Lighthouse performance scores. `UI_REDESIGN.md` describes the design and interaction changes.
+
+### Real-network result
+
+`npm run test:lifecycle:e2e` passed under Node 22.22.0 with Docker Desktop 27.5.1 and the isolated configuration described in `DEPLOYMENT.md`. Public images were proof-server 8.1.0, node 1.0.2 and indexer-standalone 4.3.3-hotfix. The first combined image-download/startup attempt hit a 600-second timeout before deployment; independent image pulls completed, and the retried run passed with images cached. The harness now separates bounded image preparation from runtime readiness, making that distinction reproducible.
+
+The successful run deployed the actual V2 contract, generated and confirmed authorizations for both pinned audience/policy pairs with the same credential, rejected replay, confirmed issuer revocation, and rejected fresh authorization under both policies. `evidence/lifecycle-network.json` contains actual references. The funded test wallet and local node/indexer/prover are real, not mocked. The chain was disposed after the run and cannot be inspected through a public Preprod explorer.
+
+This validates the contract's local network lifecycle. The browser sandbox still deliberately runs generated execution; it does not silently become a live proof-backed V2 frontend. Signed-credential integration, a finalized V2 verifier adapter, Preprod deployment and external pilot remain outstanding.

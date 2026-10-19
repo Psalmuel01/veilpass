@@ -1,3 +1,5 @@
+> Archived baseline documentation. The retained wallet application now lives at `/wallet`; `/` is the rebuilt public website. See the current root README for status.
+
 # VeilPass
 
 **Prove what matters. Keep the rest private.**

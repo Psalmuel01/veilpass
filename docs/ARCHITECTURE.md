@@ -4,13 +4,13 @@ VeilPass targets developer/professional eligibility. Two implementations coexist
 
 | Component | Implemented behavior | Evidence boundary |
 |---|---|---|
-| `contracts/veilpass` + `/` | Legacy graduation proof, immutable issuer batch, scoped nullifier | Historical local network evidence; existing wallet/prover adapter |
-| `contracts/lifecycle` | V2 batch authentication, trusted ledger-time window, two policies, one-shot request, issuer authorization, irreversible revocation/deactivation | Compiled generated execution; fresh network evidence pending |
+| `contracts/veilpass` + `/wallet` | Legacy graduation proof, immutable issuer batch, scoped nullifier | Historical local network evidence; existing wallet/prover adapter |
+| `contracts/lifecycle` | V2 batch authentication, trusted ledger-time window, two policies, one-shot request, issuer authorization, irreversible revocation/deactivation | Generated constraints plus a passing real local-network lifecycle; see evidence/lifecycle-network.json |
 | `packages/lifecycle` | Strict parsing, canonical encodings, witnesses, sample fixtures | Generated bindings, security tests |
 | `packages/sdk` | Challenge creation, context verification, current-status comparison, atomic durable consumption | Compiled-circuit integration tests; default confirmed mode fails closed |
 | `/lifecycle`, `/hackathon`, `/community` | Local developer workbench and two reference pages using SDK | Generated execution; same-origin server knows samples |
 | `scripts/two-verifiers.ts` | Two independent HTTP listeners/stores and challenge domains | Generated execution, not independent organizations |
-| `scripts/lifecycle-e2e.ts` | Deploy/prove/revoke on Docker Midnight network | Reproducible harness; not yet run successfully |
+| `scripts/lifecycle-e2e.ts` | Deploy/prove/revoke on Docker Midnight network | Passed: real local deploy, two proof-backed policies, replay, confirmed revocation and fresh rejection |
 
 ## Contract model
 
@@ -31,3 +31,7 @@ Legacy plaintext is session-only in the browser, encrypted at rest in its existi
 ## Official credentials migration
 
 The current lifecycle uses issuer-pinned membership, **not signatures or standards-compliant VCs**. No cryptographic signature implementation was invented. Integrating official `credential-compact` verification, holder-owned keys and scalable issuer/status infrastructure remains required. See `MIDNIGHT_COMPATIBILITY.md`. DID resolution is optional, not an MVP trust anchor.
+
+## Public site and workspace rebuild
+
+The public site now occupies `/`; the existing proof-backed wallet workflow moved intact to `/wallet`. Shared brand, site navigation and responsive workspace components live under `apps/web/components`. The lifecycle, developer and reference pages use the rebuilt visual system. See `UI_REDESIGN.md`. Full V2 proving/verification keys have been generated; this does not change the sandbox execution mode.

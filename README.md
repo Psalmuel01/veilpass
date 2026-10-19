@@ -6,12 +6,14 @@ VeilPass explores reusable developer qualifications: a training issuer commits a
 
 ## What actually works
 
-- **Existing proof-backed path (`/`):** approved university batch, private graduation predicate, scoped replay protection, encrypted browser vault, wallet/provider integration and historical local Midnight network evidence.
-- **New V2 lifecycle:** separate compiled Compact contract with two developer-qualification policies, pinned issuer/admin/audience/domain, ledger-time validity, irreversible revocation/deactivation and one-time request state.
+- **Existing proof-backed path (`/wallet`):** approved university batch, private graduation predicate, scoped replay protection, encrypted browser vault, wallet/provider integration and historical local Midnight network evidence.
+- **New V2 lifecycle:** real local-network deployment and proof-backed two-policy authorization/revocation are now recorded in [V2 network evidence](docs/evidence/lifecycle-network.json). The separate Compact contract enforces two developer-qualification policies, pinned issuer/admin/audience/domain, ledger-time validity, irreversible revocation/deactivation and one-time request state.
 - **Verifier SDK:** strongly typed challenges, contextual binding, expiry/current-status checks, atomic durable replay consumption and explicit execution modes. Default mode refuses generated-execution results.
 - **Product/reference surfaces:** local lifecycle workbench, hackathon/community reference pages, developer portal and a two-origin HTTP integration harness. These use generated Compact execution and the SDK; they do not generate V2 ZK proofs.
 
-**Not complete:** official signed credentials, holder-owned key binding, scalable authenticated issuance/issuer registry, V2 finalized-chain adapter, successful V2 network/Preprod lifecycle, production wallet wiring for V2, external pilot and finished submission media. This is a tested protocol extension, not a production credential platform. Workbench server knows the sample witnesses.
+**Not complete:** official signed credentials, holder-owned key binding, scalable authenticated issuance/issuer registry, V2 finalized-chain adapter, Preprod deployment, production wallet wiring for V2, external pilot and finished submission media. This is a tested protocol extension, not a production credential platform. Workbench server knows the sample witnesses.
+
+The interface has been rebuilt with a dedicated public website, an ivory/ink/ultramarine workspace, responsive navigation, focused verification, and a restyled wallet. See [UI rebuild notes](docs/UI_REDESIGN.md).
 
 ## Run it
 
@@ -31,7 +33,7 @@ VEILPASS_WORKBENCH=1 npm run dev
 
 Open [V2 lifecycle](http://127.0.0.1:3000/lifecycle), [developer portal](http://127.0.0.1:3000/developers), [hackathon sample](http://127.0.0.1:3000/hackathon), or [community sample](http://127.0.0.1:3000/community). Workbench writes require opt-in, same-origin loopback access and an isolated sample session. State expires after one hour/restart. No public hosted V2 demo is deployed.
 
-The [original wallet demo](http://127.0.0.1:3000/) is preserved. Its setup/real local-chain instructions are in [legacy README](docs/LEGACY_README.md); its historical evidence is [local-e2e.json](docs/evidence/local-e2e.json). Old evidence does not validate V2 or a currently live deployment.
+The [original wallet demo](http://127.0.0.1:3000/wallet) is preserved. Its setup/real local-chain instructions are in [legacy README](docs/LEGACY_README.md); its historical evidence is [local-e2e.json](docs/evidence/local-e2e.json). Old evidence does not validate V2 or a currently live deployment.
 
 ## Reproduce verification
 
@@ -44,7 +46,9 @@ npm run lifecycle:compile     # generate real proving assets
 npm run test:lifecycle:e2e    # Docker local network: actual deploy, prove, revoke
 ```
 
-Generated JavaScript execution is **not a ZK proof**. See [validation results](docs/VALIDATION.md) for what was run successfully and exact blockers. Network evidence is written only after a successful full run; no V2 contract address or transaction has been fabricated.
+The V2 proving and verification keys have now been generated successfully for all three circuits; sizes and SHA-256 hashes are in [artifact evidence](docs/evidence/lifecycle-artifacts.json). Key generation is distinct from generating a transaction proof or confirming a deployment.
+
+Generated JavaScript execution is **not a ZK proof**. See [validation results](docs/VALIDATION.md) for what was run successfully and exact blockers. The V2 local-network run passed; its actual contract and transaction references are recorded in the evidence file. This was a disposable local chain, not Preprod. Network evidence is written only after a successful full run.
 
 ## Inspect the implementation
 
