@@ -6,15 +6,19 @@ import { scenes } from './story.mjs';
 const directory=path.resolve('.cache/video-v2');await mkdir(directory,{recursive:true});
 function wav(pcm,rate=48000,channels=1){const header=Buffer.alloc(44);header.write('RIFF');header.writeUInt32LE(36+pcm.length,4);header.write('WAVE',8);header.write('fmt ',12);header.writeUInt32LE(16,16);header.writeUInt16LE(1,20);header.writeUInt16LE(channels,22);header.writeUInt32LE(rate,24);header.writeUInt32LE(rate*channels*2,28);header.writeUInt16LE(channels*2,32);header.writeUInt16LE(16,34);header.write('data',36);header.writeUInt32LE(pcm.length,40);return Buffer.concat([header,pcm]);}
 const graphicsOnly=process.argv.includes('--graphics-only');
-let voice=process.env.VEILPASS_VIDEO_VOICE || 'en-NG-AbeoNeural';
-let rate=process.env.VEILPASS_VIDEO_RATE || '-8%';
+let voice=process.env.VEILPASS_VIDEO_VOICE || 'en-US-AvaNeural';
+let rate=process.env.VEILPASS_VIDEO_RATE || '+0%';
 const edgeTts=process.env.VEILPASS_EDGE_TTS || path.resolve('.cache/video-voice-venv/bin/edge-tts');
 if(graphicsOnly){const existing=JSON.parse(await readFile(path.join(directory,'film-plan.json'),'utf8'));voice=existing.voice || voice;rate=existing.voiceRate || rate;for(const scene of scenes)Object.assign(scene,existing.scenes.find(s=>s.id===scene.id));}
 if(!graphicsOnly)for(const [sceneIndex,scene] of scenes.entries()){
  const parts=[Buffer.alloc(Math.round(.45*48000)*2)];let seconds=.45;scene.captions=[];
  for(const [lineIndex,line] of scene.lines.entries()){
   const base=path.join(directory,`${scene.id}-${lineIndex}`);const spoken=line.replaceAll('VeilPass','Veil Pass').replaceAll('SDK','S D K').replaceAll('API','A P I').replaceAll('Preprod','pre-production').replaceAll('’',"'");
-  await writeFile(base+'.txt',spoken);execFileSync(edgeTts,['--voice',voice,'--rate='+rate,'--file',base+'.txt','--write-media',base+'.mp3'],{timeout:90000});
+  await writeFile(base+'.txt',spoken);
+  for(let attempt=0;attempt<3;attempt++){
+   try{execFileSync(edgeTts,['--voice',voice,'--rate='+rate,'--file',base+'.txt','--write-media',base+'.mp3'],{timeout:90000,stdio:['ignore','pipe','pipe']});break;}
+   catch(error){if(attempt===2)throw error;console.warn(`Retrying narration ${scene.id}/${lineIndex} after a speech-service error.`);}
+  }
   execFileSync('ffmpeg',['-hide_banner','-loglevel','error','-y','-i',base+'.mp3','-ar','48000','-ac','1','-f','s16le',base+'.pcm']);const pcm=await readFile(base+'.pcm');if(pcm.length<10000)throw new Error('Empty narration');
   const length=pcm.length/96000;scene.captions.push({start:seconds,end:seconds+length,text:line});parts.push(pcm,Buffer.alloc(7200*2));seconds+=length+.15;
  }

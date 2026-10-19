@@ -1,6 +1,6 @@
 # VeilPass V2 demo video
 
-The finished film is `docs/video/veilpass-v2-demo.mp4`: approximately 3 minutes 39 seconds, 1920×1080, 30 fps, H.264 video and stereo AAC audio. The revised narration uses the Nigerian English neural voice `en-NG-AbeoNeural`, replacing the original macOS Samantha voice. It includes burned-in captions, a separate SRT, chapter metadata, and a very quiet original ambient track. Media is generated locally and excluded from Git.
+The finished film is `docs/video/veilpass-v2-demo.mp4`: approximately 3 minutes 27 seconds, 1920×1080, 30 fps, H.264 video and stereo AAC audio. The narration uses the American English neural voice `en-US-AvaNeural` at its normal speaking rate. It includes burned-in captions, a separate SRT, chapter metadata, and a very quiet original ambient track. Media is generated locally and excluded from Git.
 
 ## What the film demonstrates
 
@@ -30,7 +30,7 @@ The final card states the remaining scope: signed issuance, holder-owned keys, i
 | `recording-evidence.json` | Real chain/browser evidence for the recorded run |
 | `media-info.json` | Codec and container information |
 | `audio-production.json` | Voice, pace, music gain and loudness target |
-| `nigerian-voice-preview.mp3` | Short preview of the revised voice |
+| `american-voice-preview.mp3` | Short preview of the latest American voice |
 
 ## Reproduce on macOS
 
@@ -69,7 +69,7 @@ Requirements: Node 22.22+, installed project dependencies, Chrome, Docker, gener
    python3 scripts/video-v2/render.py
    ```
 
-   The default is Nigerian English at a measured pace (`en-NG-AbeoNeural`, rate `-8%`). Set `VEILPASS_VIDEO_VOICE=en-US-AndrewMultilingualNeural` for an American alternative, `VEILPASS_VIDEO_RATE` to change pace, or `VEILPASS_EDGE_TTS` to use another executable location. Service voice availability may change; synthesis errors stop the build rather than falling back to the old voice.
+   The default is American English at normal pace (`en-US-AvaNeural`, rate `+0%`). Set `VEILPASS_VIDEO_VOICE=en-NG-AbeoNeural` for a Nigerian alternative, `VEILPASS_VIDEO_RATE` to change pace, or `VEILPASS_EDGE_TTS` to use another executable location. Service voice availability may change; synthesis errors stop the build rather than falling back to the old voice.
 
    Edit `scripts/video-v2/story.mjs` to change the story. Use `prepare-assets.mjs --graphics-only` to redraw graphics while retaining existing synthesized narration and timing. Full narration changes require normal asset generation.
 
