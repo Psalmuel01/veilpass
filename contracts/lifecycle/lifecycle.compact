@@ -1,0 +1,109 @@
+// SPDX-License-Identifier: Apache-2.0
+pragma language_version 0.23;
+import CompactStandardLibrary;
+
+// V2 bounded issuer batch. Authentication is issuer-pinned Merkle membership,
+// NOT a VC signature. Read both status bits before choosing privately, so an
+// authorization never publishes the credential's leaf index or commitment.
+export ledger credentialRoot: Bytes<32>;
+export ledger approvedIssuer: Bytes<32>;
+export ledger adminCommitment: Bytes<32>;
+export ledger networkDomain: Bytes<32>;
+export ledger hackathonAudience: Bytes<32>;
+export ledger communityAudience: Bytes<32>;
+export ledger validFrom: Uint<64>;
+export ledger validUntil: Uint<64>;
+export ledger leftRevoked: Boolean;
+export ledger rightRevoked: Boolean;
+export ledger issuerActive: Boolean;
+export ledger consumed: Set<Bytes<32>>;
+
+export struct Qualification {
+  version: Uint<8>;
+  issuer: Bytes<32>;
+  program: Bytes<32>;
+  completed: Boolean;
+  level: Uint<8>;
+  issuedAt: Uint<64>;
+  expiresAt: Uint<64>;
+  holderSecret: Bytes<32>;
+}
+witness qualification(): Qualification;
+witness sibling(): Bytes<32>;
+witness isRight(): Boolean;
+witness adminSecret(): Bytes<32>;
+
+constructor(root: Bytes<32>, issuer: Bytes<32>, admin: Bytes<32>, domain: Bytes<32>, appA: Bytes<32>, appB: Bytes<32>, notBefore: Uint<64>, expires: Uint<64>) {
+  credentialRoot = disclose(root);
+  approvedIssuer = disclose(issuer);
+  adminCommitment = disclose(admin);
+  networkDomain = disclose(domain);
+  hackathonAudience = disclose(appA);
+  communityAudience = disclose(appB);
+  validFrom = disclose(notBefore);
+  validUntil = disclose(expires);
+  assert(validFrom < validUntil, "Invalid batch validity");
+  leftRevoked = false;
+  rightRevoked = false;
+  issuerActive = true;
+}
+export circuit credentialCommitment(c: Qualification): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "veilpass:credential:v2"), persistentHash<Qualification>(c)]);
+}
+export circuit batchRoot(left: Bytes<32>, right: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<3, Bytes<32>>>([pad(32, "veilpass:batch:v2"), left, right]);
+}
+export circuit adminKey(secret: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "veilpass:admin:v2"), secret]);
+}
+circuit requireAdmin(): [] {
+  assert(adminKey(adminSecret()) == adminCommitment, "Unauthorized administrator");
+}
+export circuit revoke(right: Boolean): [] {
+  requireAdmin();
+  if (disclose(right)) { rightRevoked = true; } else { leftRevoked = true; }
+}
+export circuit deactivateIssuer(): [] {
+  requireAdmin();
+  issuerActive = false;
+}
+struct Request {
+  tag: Bytes<32>;
+  domain: Bytes<32>;
+  audience: Bytes<32>;
+  policy: Uint<8>;
+  challenge: Bytes<32>;
+  deadline: Uint<64>;
+}
+export circuit requestKey(domain: Bytes<32>, audience: Bytes<32>, policy: Uint<8>, challenge: Bytes<32>, deadline: Uint<64>): Bytes<32> {
+  return persistentHash<Request>(Request { tag: pad(32, "veilpass:request:v2"), domain: domain, audience: audience, policy: policy, challenge: challenge, deadline: deadline });
+}
+export circuit authorize(audience: Bytes<32>, policy: Uint<8>, challenge: Bytes<32>, deadline: Uint<64>): [] {
+  assert(issuerActive, "Issuer is inactive");
+  const c = qualification();
+  assert(c.version == 2, "Unsupported schema");
+  assert(c.issuer == approvedIssuer, "Issuer is not approved");
+  const leaf = credentialCommitment(c);
+  const other = sibling();
+  const right = isRight();
+  const root = right ? batchRoot(other, leaf) : batchRoot(leaf, other);
+  assert(root == credentialRoot, "Credential authenticity check failed");
+  const revokedL = leftRevoked;
+  const revokedR = rightRevoked;
+  assert(!(right ? revokedR : revokedL), "Credential is revoked");
+  assert(c.issuedAt < c.expiresAt, "Invalid validity interval");
+  assert(c.issuedAt == validFrom, "Credential validity differs from batch");
+  assert(c.expiresAt == validUntil, "Credential validity differs from batch");
+  assert(blockTimeGte(validFrom), "Credential is not yet valid");
+  assert(blockTimeLt(validUntil), "Credential expired");
+  assert(blockTimeLt(disclose(deadline)), "Challenge expired");
+  assert(disclose(challenge) != pad(32, ""), "Invalid challenge");
+  assert(c.program == pad(32, "developer-training"), "Program is not approved");
+  assert(c.completed, "Program incomplete");
+  assert((disclose(policy) == 1 && disclose(audience) == hackathonAudience) ||
+         (disclose(policy) == 2 && disclose(audience) == communityAudience), "Policy or audience mismatch");
+  assert(c.level >= (policy == 1 ? 1 : 2), "Qualification level too low");
+  const request = disclose(requestKey(networkDomain, audience, policy, challenge, deadline));
+  assert(!consumed.member(request), "Challenge already consumed");
+  consumed.insert(request);
+}

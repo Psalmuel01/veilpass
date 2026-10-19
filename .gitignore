@@ -23,4 +23,9 @@ logs/
 midnight-level-db/
 
 .cache/
-submission.md
+/submission.md
+
+contracts/lifecycle/managed/
+apps/web/public/zk-lifecycle/
+
+.next-validation/
