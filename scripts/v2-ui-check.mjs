@@ -8,7 +8,7 @@ const errors=[];page.on('pageerror',e=>errors.push(e.message));
 try{
  await page.goto(`${origin}/lifecycle`);
  await page.getByRole('button',{name:'Initialize sample lifecycle'}).click();
- await page.getByRole('heading',{name:'Trusted at the source.'}).waitFor();
+ await page.locator('.vp-qualification-card').waitFor();
  await page.getByRole('button',{name:/1. Request a fresh challenge/}).click();
  await page.getByRole('button',{name:/2. Evaluate Compact constraints/}).click();
  await page.getByText(/Constraints accepted in/).waitFor();
@@ -18,7 +18,8 @@ try{
  await page.screenshot({path:'docs/screenshots/v2/lifecycle-desktop.png',fullPage:true});
  await page.getByRole('button',{name:/3. Verify with SDK/}).click();
  await page.getByRole('alert').filter({hasText:'Challenge already consumed'}).waitFor();
- await page.getByLabel('Verification policy').selectOption('professional-level');
+ await page.getByRole('button',{name:/Community access/}).click();
+ await page.getByText('Try a different qualification', {exact:true}).click();
  await page.getByLabel('Test level 1 credential').check();
  await page.getByRole('button',{name:/1. Request a fresh challenge/}).click();
  await page.getByRole('button',{name:/2. Evaluate Compact constraints/}).click();
@@ -31,6 +32,7 @@ try{
  await page.setViewportSize({width:390,height:844});
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'Mobile horizontal overflow');
  await page.screenshot({path:'docs/screenshots/v2/lifecycle-mobile.png',fullPage:true});
+ await page.getByText('Manage sample qualification', {exact:true}).click();
  await page.getByRole('button',{name:'Revoke qualification',exact:true}).click();
  await page.getByText('Revoked',{exact:true}).waitFor();
  for(const route of ['hackathon','community']){

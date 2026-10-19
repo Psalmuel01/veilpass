@@ -29,3 +29,6 @@ contracts/lifecycle/managed/
 apps/web/public/zk-lifecycle/
 
 .next-validation/
+
+.next-redesign/
+.next-redesign-build/

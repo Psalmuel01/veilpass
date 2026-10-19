@@ -1,0 +1,54 @@
+import { chromium } from '@playwright/test';
+import { mkdir } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const origin = process.env.VEILPASS_UI_ORIGIN || 'http://127.0.0.1:3004';
+const browser = await chromium.launch({ channel: 'chrome', headless: true });
+const page = await browser.newPage({ viewport: { width: 1440, height: 1100 } });
+const errors = [];
+page.on('pageerror', error => errors.push(error.message));
+const directory = 'docs/screenshots/redesign';
+await mkdir(directory, { recursive: true });
+async function capture(name) {
+  await page.evaluate(async () => { await document.fonts.ready; window.scrollTo(0,0); await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))); });
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `Overflow: ${name}`);
+  await page.screenshot({ path: `${directory}/${name}.png`, fullPage: true });
+}
+try {
+  await page.goto(origin);
+  await page.getByRole('heading', { level: 1, name: /Your credentials/ }).waitFor();
+  await capture('landing-desktop');
+  await page.screenshot({path:`${directory}/landing-hero.png`});
+  await page.setViewportSize({ width: 390, height: 844 });
+  await capture('landing-mobile');
+  await page.getByRole('button', { name: 'Open navigation', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Website navigation' }).getByRole('link', { name: 'Open app' }).click();
+  await page.getByRole('button', { name: 'Initialize sample lifecycle' }).waitFor();
+  await capture('wallet-empty-mobile');
+  await page.getByRole('button', { name: 'Initialize sample lifecycle' }).click();
+  await page.locator('.vp-qualification-card').waitFor();
+  await capture('workspace-mobile');
+  await page.getByRole('button', {name:'Open workspace navigation'}).click();
+  await page.getByRole('dialog', {name:'Workspace navigation'}).waitFor();
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', {name:'Open workspace navigation'}).waitFor();
+  assert.equal(await page.getByRole('button', {name:'Open workspace navigation'}).getAttribute('aria-expanded'), 'false');
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  await capture('workspace-desktop');
+  await page.goto(`${origin}/developers`);
+  await page.getByRole('heading', { name: 'Integrate a verifier' }).waitFor();
+  await capture('developers-desktop');
+  await page.goto(`${origin}/hackathon`);
+  await page.getByRole('button', { name: 'Check sample qualification' }).click();
+  await page.getByRole('heading', { name: 'Sample qualification accepted' }).waitFor();
+  await capture('hackathon-desktop');
+  await page.goto(`${origin}/community`);
+  await page.getByRole('button', { name: 'Check sample qualification' }).click();
+  await page.getByRole('heading', { name: 'Sample qualification accepted' }).waitFor();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await capture('community-mobile');
+  await page.goto(`${origin}/wallet`);
+  await page.getByRole('heading', { name: /Prove what matters/ }).waitFor();
+  await capture('midnight-wallet-mobile');
+  assert.deepEqual(errors, []);
+  console.log('Redesign review passed: public navigation, initialization, reference app success, responsive overflow and no browser errors. Screenshots saved.');
+} finally { await browser.close(); }

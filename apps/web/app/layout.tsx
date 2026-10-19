@@ -1,4 +1,4 @@
 import type { Metadata } from 'next';
 import './globals.css';
-export const metadata: Metadata = { title: 'VeilPass — Prove what matters.', description: 'Private credentials. Verifiable eligibility. Built on Midnight.' };
+export const metadata: Metadata = { title: 'VeilPass — Your credentials. Only your business.', description: 'Private credentials. Verifiable eligibility. Built on Midnight.' };
 export default function RootLayout({ children }: { children: React.ReactNode }) { return <html lang="en"><body>{children}</body></html>; }

@@ -4,7 +4,7 @@ const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 1080 } });
 const errors = [];
 page.on('pageerror', e => errors.push(e.message));
-await page.goto('http://127.0.0.1:3000');
+await page.goto(`${process.env.VEILPASS_UI_ORIGIN || 'http://127.0.0.1:3000'}/wallet`);
 await page.getByRole('heading', { name: /Prove what matters/ }).waitFor();
 await mkdir('docs/screenshots', {recursive:true});
 await page.screenshot({ path: 'docs/screenshots/overview.png', fullPage: true });

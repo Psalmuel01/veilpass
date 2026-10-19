@@ -57,7 +57,7 @@ export async function browserAuthorization(wallet: MidnightWalletProvider, confi
         return connected;
       } } };
     `);
-    await page.goto(origin);
+    await page.goto(`${origin}/wallet`);
     if (interactive) {
       console.log('Interactive local demo ready in Chrome at http://127.0.0.1:3001.');
       console.log('Choose Funded local test wallet. Transactions use real local Midnight proofs; no mainnet funds are involved. Close this Chrome window to stop the demo.');
