@@ -1,6 +1,6 @@
 # Get the accounts and services needed for Preprod
 
-Updated 20 October 2026. The Vercel website is a frontend preview. It does not supply a funded wallet, a persistent issuer database, or a trusted prover.
+Updated 20 October 2026. The Vercel website is still a frontend preview. The free hosted-backend adapter and deployment configuration are in `deploy/render/`; public deployment and hosted proof acceptance remain separate gates.
 
 ## 1. Node and indexer access
 
@@ -55,11 +55,13 @@ This keeps the prover bound to your device. Confirm `http://localhost:6300/versi
 
 A shared remote prover is an additional trusted service, not a privacy-neutral replacement. Never put a wallet signing seed in a proof witness. The V3 contract receives credential and presentation signatures, not the holder's signing seed.
 
-## 4. Persistent issuer and verifier hosting
+## 4. Hosted issuer and verifier
 
-Vercel's function filesystem is not a persistent issuer database. `/api/issuance` deliberately refuses to run on Vercel. The local service uses an owner-only encrypted SQLite authority database and a separate durable SQLite verifier challenge store. A hosted service needs a server with persistent storage or a deliberately implemented transactional hosted-database adapter, HTTPS, authenticated administration, secret management and backups.
+The operator selected Render Free with the existing Neon `veilpass` Free project. The Postgres adapter keeps encrypted authority state, verifier challenge consumption and request limits durable without a Render disk. Neon was initialized explicitly; owner-only `.private/hosted-preprod/render.env` holds the stable runtime configuration. Never commit that file or regenerate its encryption key on redeploy.
 
-Do not buy hosting yet just to bypass this gate. Finish the local proof-backed acceptance test, decide whether the pilot can use a local trusted prover, then size and select hosting using measured requirements. Multi-user issuer accounts, authorized institutional onboarding, recovery-authorized reissuance and key rotation still need a production design and review.
+See [Render configuration](../deploy/render/README.md) and [release acceptance](HOSTED_PREPROD.md). Local development still uses encrypted SQLite. Vercel's issuance route remains disabled unless the frontend's explicit API rewrites point to the hosted backend. Public mutation origins must match the backend or its separately pinned frontend.
+
+Render Free has idle sleeps and resource quotas; it is a Preprod pilot target. Actual proof-server 8.1.3 V3 authorization attempts were OOM-killed at 512 MiB and 2 GiB in local capacity tests. No free Render hosted prover has passed acceptance. Do not enable or claim public network proof support until a suitable prover and the real contract deployment are validated.
 
 ## Deployment acceptance
 

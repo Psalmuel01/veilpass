@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { timingSafeEqual } from "node:crypto";
+import { serviceRequestAllowed, admitServiceRequest } from "../../../lib/service-access";
 import path from "node:path";
 import { signedProjectRoot } from "../../../lib/signed-network-config";
 export const runtime = "nodejs";
@@ -15,9 +16,7 @@ function configured() {
   );
 }
 function local(request: NextRequest) {
-  return /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(
-    request.headers.get("host") || "",
-  );
+  return serviceRequestAllowed(request.headers, false);
 }
 function admin(request: NextRequest) {
   const actual = Buffer.from(request.headers.get("authorization") || "");
@@ -34,10 +33,13 @@ async function modules() {
   const directory =
     process.env.VEILPASS_ISSUER_DIRECTORY ||
     path.join(signedProjectRoot(), ".private/signed-issuer");
+  const postgres = process.env.VEILPASS_STORAGE === "postgres"
+    ? (await import("../../../../../integrations/issuance/src/postgres")).hostedDatabase()
+    : undefined;
   return {
     ...model,
     withIssuer: <T>(action: Parameters<typeof service.withIssuer<T>>[2]) =>
-      service.withIssuer(
+      postgres ? postgres.withIssuer(process.env.VEILPASS_ISSUER_STORAGE_KEY!, action) : service.withIssuer(
         directory,
         process.env.VEILPASS_ISSUER_STORAGE_KEY!,
         action,
@@ -54,6 +56,8 @@ export async function GET(request: NextRequest) {
       { status: 503, headers },
     );
   try {
+    if (!(await admitServiceRequest("issuer")))
+      return NextResponse.json({ error: "Request limit reached" }, { status: 429, headers: { ...headers, "Retry-After": "60" } });
     const m = await modules();
     const id = request.nextUrl.searchParams.get("id");
     if (id && !/^[0-9a-f]{64}$/.test(id))
@@ -122,7 +126,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 503, headers },
     );
-  if (request.headers.get("origin") !== `http://${request.headers.get("host")}`)
+  if (!serviceRequestAllowed(request.headers, true))
     return NextResponse.json(
       { error: "Origin rejected" },
       { status: 403, headers },
@@ -152,6 +156,8 @@ export async function POST(request: NextRequest) {
         { error: "Issuer authentication required" },
         { status: 401, headers },
       );
+    if (!(await admitServiceRequest("issuer")))
+      return NextResponse.json({ error: "Request limit reached" }, { status: 429, headers: { ...headers, "Retry-After": "60" } });
     const m = await modules();
     const body = m.decodeWire(text) as {
       action: string;

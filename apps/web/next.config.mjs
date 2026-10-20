@@ -7,6 +7,18 @@ const config = {
   outputFileTracingRoot: path.resolve(webRoot, '../..'),
   devIndicators: false,
   experimental: { externalDir: true },
+  async rewrites() {
+    const backend = process.env.VEILPASS_BACKEND_ORIGIN;
+    if (!backend) return [];
+    const url = new URL(backend);
+    if (url.protocol !== 'https:' || url.username || url.password || url.pathname !== '/' || url.search || url.hash)
+      throw new Error('Backend must be an HTTPS origin without credentials or a path');
+    // Override only these existing API routes. No arbitrary upstream URLs or
+    // caller-supplied proxy paths; browser and frontend assets stay on Vercel.
+    return { beforeFiles: ['issuance', 'signed-network'].map(name => ({
+      source: `/api/${name}`, destination: `${url.origin}/api/${name}`,
+    })) };
+  },
   webpack(config, { isServer }) {
     config.resolve.extensionAlias = { ...config.resolve.extensionAlias, '.js': ['.ts', '.tsx', '.js'] };
     config.output.environment = { ...config.output.environment, asyncFunction: true };

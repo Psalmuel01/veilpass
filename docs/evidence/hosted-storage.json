@@ -1,0 +1,42 @@
+{
+  "recordedAt": "2026-10-20T12:44:30.881763+00:00",
+  "mode": "hosted-storage-and-http-acceptance",
+  "publicDeployment": false,
+  "neon": {
+    "project": "veilpass",
+    "plan": "Free",
+    "connected": true,
+    "issuerInitialized": true,
+    "publicIssuerFingerprint": "52552b8a73de3b266948ab0f080a00b415a9bc8228f20c51204da1087ee50ba8"
+  },
+  "disposablePostgresAcceptance": {
+    "passed": true,
+    "encryptedIssuance": true,
+    "concurrentUpdates": true,
+    "failedOperationRollback": true,
+    "revocation": true,
+    "restartContinuity": true,
+    "namespaceIsolation": true,
+    "atomicReplayRejection": true,
+    "expiry": true,
+    "durableRequestLimits": true
+  },
+  "linuxContainer": {
+    "platform": "linux/amd64",
+    "image": "sha256:9679b318bc49f6a6282195d7fa65baec61ed3c2b4966227c7f76d7d1b619d1a6",
+    "buildPassed": true,
+    "httpAcceptancePassed": true,
+    "hostAndOriginRejection": true,
+    "pinnedFrontendOriginAccepted": true,
+    "adminAuthentication": true,
+    "holderSignedIssuance": true,
+    "revocation": true,
+    "memoryLimitBytes": 536870912,
+    "observedMemoryPeakBytes": 277774336,
+    "cpuLimitDuringHttpTest": 1,
+    "note": "Local disposable acceptance; does not establish Render Free CPU performance, public Vercel rewrites or a Preprod chain proof."
+  },
+  "appUnitTestsPassed": 69,
+  "typecheckPassed": true,
+  "privateConfigurationExcludedFromGit": true
+}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFile } from "node:fs/promises";
+import { serviceRequestAllowed, admitServiceRequest } from "../../../lib/service-access";
 import path from "node:path";
 import {
   signedNetworkConfig,
@@ -12,7 +13,7 @@ const headers = {
   "Content-Type": "application/json",
 };
 const local = (r: NextRequest) =>
-  /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(r.headers.get("host") || "");
+  serviceRequestAllowed(r.headers, false);
 export async function GET(request: NextRequest) {
   if (!local(request))
     return NextResponse.json(
@@ -20,6 +21,8 @@ export async function GET(request: NextRequest) {
       { status: 503, headers },
     );
   try {
+    if (!(await admitServiceRequest("verifier")))
+      return NextResponse.json({ error: "Request limit reached" }, { status: 429, headers: { ...headers, "Retry-After": "60" } });
     const c = await signedNetworkConfig();
     const { encodeWire } = await import(
       "../../../../../integrations/issuance/src/wire"
@@ -39,7 +42,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   if (
     !local(request) ||
-    request.headers.get("origin") !== `http://${request.headers.get("host")}`
+    !serviceRequestAllowed(request.headers, true)
   )
     return NextResponse.json(
       { error: "Origin rejected" },
@@ -47,6 +50,8 @@ export async function POST(request: NextRequest) {
     );
   let config;
   try {
+    if (!(await admitServiceRequest("verifier")))
+      return NextResponse.json({ error: "Request limit reached" }, { status: 429, headers: { ...headers, "Retry-After": "60" } });
     config = await signedNetworkConfig();
   } catch {
     return NextResponse.json(
@@ -110,10 +115,13 @@ export async function POST(request: NextRequest) {
       trust: config.trust,
       verifierKeys,
     });
-    const store = new SqliteChallengeStore(
+    const store = process.env.VEILPASS_STORAGE === "postgres"
+      ? (await import("../../../../../integrations/issuance/src/postgres")).hostedDatabase()
+          .challengeStore(`${config.contractAddress}:${body.policy}`)
+      : new SqliteChallengeStore(
       path.resolve(
-        signedProjectRoot(),
-        ".private/signed-verifiers",
+        process.env.VEILPASS_VERIFIER_DIRECTORY ||
+          path.join(signedProjectRoot(), ".private/signed-verifiers"),
         config.contractAddress,
         String(body.policy),
       ),

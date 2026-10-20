@@ -8,6 +8,19 @@ jobs:
   constraints-and-browser:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: veilpass-disposable-test-password
+          POSTGRES_DB: veilpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -21,6 +34,9 @@ jobs:
       - run: npm run contract:check && npm run lifecycle:check && npm run signed:check
       - run: npm run typecheck && npm run typecheck --prefix integrations/issuance
       - run: npm test && npm test --prefix integrations/issuance
+      - run: node --import tsx scripts/postgres-check.ts
+        env:
+          VEILPASS_TEST_DATABASE_URL: postgresql://postgres:veilpass-disposable-test-password@127.0.0.1:5432/veilpass
       - run: npx playwright install --with-deps chromium
       - run: npm run build
         env:

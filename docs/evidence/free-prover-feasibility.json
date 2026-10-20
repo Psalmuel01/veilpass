@@ -1,0 +1,23 @@
+{
+  "recordedAt": "2026-10-20T09:34:58.002796+00:00",
+  "mode": "offline-disposable-v3-proof",
+  "image": "midnightntwrk/proof-server:8.1.3",
+  "imageDigest": "sha256:0f4ab0716985eaebbe55a970348f52ff05ffd8a96631ed7232bd0c4ba02c115c",
+  "memoryLimitBytes": 536870912,
+  "cpuLimit": 0.1,
+  "startupVersionCheckPassed": true,
+  "actualAuthorizationAttempted": true,
+  "proofSucceeded": false,
+  "containerOOMKilled": true,
+  "containerExitCode": 137,
+  "submittedToChain": false,
+  "conclusion": "This V3 authorization exceeded a 512 MiB hard memory cap. Render Free hosted proving has not passed acceptance.",
+  "additionalLocalTrial": {
+    "memoryLimitBytes": 2147483648,
+    "cpuLimit": 1,
+    "containerOOMKilled": true,
+    "containerExitCode": 137,
+    "proofSucceeded": false,
+    "submittedToChain": false
+  }
+}

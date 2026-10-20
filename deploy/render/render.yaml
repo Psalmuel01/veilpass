@@ -1,0 +1,43 @@
+# Free Preprod backend draft. Requires external Postgres; no ephemeral SQLite.
+# Use this path when creating a Render Blueprint (not repository-root render.yaml).
+services:
+  - type: web
+    name: veilpass-preprod
+    runtime: node
+    buildCommand: npm ci --include=dev && node scripts/render-build.mjs
+    startCommand: node scripts/render-start.mjs
+    branch: main
+    plan: free
+    region: oregon
+    numInstances: 1
+    autoDeployTrigger: checksPass
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 24.22.0
+      - key: NEXT_PUBLIC_HOSTED_PREVIEW
+        value: "1"
+      - key: VEILPASS_WORKBENCH
+        value: "0"
+      - key: VEILPASS_STORAGE
+        value: postgres
+      - key: DATABASE_URL
+        sync: false
+      - key: VEILPASS_HOSTED_BACKEND
+        value: "1"
+      - key: VEILPASS_FRONTEND_ORIGIN
+        value: https://useveilpass.vercel.app
+      - key: VEILPASS_SIGNED_ISSUANCE
+        value: "1"
+      - key: VEILPASS_BOOTSTRAP_ISSUER
+        value: "0"
+      - key: VEILPASS_ISSUER_FINGERPRINT
+        sync: false
+      - key: BLOCKFROST_PROJECT_ID
+        sync: false
+      - key: VEILPASS_ISSUER_STORAGE_KEY
+        sync: false
+      - key: VEILPASS_ISSUER_ADMIN_TOKEN
+        sync: false
+# No paid/private prover is provisioned. Network authorization remains disabled
+# until actual artifacts, deployment configuration and proving are validated.

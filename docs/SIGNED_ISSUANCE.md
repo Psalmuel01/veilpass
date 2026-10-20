@@ -32,7 +32,7 @@ SQLite stores an encrypted authority snapshot including its issuer key, trusted 
 
 Issuance transport retries can recover the same signed credential without adding a second record. Each retry must prove possession of the same approved holder key; revoked credentials cannot be recovered as active. The ordinary one-shot `issue` API still rejects replay.
 
-The route requires explicit configuration, same-origin loopback POSTs, bounded JSON input, administration tokens and local request throttling. It is disabled on Vercel. Do not expose the developer server as a public issuer service.
+The route requires explicit configuration, bounded JSON input and administration tokens. Local mode requires same-origin loopback POSTs. The separately configured hosted mode requires an exact HTTPS backend host and pinned browser origin, durable request limits, stable keys and external Postgres on ephemeral hosts. It remains disabled on Vercel itself; optional frontend rewrites target the configured Render backend. Never expose the developer launcher as a hosted service. See `deploy/render/README.md` for deployment status.
 
 ## V3 proof-backed contract
 
