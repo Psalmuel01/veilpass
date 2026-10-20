@@ -13,7 +13,7 @@ export function SiteHeader() {
       <Link href="/#how-it-works" onClick={() => setOpen(false)}>How it works</Link>
       <Link href="/#privacy" onClick={() => setOpen(false)}>Our approach</Link>
       <Link href="/developers">For developers</Link>
-      <Link className="vp-button vp-button-ink" href="/lifecycle">Open app <ArrowUpRight size={16}/></Link>
+      <Link className="vp-button vp-button-ink" href="/holder">Open app <ArrowUpRight size={16}/></Link>
     </nav>
   </header>;
 }

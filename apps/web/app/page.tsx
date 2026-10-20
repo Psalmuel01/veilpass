@@ -8,7 +8,7 @@ export default function Home() {
     <SiteHeader/>
     <main className="vp-site-main"><HostedNotice/>
       <section className="vp-landing-hero">
-        <div className="vp-hero-copy"><div className="vp-eyebrow"><span className="vp-blue-dot"/> THE FREEDOM TO REVEAL LESS</div><h1>Your credentials.<br/>Only <em>your</em><br/>business.</h1><p>Open doors with your qualifications.<br/>Keep the details to yourself.</p><div className="vp-hero-actions"><Link className="vp-button vp-button-blue" href="/lifecycle">Explore VeilPass <ArrowUpRight size={18}/></Link><Link className="vp-quiet-link" href="#how-it-works">See how it works <ArrowDown size={15}/></Link></div><div className="vp-hero-caption"><span className="vp-midnight-symbol">◒</span> Privacy infrastructure. Built with Midnight.</div></div>
+        <div className="vp-hero-copy"><div className="vp-eyebrow"><span className="vp-blue-dot"/> THE FREEDOM TO REVEAL LESS</div><h1>Your credentials.<br/>Only <em>your</em><br/>business.</h1><p>Open doors with your qualifications.<br/>Keep the details to yourself.</p><div className="vp-hero-actions"><Link className="vp-button vp-button-blue" href="/holder">Explore VeilPass <ArrowUpRight size={18}/></Link><Link className="vp-quiet-link" href="#how-it-works">See how it works <ArrowDown size={15}/></Link></div><div className="vp-hero-caption"><span className="vp-midnight-symbol">◒</span> Privacy infrastructure. Built with Midnight.</div></div>
         <div className="vp-hero-art" aria-label="Illustration of a private qualification becoming a minimal eligibility result">
           <div className="vp-art-grid"/><div className="vp-art-coordinate vp-art-coordinate-top">PRIVATE IN. POSSIBILITY OUT.</div>
           <div className="vp-art-orbit vp-art-orbit-a"/><div className="vp-art-orbit vp-art-orbit-b"/><div className="vp-art-plus plus-one"><Plus size={17}/></div><div className="vp-art-plus plus-two"><Plus size={17}/></div>
@@ -32,7 +32,7 @@ export default function Home() {
         ['Is this a production credential service?','VeilPass is a developer preview. Signed VC issuance, holder-owned key binding and public proof-backed deployment remain outstanding. The V2 chain adapter has been validated on a real local network. Use sample data only.'],
         ['What happens when a credential is revoked?','New eligibility requests fail. The SDK also rejects an old authorization when it observes changed credential status. This does not revoke an access token already issued by a separate application.'],
       ].map(([q,a])=><details key={q}><summary>{q}<Plus size={18}/></summary><p>{a}</p></details>)}</div></section>
-      <section className="vp-final-cta"><span className="vp-eyebrow">LESS REVEALED. MORE AHEAD.</span><h2>Let your qualifications<br/><em>do the talking.</em></h2><Link className="vp-button vp-button-blue" href="/lifecycle">Open VeilPass <ArrowUpRight size={18}/></Link></section>
+      <section className="vp-final-cta"><span className="vp-eyebrow">LESS REVEALED. MORE AHEAD.</span><h2>Let your qualifications<br/><em>do the talking.</em></h2><Link className="vp-button vp-button-blue" href="/holder">Open VeilPass <ArrowUpRight size={18}/></Link></section>
     </main><footer className="vp-site-footer"><Brand/><p>Prove what qualifies you. Reveal nothing else.</p><div><Link href="/developers">Developers</Link><Link href="/wallet">Wallet demo</Link><span>Developer preview · 2026</span></div></footer>
   </div>;
 }
