@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { timingSafeEqual } from "node:crypto";
+import { authenticateOperator, operatorAllowed } from "../../../lib/operator-access";
 import { serviceRequestAllowed, admitServiceRequest } from "../../../lib/service-access";
 import path from "node:path";
 import { signedProjectRoot } from "../../../lib/signed-network-config";
@@ -18,14 +18,7 @@ function configured() {
 function local(request: NextRequest) {
   return serviceRequestAllowed(request.headers, false);
 }
-function admin(request: NextRequest) {
-  const actual = Buffer.from(request.headers.get("authorization") || "");
-  const expected = Buffer.from(
-    `Bearer ${process.env.VEILPASS_ISSUER_ADMIN_TOKEN || ""}`,
-  );
-  return actual.length === expected.length && timingSafeEqual(actual, expected);
-}
-async function modules() {
+async function modules(audit?: { actor: string; action: string }) {
   const [model, service] = await Promise.all([
     import("../../../../../integrations/issuance/src/index"),
     import("../../../../../integrations/issuance/src/service"),
@@ -39,7 +32,7 @@ async function modules() {
   return {
     ...model,
     withIssuer: <T>(action: Parameters<typeof service.withIssuer<T>>[2]) =>
-      postgres ? postgres.withIssuer(process.env.VEILPASS_ISSUER_STORAGE_KEY!, action) : service.withIssuer(
+      postgres ? postgres.withIssuer(process.env.VEILPASS_ISSUER_STORAGE_KEY!, action, audit) : service.withIssuer(
         directory,
         process.env.VEILPASS_ISSUER_STORAGE_KEY!,
         action,
@@ -51,7 +44,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Signed issuance is not configured. Run the local issuer service.",
+          "Signed issuance is unavailable. Check service readiness and retry.",
       },
       { status: 503, headers },
     );
@@ -84,7 +77,7 @@ export async function GET(request: NextRequest) {
   } catch {
     return NextResponse.json(
       {
-        error: "Issuer storage unavailable. Check local service configuration.",
+        error: "Issuer storage unavailable. Retry after the service has recovered.",
       },
       { status: 503, headers },
     );
@@ -122,7 +115,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Signed issuance is not configured. Run the local issuer service.",
+          "Signed issuance is unavailable. Check service readiness and retry.",
       },
       { status: 503, headers },
     );
@@ -151,14 +144,17 @@ export async function POST(request: NextRequest) {
     const action = JSON.parse(text)?.action;
     if (!["approve", "issue", "revoke", "deactivate"].includes(action))
       throw new Error("Unknown action");
-    if (action !== "issue" && !admin(request))
+    const actor = action === "issue" ? null : await authenticateOperator(request.headers);
+    if (action !== "issue" && !actor)
       return NextResponse.json(
         { error: "Issuer authentication required" },
         { status: 401, headers },
       );
+    if (actor && !operatorAllowed(actor.role, action))
+      return NextResponse.json({ error: "Operator role does not permit this action" }, { status: 403, headers });
     if (!(await admitServiceRequest("issuer")))
       return NextResponse.json({ error: "Request limit reached" }, { status: 429, headers: { ...headers, "Retry-After": "60" } });
-    const m = await modules();
+    const m = await modules({ actor: actor?.id || "holder", action });
     const body = m.decodeWire(text) as {
       action: string;
       level: 1 | 2;

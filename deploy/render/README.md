@@ -1,6 +1,6 @@
 # Render Free Preprod deployment
 
-Not deployed. The operator requires $0 hosting: never provision a paid service or disk.
+Deployed at https://veilpass-preprod.onrender.com on Render Free with Neon Free. The operator requires $0 hosting: never provision a paid service or disk. Hosted signed issuance/revocation passed; hosted Midnight proofs are not enabled.
 
 Render can access `Psalmuel01/veilpass`. The native Node service uses `npm ci --include=dev && node scripts/render-build.mjs` and `node scripts/render-start.mjs`, with Node pinned to 24.22.0. The separate Dockerfile reproduces a clean Linux build for validation. The Blueprint selects `plan: free`, no disk, and external Postgres. Render Free sleeps on idle and can discard every local file on restart. Its own free Postgres expires after 30 days, so the intended database is a Neon Free project. These free services are a bounded Preprod pilot, not a production uptime guarantee.
 
@@ -18,7 +18,7 @@ Render can access `Psalmuel01/veilpass`. The native Node service uses `npm ci --
 
 `integrations/issuance/src/postgres.ts` stores the encrypted authority snapshot, pinned public identity fingerprint, verifier challenges, consumed requests and global rate budgets in Postgres. Optimistic updates prevent concurrent operations from overwriting each other. Challenge consumption and rate admission are atomic database statements. Remote connections always validate TLS certificates; URL query parameters cannot disable verification. There is no fallback from a missing hosted database to ephemeral SQLite.
 
-The actual disposable Postgres acceptance test and containerized hosted HTTP journey passed: issuance, concurrent offers, failed-operation rollback, revocation, restart continuity, namespace isolation, atomic replay rejection, expiry and durable rate limits. Run `scripts/postgres-check.ts` only against the explicitly disposable loopback database; never point it at Neon.
+The actual disposable Postgres acceptance test, containerized HTTP journey and deployed signed-issuance journey passed: issuance, concurrent offers, failed-operation rollback, revocation, restart continuity, namespace isolation, atomic replay rejection, expiry and durable rate limits. Run `scripts/postgres-check.ts` only against the explicitly disposable loopback database; never point it at Neon.
 
 ## Remaining release steps
 
@@ -41,3 +41,5 @@ npm run preprod:check -- .env.prepod
 ```
 
 Keep issuer storage/admin secrets stable across redeployments. Back up encrypted authority state and its matching storage key separately from Git. Do not upload `.private` or run `dev:signed` as a hosted start command. If the hosted authority is absent after bootstrap, restore its backup instead of generating a replacement identity.
+
+Named operator access, storage-key rotation, encrypted recovery drills and readiness monitoring are documented in [OPERATIONS.md](../../docs/OPERATIONS.md). Signing-key rollover, external review and the real Preprod pilot remain separate gates.

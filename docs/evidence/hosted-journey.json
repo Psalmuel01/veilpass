@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-20T22:38:24.182Z",
+  "origin": "https://useveilpass.vercel.app",
+  "signedIssuance": true,
+  "holderOwnership": true,
+  "localPolicyChecks": [
+    1,
+    2
+  ],
+  "revocation": true,
+  "syntheticCredentialRevoked": true,
+  "networkProof": false,
+  "note": "Actual hosted issuer journey; private holder keys remained in the acceptance process. No installed-wallet, browser-recovery, chain-proof or external-pilot claim."
+}

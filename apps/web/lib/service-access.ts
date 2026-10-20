@@ -32,7 +32,7 @@ export function serviceRequestAllowed(headers: Pick<Headers, "get">, mutation: b
   }
   return serviceOriginAllowed(headers, { mutation });
 }
-export async function admitServiceRequest(bucket: "issuer" | "verifier") {
+export async function admitServiceRequest(bucket: "issuer" | "verifier" | "readiness") {
   if (process.env.VEILPASS_HOSTED_BACKEND !== "1") return true;
   if (!hostedServiceConfigured()) return false;
   if (process.env.VEILPASS_STORAGE === "postgres") {

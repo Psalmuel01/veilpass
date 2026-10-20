@@ -66,7 +66,7 @@ The network check starts/removes a disposable local node/indexer/prover stack, u
 
 ## Remaining production gates
 
-Installed-wallet acceptance, public Preprod compatibility/deployment, persistent hosted issuer/verifier operation, institutional account authorization, loss recovery/key rotation, independent review, accessibility review and a real issuer/two-application pilot remain separate acceptance gates. See [Preprod setup](PREPROD_SETUP.md). No production-readiness or independent-audit claim is made.
+Installed-wallet acceptance, public Preprod compatibility/deployment, hosted network-verifier acceptance, institutional identity verification, credential signing-key rollover, independent review, accessibility review and a real issuer/two-application pilot remain separate acceptance gates. See [Preprod setup](PREPROD_SETUP.md). No production-readiness or independent-audit claim is made.
 
 The full browser flow passed actual local-network proofs; see [browser evidence](evidence/signed-browser-network.json). The browser has wallet discovery, network consistency checks before balancing/submission, V3 proof generation and a separate retryable confirmed-transaction verification step. Forgetting the local wallet connection does not revoke permissions inside an extension. The full browser acceptance harness uses a disposable funded connector bridge, not a real installed extension.
 
@@ -75,3 +75,5 @@ For a configured local deployment, set `VEILPASS_SIGNED_NETWORK=1` and `VEILPASS
 After full compilation, `npm run signed:artifacts` records hashes. `npm run validate --workspace @veilpass/issuance -- --reuse-compiled` checks those source/generated-code hashes before reusing existing outputs, preserving proving keys while rerunning all module tests. The default validation path recompiles constraints and requires full proof compilation again before network tests.
 
 Wallet interoperability regression tests cover global BigInt JSON hooks: the wire encoder normalizes native integers/bytes before JSON serialization. Verifier challenge freshness is measured after indexer responses, so a delayed fresh response cannot be rejected against an earlier timestamp.
+
+Hosted issuer operation now uses Render Free and Neon. Named role operators, immediate token rotation/disablement, encrypted authority backups and empty-target recovery, storage-key rotation and readiness monitoring are covered in [OPERATIONS.md](OPERATIONS.md). See [hosted journey evidence](evidence/hosted-journey.json) for actual signed issuance and revocation through the production frontend; these results do not claim chain proofs or an external pilot.

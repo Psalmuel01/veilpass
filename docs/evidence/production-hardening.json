@@ -1,0 +1,25 @@
+{
+  "recordedAt": "2026-10-20T22:44:19.873231+00:00",
+  "rootTests": 72,
+  "issuanceTests": 39,
+  "typecheckPassed": true,
+  "productionBuildPassed": true,
+  "dependencyAuditVulnerabilities": 0,
+  "realDisposablePostgres": {
+    "operatorRoleAccounts": true,
+    "tokenRotationAndDisablement": true,
+    "atomicAuthorityAudit": true,
+    "encryptedEmptyTargetRecovery": true,
+    "storageKeyRotationPreservesSigningIdentity": true,
+    "revocationPreservedOnRestore": true
+  },
+  "builtHttpAcceptance": {
+    "namedRoleRejection": true,
+    "accountDisablement": true,
+    "signedIssuance": true,
+    "revocation": true
+  },
+  "realNeonEncryptedBackupCreated": true,
+  "productionReady": false,
+  "networkProofInThisRun": false
+}

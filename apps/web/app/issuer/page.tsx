@@ -51,7 +51,7 @@ export default function IssuerControls() {
     }
   }
   return (
-    <AppShell section="Signed issuer" environment="Local operator">
+    <AppShell section="Signed issuer" environment="Issuer operator">
       <main className="vp-dashboard vp-holder">
         <div className="vp-page-heading">
           <div>
@@ -69,10 +69,9 @@ export default function IssuerControls() {
         </div>
         <div className="vp-sandbox-note">
           <p>
-            Local issuer administration · Requires the operator token from your
-            local setup. This service uses encrypted persistent storage.
-            Institutional identity checks and multi-user issuer accounts are
-            separate deployment requirements.
+            Authorized issuer administration · Requires a current operator token. This service uses encrypted persistent storage.
+            Named operators have individual roles and revocable access. Institutional
+            identity must be verified by the deployment operator.
           </p>
         </div>
         {error && (

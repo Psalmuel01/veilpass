@@ -49,3 +49,5 @@ scripts/video-v2/__pycache__/
 .next-signed-build/
 
 apps/web/public/zk-signed/
+
+.next-release-readiness/
