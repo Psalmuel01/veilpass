@@ -1,6 +1,6 @@
 {
-  "recordedAt": "2026-10-20T22:44:19.873231+00:00",
-  "rootTests": 72,
+  "recordedAt": "2026-10-20T22:46:50.722895+00:00",
+  "rootTests": 75,
   "issuanceTests": 39,
   "typecheckPassed": true,
   "productionBuildPassed": true,
@@ -21,5 +21,7 @@
   },
   "realNeonEncryptedBackupCreated": true,
   "productionReady": false,
-  "networkProofInThisRun": false
+  "networkProofInThisRun": false,
+  "coldStartReadRetryTested": true,
+  "mutationsNeverAutoRetried": true
 }

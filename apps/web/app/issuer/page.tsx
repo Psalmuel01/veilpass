@@ -1,4 +1,5 @@
 "use client";
+import { serviceResponse } from "../../lib/service-response";
 import { useState } from "react";
 import { AppShell } from "../../components/app-shell";
 export default function IssuerControls() {
@@ -21,7 +22,7 @@ export default function IssuerControls() {
         action === "approve"
           ? { action, level, holder: m.decodeWire(identity) }
           : { action, id };
-      const response = await fetch("/api/issuance", {
+      const response = await serviceResponse("/api/issuance", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

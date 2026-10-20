@@ -1,4 +1,5 @@
 "use client";
+import { serviceResponse } from "../../lib/service-response";
 import { useEffect, useRef, useState } from "react";
 import { holderError } from "../../lib/holder-error";
 import { AppShell } from "../../components/app-shell";
@@ -167,7 +168,7 @@ export default function HolderWallet() {
   }
   async function api(body?: unknown, id?: string) {
     const m = await load();
-    const response = await fetch(
+    const response = await serviceResponse(
       `/api/issuance${id ? `?id=${encodeURIComponent(id)}` : ""}`,
       body
         ? {
@@ -252,7 +253,7 @@ export default function HolderWallet() {
     setNotice("Encrypted backup exported. Keep it and its passphrase safe.");
   }
   async function discoverWallets() {
-    const response = await fetch("/api/signed-network", { cache: "no-store" });
+    const response = await serviceResponse("/api/signed-network", { cache: "no-store" });
     if (!response.ok) throw new Error((await response.json()).error);
     const m = await load();
     networkConfig.current = m.decodeWire(
@@ -275,7 +276,7 @@ export default function HolderWallet() {
     setWalletName(wallets.find((w) => w[0] === id)?.[1] || "Midnight wallet");
   }
   async function networkAction(action: string, presentation?: unknown) {
-    const response = await fetch("/api/signed-network", {
+    const response = await serviceResponse("/api/signed-network", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action, policy, presentation }),
@@ -293,7 +294,7 @@ export default function HolderWallet() {
     networkPresentation.current = undefined;
     setStage("preparing");
     const challenge = (await networkAction("challenge")) as ChallengeV3;
-    const response = await fetch(`/api/issuance?id=${id}&path=1`, {
+    const response = await serviceResponse(`/api/issuance?id=${id}&path=1`, {
       cache: "no-store",
     });
     if (!response.ok)
@@ -350,8 +351,8 @@ export default function HolderWallet() {
           <p>
             Signed issuance preview · Local policy checks run real signature
             constraints in your browser. They are not zero-knowledge proofs or
-            application authorizations. Enrollment requires a configured local
-            issuer.
+            application authorizations. Enrollment uses the configured signed
+            issuer service.
           </p>
         </div>
         {error && (
