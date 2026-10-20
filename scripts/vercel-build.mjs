@@ -7,4 +7,6 @@ if (missing.length) {
   execFileSync(process.execPath, ['scripts/install-compact.mjs'], { stdio: 'inherit' });
   for (const name of missing) execFileSync(process.execPath, ['scripts/compile.mjs', ...(name === 'lifecycle' ? ['--lifecycle'] : []), '--skip-zk'], { stdio: 'inherit' });
 }
+execFileSync(process.execPath, ['integrations/issuance/compile.mjs'], { stdio: 'inherit' });
+execFileSync(process.execPath, ['integrations/issuance/compile.mjs', '--authorization'], { stdio: 'inherit' });
 execFileSync(process.execPath, ['node_modules/next/dist/bin/next', 'build', 'apps/web'], { stdio: 'inherit' });

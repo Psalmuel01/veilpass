@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: Apache-2.0
-import { randomBytes } from "node:crypto";
 import {
   ecMulGenerator,
   type JubjubPoint,
@@ -19,8 +18,9 @@ export type PublicIdentity = {
   method: VerificationMethodRef;
   publicKey: JubjubPoint;
 };
-export const random32 = () => new Uint8Array(randomBytes(32));
-export const hex = (bytes: Uint8Array) => Buffer.from(bytes).toString("hex");
+export const random32 = () => crypto.getRandomValues(new Uint8Array(32));
+export const hex = (bytes: Uint8Array) =>
+  Array.from(bytes, (n) => n.toString(16).padStart(2, "0")).join("");
 export function label(text: string) {
   const b = new TextEncoder().encode(text);
   if (!b.length || b.length > 32) throw new Error("Invalid 32-byte label");
@@ -59,8 +59,8 @@ export function checkedTime(clock: () => number) {
 }
 function nonceScalar() {
   for (;;) {
-    const raw = randomBytes(32);
-    const n = BigInt("0x" + raw.toString("hex"));
+    const raw = random32();
+    const n = BigInt("0x" + hex(raw));
     raw.fill(0);
     if (n > 0n && n < JUBJUB_ORDER) return n;
   }

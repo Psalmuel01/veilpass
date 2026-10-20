@@ -10,10 +10,11 @@
     "test": "node --import tsx --test tests/*.test.ts",
     "demo": "node --import tsx demo.ts",
     "compile": "node compile.mjs",
-    "pretest": "node compile.mjs",
+    "pretest": "node compile.mjs && node compile.mjs --authorization",
     "predemo": "node compile.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "validate": "node validate.mjs"
+    "validate": "node validate.mjs",
+    "authorization:compile": "node compile.mjs --authorization --proofs"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-runtime": "0.16.0",

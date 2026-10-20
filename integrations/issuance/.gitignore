@@ -1,3 +1,5 @@
 node_modules/
 managed/
 .private/
+
+managed-authorization/

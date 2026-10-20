@@ -33,6 +33,8 @@ export function AppShell({ children, section = 'Overview', environment = 'Local 
   const links = [
     {label: 'Overview', href: '/lifecycle', icon: LayoutGrid},
     {label: 'Live verification', href: '/live', icon: ShieldCheck},
+    {label: 'Holder wallet', href: '/holder', icon: LockKeyhole},
+    {label: 'Signed issuer', href: '/issuer', icon: Building2},
     {label: 'Credential wallet', href: '/lifecycle#credential', icon: WalletCards},
     {label: 'Verification', href: '/lifecycle#verification', icon: ShieldCheck},
     {label: 'Issuer controls', href: '/lifecycle#issuer', icon: Building2},

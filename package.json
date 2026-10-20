@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev apps/web --hostname 127.0.0.1",
-    "build": "next build apps/web",
-    "start": "next start apps/web --hostname 127.0.0.1",
+    "dev": "node scripts/check-node.mjs && next dev apps/web --hostname 127.0.0.1",
+    "build": "node scripts/check-node.mjs && next build apps/web",
+    "start": "node scripts/check-node.mjs && next start apps/web --hostname 127.0.0.1",
     "contract:compile": "node scripts/compile.mjs",
     "contract:check": "node scripts/compile.mjs --skip-zk",
     "test": "vitest run",
@@ -28,7 +28,17 @@
     "test:live:browser": "node scripts/check-node.mjs && VEILPASS_BUILD_DIR=.next-live-demo npm run build && VEILPASS_BROWSER_E2E=1 tsx scripts/lifecycle-e2e.ts",
     "demo:live": "node scripts/check-node.mjs && VEILPASS_BUILD_DIR=.next-live-demo npm run build && VEILPASS_LIVE_DEMO=1 tsx scripts/lifecycle-e2e.ts",
     "test:live:ui": "node scripts/check-node.mjs && node scripts/live-ui-check.mjs",
-    "test:hosted:ui": "node scripts/vercel-ui-check.mjs"
+    "test:hosted:ui": "node scripts/vercel-ui-check.mjs",
+    "dev:signed": "node scripts/signed-dev.mjs",
+    "issuer:token": "node scripts/signed-dev.mjs --token",
+    "test:signed:ui": "node --import tsx scripts/signed-ui-check.mjs",
+    "test:signed:network": "node --import tsx scripts/signed-network-e2e.ts",
+    "signed:check": "node integrations/issuance/compile.mjs && node integrations/issuance/compile.mjs --authorization",
+    "preprod:check": "node scripts/preprod-check.mjs",
+    "test:signed:browser": "VEILPASS_SIGNED_BROWSER=only node --import tsx scripts/signed-network-e2e.ts",
+    "signed:artifacts": "node scripts/signed-artifacts.mjs",
+    "signed:assets": "node scripts/signed-assets.mjs",
+    "test:signed:api": "node --import tsx scripts/signed-network-api-check.mjs"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-js": "2.5.1",
@@ -69,6 +79,9 @@
     "postcss": "8.5.28"
   },
   "engines": {
-    "node": "22.x"
-  }
+    "node": "24.x"
+  },
+  "workspaces": [
+    "integrations/issuance"
+  ]
 }

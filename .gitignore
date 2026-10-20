@@ -42,3 +42,10 @@ apps/web/public/zk-lifecycle/
 .next-video-build/
 scripts/video-v2/__pycache__/
 .vercel
+
+.next-holder-check/
+
+.next-signed-dev/
+.next-signed-build/
+
+apps/web/public/zk-signed/

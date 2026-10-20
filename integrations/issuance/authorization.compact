@@ -1,0 +1,84 @@
+// SPDX-License-Identifier: Apache-2.0
+pragma language_version 0.23;
+include "./qualification";
+
+// Separately versioned signed-credential authorization contract. V2's witness
+// schema and verification keys must never be reused for this deployment.
+export ledger trustedIssuer: VerificationMethodRef;
+export ledger trustedIssuerKey: JubjubPoint;
+export ledger trustedRegistry: Bytes<32>;
+export ledger activeStatusRoot: Bytes<32>;
+export ledger statusVersion: Counter;
+export ledger administrator: Bytes<32>;
+export ledger issuerActive: Boolean;
+export ledger networkDomain: Bytes<32>;
+export ledger applicationA: Bytes<32>;
+export ledger applicationB: Bytes<32>;
+export ledger consumed: Set<Bytes<32>>;
+export struct StatusPath { siblings: Vector<16, Bytes<32>>; right: Vector<16, Boolean>; }
+witness signedCredential(): Q_Credential;
+witness privateClaims(): QualificationClaims;
+witness issuerSignature(): Proof;
+witness signedPresentation(): P_Presentation;
+witness holderSignature(): Proof;
+witness currentStatusPath(): StatusPath;
+witness administratorSecret(): Bytes<32>;
+constructor(issuer: VerificationMethodRef, key: JubjubPoint, registry: Bytes<32>, root: Bytes<32>, admin: Bytes<32>, domain: Bytes<32>, appA: Bytes<32>, appB: Bytes<32>) {
+  trustedIssuer = disclose(issuer); trustedIssuerKey = disclose(key); trustedRegistry = disclose(registry);
+  activeStatusRoot = disclose(root); administrator = disclose(admin); issuerActive = true;
+  networkDomain = disclose(domain); applicationA = disclose(appA); applicationB = disclose(appB);
+  assert(networkDomain != pad(32, "") && applicationA != pad(32, "") && applicationB != pad(32, "") && applicationA != applicationB, "Invalid deployment domain");
+}
+export pure circuit statusLeaf(handle: Bytes<32>, root: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<3, Bytes<32>>>([pad(32, "veilpass:active:v3"), handle, root]);
+}
+export pure circuit statusNode(left: Bytes<32>, right: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<3, Bytes<32>>>([pad(32, "veilpass:status-node:v3"), left, right]);
+}
+export pure circuit administratorKey(secret: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "veilpass:admin:v3"), secret]);
+}
+circuit requireAdministrator(): [] { assert(administratorKey(administratorSecret()) == administrator, "Unauthorized administrator"); }
+export circuit publishStatus(root: Bytes<32>): [] {
+  requireAdministrator(); assert(issuerActive, "Issuer inactive"); activeStatusRoot = disclose(root); statusVersion.increment(1);
+}
+export circuit deactivate(): [] { requireAdministrator(); issuerActive = false; }
+export pure circuit authorizationKey(domain: Bytes<32>, audience: Bytes<32>, policy: Uint<8>, challenge: Bytes<32>, deadline: Uint<64>): Bytes<32> {
+  return persistentHash<RequestContext>(RequestContext { domain: domain, audience: audience, policy: policy, challenge: challenge, expiresAt: deadline, credentialRoot: pad(32, "veilpass:request:v3") });
+}
+export circuit authorize(audience: Bytes<32>, policy: Uint<8>, challenge: Bytes<32>, notBefore: Uint<64>, deadline: Uint<64>): [] {
+  assert(issuerActive, "Issuer inactive");
+  const credential = signedCredential(); const claims = privateClaims(); const presentation = signedPresentation(); const holderProof = holderSignature();
+  verifyHolder(credential, claims, issuerSignature(), trustedIssuer, trustedIssuerKey, presentation, holderProof);
+  assert(credential.statusBinding.registryRef.registryId == trustedRegistry, "Wrong registry");
+  assert(credential.statusBinding.registryRef.authorityVerificationMethodRef == trustedIssuer, "Wrong registry authority");
+  assert(presentation.disclosed.domain == networkDomain, "Wrong network domain");
+  assert(presentation.disclosed.audience == disclose(audience) && presentation.disclosed.policy == disclose(policy) && presentation.disclosed.challenge == disclose(challenge) && presentation.disclosed.expiresAt == disclose(deadline), "Wrong request context");
+  assert((disclose(policy) == 1 && disclose(audience) == applicationA) || (disclose(policy) == 2 && disclose(audience) == applicationB), "Wrong application policy");
+  assert(disclose(notBefore) < disclose(deadline), "Invalid request window");
+  assert(credential.issuedAt <= notBefore && holderProof.createdAt <= notBefore, "Credential or signature in future");
+  assert(deadline <= credential.expiresAt, "Credential expires before request");
+  assert(blockTimeGte(disclose(notBefore)), "Request not yet valid");
+  assert(blockTimeLt(disclose(deadline)), "Request expired");
+  const path = currentStatusPath();
+  const leaf = statusLeaf(credential.statusBinding.statusHandleCommitment, credentialRoot(credential));
+  const node0 = path.right[0] ? statusNode(path.siblings[0], leaf) : statusNode(leaf, path.siblings[0]);
+  const node1 = path.right[1] ? statusNode(path.siblings[1], node0) : statusNode(node0, path.siblings[1]);
+  const node2 = path.right[2] ? statusNode(path.siblings[2], node1) : statusNode(node1, path.siblings[2]);
+  const node3 = path.right[3] ? statusNode(path.siblings[3], node2) : statusNode(node2, path.siblings[3]);
+  const node4 = path.right[4] ? statusNode(path.siblings[4], node3) : statusNode(node3, path.siblings[4]);
+  const node5 = path.right[5] ? statusNode(path.siblings[5], node4) : statusNode(node4, path.siblings[5]);
+  const node6 = path.right[6] ? statusNode(path.siblings[6], node5) : statusNode(node5, path.siblings[6]);
+  const node7 = path.right[7] ? statusNode(path.siblings[7], node6) : statusNode(node6, path.siblings[7]);
+  const node8 = path.right[8] ? statusNode(path.siblings[8], node7) : statusNode(node7, path.siblings[8]);
+  const node9 = path.right[9] ? statusNode(path.siblings[9], node8) : statusNode(node8, path.siblings[9]);
+  const node10 = path.right[10] ? statusNode(path.siblings[10], node9) : statusNode(node9, path.siblings[10]);
+  const node11 = path.right[11] ? statusNode(path.siblings[11], node10) : statusNode(node10, path.siblings[11]);
+  const node12 = path.right[12] ? statusNode(path.siblings[12], node11) : statusNode(node11, path.siblings[12]);
+  const node13 = path.right[13] ? statusNode(path.siblings[13], node12) : statusNode(node12, path.siblings[13]);
+  const node14 = path.right[14] ? statusNode(path.siblings[14], node13) : statusNode(node13, path.siblings[14]);
+  const node15 = path.right[15] ? statusNode(path.siblings[15], node14) : statusNode(node14, path.siblings[15]);
+  assert(node15 == activeStatusRoot, "Credential not active in current registry");
+  const request = disclose(authorizationKey(networkDomain, audience, policy, challenge, deadline));
+  assert(!consumed.member(request), "Request already consumed"); consumed.insert(request);
+}

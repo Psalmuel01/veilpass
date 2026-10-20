@@ -1,0 +1,18 @@
+{
+  "recordedAt": "2026-10-20T07:17:14.317Z",
+  "mode": "confirmed-midnight-v3",
+  "network": "undeployed",
+  "contractAddress": "1af17152daa02c2895ee0acb13d51112d2f050ff7cf88cf31e34f0579a799235",
+  "deploymentTransaction": "00852c3b277c60bce18fdce0dd34f18180bc946e2a011cb065b6384812aed68a58",
+  "authorizationTransactions": [
+    "007cf8435313dd46ae845116c6d3fc9ad60a8ea6a9cd41072bda0cd732c439c76c",
+    "00362239fd09441b7139837641b1f36bc1284c1869ba94f5b3cffa3c75ae8f6b41"
+  ],
+  "revocationTransaction": "00ed1f80b04a6cb752851f37222a800a11bddd382ed6690a5182b153532631d5d5",
+  "twoPoliciesVerified": true,
+  "sdkReplayRejected": true,
+  "revokedCredentialRejected": true,
+  "oldReceiptRejectedAfterStatusChange": true,
+  "statusHandleAndClaimsRootAbsentFromPublicTransaction": true,
+  "note": "Disposable local network. Not Preprod. Holder signing seed never enters proof witnesses."
+}

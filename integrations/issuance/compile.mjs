@@ -17,9 +17,9 @@ if (
 execFileSync(
   compiler,
   [
-    "--skip-zk",
-    path.join(directory, "qualification.compact"),
-    path.join(directory, "managed"),
+    ...(process.argv.includes("--proofs") ? [] : ["--skip-zk"]),
+    path.join(directory, process.argv.includes("--authorization") ? "authorization.compact" : "qualification.compact"),
+    path.join(directory, process.argv.includes("--authorization") ? "managed-authorization" : "managed"),
   ],
   { stdio: "inherit" },
 );

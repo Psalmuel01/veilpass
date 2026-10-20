@@ -1,7 +1,7 @@
-// Runs before commands that need Node 22+. Dependencies call APIs added in 22
+// Runs before commands that need Node 24+. Dependencies call APIs added in 22
 // (undici's markAsUncloneable), and on an older runtime they fail at import
 // time with a stack trace that says nothing about the Node version.
-const required = 22;
+const required = 24;
 const actual = Number(process.versions.node.split('.')[0]);
 
 if (actual < required) {

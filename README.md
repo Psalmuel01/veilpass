@@ -14,26 +14,30 @@ For a complete feature inventory, browser walkthrough, test commands and priorit
 - **Verifier SDK:** strongly typed challenges, contextual binding, expiry/current-status checks, atomic durable replay consumption and explicit execution modes. Default mode refuses generated-execution results.
 - **Product/reference surfaces:** local lifecycle workbench, hackathon/community reference pages, developer portal and a two-origin HTTP integration harness. These use generated Compact execution and the SDK; they do not generate V2 ZK proofs.
 
-**Not complete in the deployed/V2 proof flow:** official signed credentials, holder-owned key binding, scalable authenticated issuance/issuer registry, Preprod deployment, installed-wallet acceptance for V2, external pilot and a finished submission package. This is a tested protocol extension, not a production credential platform. Workbench server knows the sample witnesses.
+**Remaining production gates:** persistent hosted signed issuance, institutional issuer accounts, Preprod deployment, installed-wallet acceptance, key rotation/reissuance, independent review and external pilot. The new signed V3 flow is separate from V2. This is a tested protocol extension, not a production credential platform. Workbench server knows the sample witnesses.
 
 The interface now includes persistent system-aware dark mode and self-hosted Space Grotesk typography. It has been rebuilt with a dedicated public website, an ivory/ink/ultramarine workspace, responsive navigation, focused verification, and a restyled wallet. See [UI rebuild notes](docs/UI_REDESIGN.md).
 
-## Signed issuance and holder ownership — local milestone
+## Signed issuance, holder custody and V3
 
-An isolated [Node 24 integration](integrations/issuance/README.md) now issues real issuer-signed qualifications bound to holder-generated keys, verifies contextual holder signatures, and supports encrypted backup/recovery and local revocation checks. It uses the official Midnight credential libraries and passes 27 security/behavior tests; see [validation evidence](docs/evidence/signed-issuance-local.json).
+The signed flow now includes `/holder` and `/issuer`: device-generated holder keys, operator-authenticated holder-bound enrollment, real issuer/holder signatures, encrypted browser storage and recovery, durable encrypted SQLite authority state, safe issuance retries and irreversible revocation. See the [signed workflow guide](docs/SIGNED_ISSUANCE.md).
 
-This is generated Compact signature/constraint execution, not a new ZK transaction flow. It is not wired into `/live`, the V2 contract/SDK, or the hosted app. The new issuer/status/request stores are ephemeral local objects; authenticated public issuance, durable authority custody and new proof integration remain next. Root Node 22 workflows are unchanged.
+A separate V3 contract and verifier use the official credential constraints, private active-status membership, pinned circuit/issuer keys, ledger-time request windows and durable replay protection. Actual local-network deployment, both proof-backed policies, independent confirmed-transaction verification and revocation passed; see [V3 network evidence](docs/evidence/signed-network.json). V2 remains a separate flow.
+
+The app now uses **Node 24.22.0** and one npm workspace lockfile so all Midnight components share one WASM runtime. The browser now passes the [complete signed proof lifecycle](docs/evidence/signed-browser-network.json) using a disposable connector wallet; installed-wallet acceptance and a configured persistent deployment remain required. Hosted public issuance, institutional account onboarding, key rotation, independent review and the external pilot are not complete. Start with [Preprod account and wallet setup](docs/PREPROD_SETUP.md).
 
 ## Run it
 
-Use Node **22.22.0** (installed through nvm), npm and Compact 0.31.1. Docker is needed for actual network proofs.
+Use Node **24.22.0** (installed through nvm), npm and Compact 0.31.1. Docker is needed for actual network proofs.
 
 ```sh
+nvm install                     # first setup only
 nvm use
 npm ci
 npm run toolchain:install     # skip if pinned compiler already installed
 npm run contract:check
 npm run lifecycle:check
+npm run signed:check
 npm test
 npm run typecheck
 npm run build

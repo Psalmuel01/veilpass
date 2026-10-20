@@ -734,3 +734,22 @@ html[data-theme="dark"] .legacy-wallet .flow-card-top > span { background: #232e
 @media(max-width:480px) { .vp-topbar-right .vp-environment { display: none; } .vp-breadcrumb { min-width: 0; } .vp-breadcrumb > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
 
 .vp-hosted-notice{display:flex;align-items:center;gap:12px 20px;flex-wrap:wrap;margin:20px clamp(18px,4vw,64px);padding:16px 20px;border:1px solid var(--vp-line,#53647e);border-radius:10px;background:var(--vp-paper,#f7f6f2);color:var(--vp-ink,#10151f);font-size:13px;line-height:1.6}.vp-hosted-notice strong{font-size:13px}.vp-hosted-notice span{flex:1;min-width:200px}.vp-hosted-notice a{color:var(--vp-blue,#3155e7);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+
+/* Holder-owned credential controls inherit the shared light/dark palette. */
+.vp-holder-controls { width: min(100%, 760px); display: flex; flex-direction: column; gap: 16px; }
+.vp-holder-controls label { font-weight: 600; font-size: 14px; }
+.vp-holder-controls input, .vp-holder-controls textarea, .vp-holder-controls select { width: 100%; min-width: 0; box-sizing: border-box; padding: 12px; border: 1px solid var(--vp-border, #8893a4); border-radius: 10px; background: transparent; color: inherit; font: inherit; }
+.vp-holder-controls textarea { resize: vertical; font-family: monospace; font-size: 12px; }
+.vp-holder-controls pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; }
+.vp-holder-reference { overflow-wrap: anywhere; font-family: monospace; font-size: 12px; }
+.vp-holder-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.vp-holder-controls button { align-self: flex-start; white-space: normal; }
+.vp-holder-controls article { padding-block: 16px; border-block-start: 1px solid var(--vp-border, #8893a4); }
+.vp-holder .vp-wallet-empty { grid-template-columns: 1fr; text-align: left; }
+.vp-holder .vp-wallet-empty p { max-width: 760px; }
+.vp-holder-controls input, .vp-holder-controls textarea, .vp-holder-controls select { border-color: var(--theme-line, #dfe2e8); background: var(--theme-surface, #fff); }
+.vp-holder-controls option { background: var(--theme-surface, #fff); color: var(--theme-ink, #172033); }
+.vp-holder-controls details { padding-block: 16px; border-block: 1px solid var(--theme-line, #dfe2e8); }
+.vp-holder-controls summary { cursor: pointer; font-weight: 600; }
+
+.vp-sidebar { overflow-y: auto; }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma language_version 0.23;
 import CompactStandardLibrary;
-include "./node_modules/@midnight-ntwrk/credential-compact/dist/credentials/composable";
+include "../../node_modules/@midnight-ntwrk/credential-compact/dist/credentials/composable";
 
 export struct QualificationClaims {
   program: Bytes<32>;

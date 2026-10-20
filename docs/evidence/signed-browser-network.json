@@ -1,0 +1,18 @@
+{
+  "recordedAt": "2026-10-20T07:52:09.029Z",
+  "mode": "confirmed-midnight-v3",
+  "network": "undeployed",
+  "connector": "Disposable funded testkit wallet through browser connector bridge; not an installed extension",
+  "browserOwnedSigningKeys": true,
+  "authenticatedIssuance": true,
+  "twoPoliciesConfirmed": true,
+  "walletNetworkChangeRejected": true,
+  "replayRejected": true,
+  "revocationRejected": true,
+  "transactions": [
+    "0044edf7eb9fca056fdbc1939499903c7e0a3381b3867d2548d05d48bdbc753fac",
+    "007c1a6cc3727f4ccd7fdfa42e68226eed73542663b582f89cf780f7aaa11dfb02"
+  ],
+  "deploymentTransaction": "00610d74b3d0ae0faefca4e1cf5e40683114f5b026d87d0a2f6d4431785372fa9d",
+  "revocationTransaction": "00c057875ad0522856ef591937dd04927e0845eae7917fb5b7d29571336c44483a"
+}

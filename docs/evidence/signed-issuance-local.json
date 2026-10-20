@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-19T23:29:03.420Z",
-  "scope": "Isolated local signed-issuance foundation; not integrated with V2 proof flow or hosted app",
+  "checkedAt": "2026-10-20T07:49:02.930Z",
+  "scope": "Signed browser custody and persistent issuer plus generated V3 contract/verifier constraints. Real local-network proofs are recorded separately in signed-network.json; not a public Preprod deployment.",
   "node": "v24.22.0",
   "compact": "0.31.1",
   "dependencies": {
@@ -9,10 +9,10 @@
     "@midnight-ntwrk/credential-model": "0.3.0",
     "@midnight-ntwrk/midnight-did-jubjub-schnorr": "0.7.0"
   },
-  "qualificationSourceSha256": "966275345cd91d79085978ba94cb8ff47f188a694fdb7abb9c5c8af4b10f317d",
+  "qualificationSourceSha256": "596ff1f297c063f45ea2660835e1b71965a8d617affb4fd074c9c244a01e111e",
   "tests": {
-    "total": 27,
-    "passed": 27,
+    "total": 39,
+    "passed": 39,
     "failed": 0
   },
   "mode": "local-signed-credential",
@@ -22,14 +22,14 @@
     "valid": true,
     "eligible": true,
     "policyId": "approved-training",
-    "verificationReference": "b84b62d35584debf72872ad5cab7112fd4694c6633918424952d9ee76cbfa6be",
+    "verificationReference": "4935777f99e4f742a992f85b2208510c72735e0d8b063f67832de8e63549b9ae",
     "mode": "local-signed-credential"
   },
   "secondReceipt": {
     "valid": true,
     "eligible": true,
     "policyId": "professional-level",
-    "verificationReference": "525c270848881fff91b506f471c3ee55c63d5b1ca1a54152affdf62fc0704b9c",
+    "verificationReference": "35046a401d1c59a76d5bddf37bbd2ee68d142dd40269a918eecdc45b89d086cb",
     "mode": "local-signed-credential"
   },
   "replayRejected": true,

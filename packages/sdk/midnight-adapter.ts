@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
 /** Trusted, operator-configured Midnight indexer. Never accepts holder endpoints or state. */
-import { ContractState, valueToBigInt } from '@midnight-ntwrk/compact-runtime';
-import { Transaction, ContractCall, type Op, type AlignedValue } from '@midnight-ntwrk/midnight-js-protocol/ledger';
+import { ContractState } from '@midnight-ntwrk/compact-runtime';
+import { Transaction, ContractCall, type AlignedValue } from '@midnight-ntwrk/midnight-js-protocol/ledger';
 import { ledger, fromHex, toHex } from '../lifecycle/index';
 import type { ChainAdapter, PublicSnapshot, ConfirmedAuthorization } from './index';
+import { requestFromTranscript } from './transcript';
+export { requestFromTranscript } from './transcript';
 type Action = { __typename: string; address: string; state: string; entryPoint?: string };
 type Block = { height: number; hash: string; timestamp: number;  };
 type IndexedTransaction = { raw:string; identifiers: string[]; transactionResult: { status: string }; contractActions: Action[]; block: Block };
@@ -12,26 +14,6 @@ export type LifecycleVerifierKeys = Record<'authorize'|'revoke'|'deactivateIssue
 type State = ReturnType<typeof ledger>;
 export function snapshot(s: State, observedAt: number): PublicSnapshot {
   return { root: toHex(s.credentialRoot), domain: toHex(s.networkDomain), issuerActive: s.issuerActive, statusVersion: `${Number(s.leftRevoked)}:${Number(s.rightRevoked)}:${Number(s.issuerActive)}`, validFrom: Number(s.validFrom), validUntil: Number(s.validUntil), observedAt };
-}
-/** Recognize the pinned Compact 0.31.1 consumed-set insertion, never a byte substring. */
-export function requestFromTranscript(program: Op<AlignedValue>[]): string | null {
-  const found: string[]=[];
-  for(let i=0;i+4<program.length;i++) {
-    const [index,key,value,insert,parent]=program.slice(i,i+5);
-    if(typeof index!=='object' || !('idx' in index) || !index.idx.pushPath || index.idx.path.length!==1)continue;
-    const field=index.idx.path[0];
-    if(field.tag!=='value' || valueToBigInt(field.value.value)!==11n)continue;
-    if(typeof key!=='object' || !('push' in key) || key.push.storage || key.push.value.tag!=='cell')continue;
-    const cell=key.push.value.content;
-    if(cell.value.length!==1 || cell.value[0].length>32 || cell.alignment.length!==1)continue;
-    const alignment=cell.alignment[0];
-    if(alignment.tag!=='atom' || alignment.value.tag!=='bytes' || alignment.value.length!==32)continue;
-    if(typeof value!=='object' || !('push' in value) || !value.push.storage || value.push.value.tag!=='null')continue;
-    if(typeof insert!=='object' || !('ins' in insert) || insert.ins.cached || insert.ins.n!==1)continue;
-    if(typeof parent!=='object' || !('ins' in parent) || !parent.ins.cached || parent.ins.n!==1)continue;
-    const padded=new Uint8Array(32);padded.set(cell.value[0]);found.push(toHex(padded));
-  }
-  return found.length===1 ? found[0] : null;
 }
 export class MidnightChainAdapter implements ChainAdapter {
   private readonly now: () => number;

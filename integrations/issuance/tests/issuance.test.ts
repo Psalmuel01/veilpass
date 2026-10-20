@@ -422,3 +422,79 @@ test("unknown or mismatched current status cannot authorize a valid signed crede
     );
   }
 });
+
+test("holder-bound approvals reject an intercepted offer", () => {
+  const issuer = new IssuerAuthority(),
+    owner = new Holder(),
+    attacker = new Holder();
+  const offer = issuer.approve(2, owner.publicIdentity());
+  assert.throws(() => issuer.issue(attacker.request(offer)), /not approved/);
+  const signed = issuer.issue(owner.request(offer));
+  assert.equal(owner.accept(signed, issuer.publicTrust()).length, 64);
+});
+
+test("issuer snapshots preserve key, pending offers, status and irreversible revocation", () => {
+  const issuer = new IssuerAuthority(),
+    holder = new Holder();
+  const trust = issuer.publicTrust(),
+    offer = issuer.approve(2, holder.publicIdentity());
+  const restored = IssuerAuthority.fromState(issuer.exportState());
+  assert.deepEqual(restored.publicTrust(), trust);
+  const q = restored.issue(holder.request(offer)),
+    id = holder.accept(q, trust);
+  const again = IssuerAuthority.fromState(restored.exportState());
+  assert.throws(() => again.issue(holder.request(offer)), /not pending/);
+  again.revoke(id);
+  const revoked = IssuerAuthority.fromState(again.exportState());
+  assert.equal(revoked.statusReader().read(id)?.revoked, true);
+  revoked.deactivate();
+  assert.throws(
+    () => IssuerAuthority.fromState(revoked.exportState()).approve(1),
+    /inactive/,
+  );
+});
+
+test("durable enrollment retries recover the same credential and reject key substitution or revoked retries", () => {
+  const issuer = new IssuerAuthority(),
+    holder = new Holder(),
+    attacker = new Holder();
+  const offer = issuer.approve(2, holder.publicIdentity()),
+    request = holder.request(offer);
+  const q = issuer.issueOrResume(request),
+    restored = IssuerAuthority.fromState(issuer.exportState());
+  assert.deepEqual(restored.issueOrResume(holder.request(offer)), q);
+  assert.equal(restored.statusEntries().length, 1);
+  assert.throws(() => restored.issueOrResume(attacker.request(offer)));
+  restored.revoke(credentialId(q));
+  assert.throws(() => restored.issueOrResume(request), /revoked/);
+});
+
+test("wire integers survive wallet SDK global BigInt JSON hooks", () => {
+  const previous = Object.getOwnPropertyDescriptor(BigInt.prototype, "toJSON");
+  try {
+    Object.defineProperty(BigInt.prototype, "toJSON", {
+      configurable: true,
+      value: function (this: bigint) {
+        return this.toString();
+      },
+    });
+    const issuer = new IssuerAuthority(),
+      holder = new Holder();
+    const trust = decodeWire(encodeWire(issuer.publicTrust())) as ReturnType<
+      IssuerAuthority["publicTrust"]
+    >;
+    assert.deepEqual(decodeWire(encodeWire(Buffer.from([1, 2, 3]))), new Uint8Array([1, 2, 3]));
+    assert.equal(typeof trust.publicKey.x, "bigint");
+    assert.deepEqual(trust, issuer.publicTrust());
+    const restored = IssuerAuthority.fromState(issuer.exportState());
+    assert.deepEqual(restored.publicTrust(), trust);
+    const offer = restored.approve(2, holder.publicIdentity());
+    const q = restored.issue(
+      decodeWire(encodeWire(holder.request(offer))) as EnrollmentRequest,
+    );
+    holder.accept(q, trust);
+  } finally {
+    if (previous) Object.defineProperty(BigInt.prototype, "toJSON", previous);
+    else Reflect.deleteProperty(BigInt.prototype, "toJSON");
+  }
+});

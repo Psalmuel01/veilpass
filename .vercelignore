@@ -26,5 +26,9 @@ contracts/*/managed
 apps/web/public/zk
 apps/web/public/zk-lifecycle
 
-# Node 24 local integration; not part of the Node 22 hosted preview.
-integrations/issuance/
+# Generated signed-issuance artifacts and local dependencies.
+integrations/issuance/managed/
+integrations/issuance/.private/
+
+integrations/issuance/managed-authorization/
+apps/web/public/zk-signed/

@@ -1,3 +1,12 @@
+## 20 October 2026 — signed browser custody and V3
+
+- Added holder/issuer screens, device-owned signing keys, authenticated holder-bound issuance, encrypted recovery/browser storage and inactivity locking.
+- Persisted encrypted authority state, approvals, retry receipts and irreversible revocation with SQLite concurrency protection.
+- Added separately versioned V3 status-tree authorization, pinned-key confirmed-transaction verifier and durable challenge storage.
+- Confirmed actual local V3 deployment, two policy proofs, SDK replay rejection and revocation.
+- Migrated to a Node 24 npm workspace to share Midnight native runtime instances. Added CI, browser acceptance and Preprod setup/connectivity tooling.
+- Public Preprod and production service operation remain gated on credentials, compatibility and infrastructure.
+
 # Changelog
 
 ## Signed issuance and holder ownership foundation — 20 October 2026

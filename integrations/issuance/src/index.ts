@@ -126,9 +126,18 @@ export class IssuerAuthority {
   #active = true;
   #offers = new Map<
     string,
-    { level: 1 | 2; createdAt: number; expiresAt: number }
+    {
+      level: 1 | 2;
+      createdAt: number;
+      expiresAt: number;
+      holder?: PublicIdentity;
+    }
   >();
   #issued = new Map<string, { revoked: boolean; credentialRoot: Uint8Array }>();
+  #completed = new Map<
+    string,
+    { root: Uint8Array; qualification: SignedQualification; until: number }
+  >();
   constructor(
     private clock: () => number = clockSeconds,
     private lifetime = 86400,
@@ -142,8 +151,16 @@ export class IssuerAuthority {
     };
   }
   /** The operator approves these claims; the applicant cannot choose the level. */
-  approve(level: 1 | 2): Offer {
+  approve(level: 1 | 2, holder?: PublicIdentity): Offer {
     if (!this.#active) throw new Error("Issuer inactive");
+    if (holder) {
+      core.assertValidVerificationMethodRef(holder.method);
+      if (
+        typeof holder.publicKey.x !== "bigint" ||
+        typeof holder.publicKey.y !== "bigint"
+      )
+        throw new Error("Invalid holder public key");
+    }
     if (level !== 1 && level !== 2)
       throw new Error("Unsupported qualification level");
     const now = checkedTime(this.clock);
@@ -156,6 +173,7 @@ export class IssuerAuthority {
       level,
       createdAt: now,
       expiresAt: now + 300,
+      ...(holder ? { holder: structuredClone(holder) } : {}),
     });
     return {
       challenge,
@@ -164,12 +182,20 @@ export class IssuerAuthority {
     };
   }
   issue(request: EnrollmentRequest): SignedQualification {
+    if (this.#issued.size >= 2048)
+      throw new Error("Issuer storage capacity reached");
     const now = checkedTime(this.clock),
       offer = this.#offers.get(hex(request.context.challenge)),
       trust = this.publicTrust();
     if (!this.#active) throw new Error("Issuer inactive");
     if (!offer) throw new Error("Issuance request not pending");
     if (now >= offer.expiresAt) throw new Error("Issuance request expired");
+    if (
+      offer.holder &&
+      (!sameMethod(offer.holder.method, request.context.holder) ||
+        !samePoint(offer.holder.publicKey, request.context.holderPublicKey))
+    )
+      throw new Error("Enrollment not approved for this holder");
     if (
       !sameMethod(request.context.issuer, trust.method) ||
       request.context.expiresAt !== BigInt(offer.expiresAt)
@@ -242,8 +268,162 @@ export class IssuerAuthority {
     if (!state) throw new Error("Unknown credential");
     state.revoked = true;
   }
+  /** Transport retry: a fresh valid proof for the same enrollment returns the
+   * same credential for ten minutes, without issuing a second status record. */
+  issueOrResume(request: EnrollmentRequest): SignedQualification {
+    const now = checkedTime(this.clock);
+    for (const [id, value] of this.#completed)
+      if (value.until <= now) this.#completed.delete(id);
+    const id = hex(request.context.challenge),
+      completed = this.#completed.get(id);
+    if (!this.#active) throw new Error("Issuer inactive");
+    if (completed) {
+      if (
+        !sameBytes(completed.root, family.enrollmentRoot(request.context)) ||
+        !samePoint(request.proof.publicKey, request.context.holderPublicKey) ||
+        !sameMethod(
+          request.proof.signerVerificationMethodRef,
+          request.context.holder,
+        ) ||
+        !sameBytes(request.proof.challengeHash, request.context.challenge) ||
+        request.proof.createdAt > BigInt(now)
+      )
+        throw new Error("Wrong retry context");
+      assertCanonicalProof(request.proof);
+      core.assertValidPresentationContextProof(completed.root, request.proof);
+      if (this.#issued.get(credentialId(completed.qualification))?.revoked)
+        throw new Error("Credential revoked");
+      return structuredClone(completed.qualification);
+    }
+    if (this.#completed.size >= 128)
+      throw new Error("Issuance retry capacity reached");
+    const qualification = this.issue(request);
+    this.#completed.set(id, {
+      root: family.enrollmentRoot(request.context),
+      qualification: structuredClone(qualification),
+      until: now + 600,
+    });
+    return qualification;
+  }
   deactivate() {
     this.#active = false;
+  }
+  statusEntries() {
+    return [...this.#issued].map(([id, state]) => ({
+      id,
+      revoked: state.revoked,
+      credentialRoot: Uint8Array.from(state.credentialRoot),
+    }));
+  }
+  /** Sensitive state: encrypt before storage; never expose over HTTP. */
+  exportState() {
+    return encodeWire({
+      version: 1,
+      purpose: "veilpass:issuer-state:v1",
+      seed: this.#key.backupSeed(),
+      identity: this.#key.publicIdentity(),
+      registryId: this.#registryId,
+      active: this.#active,
+      lifetime: this.lifetime,
+      offers: [...this.#offers],
+      issued: [...this.#issued],
+      completed: [...this.#completed],
+    });
+  }
+  static fromState(text: string, clock: () => number = clockSeconds) {
+    const data = decodeWire(text) as {
+      version: number;
+      purpose: string;
+      seed: string;
+      identity: PublicIdentity;
+      registryId: Uint8Array;
+      active: boolean;
+      lifetime: number;
+      offers: [
+        string,
+        {
+          level: 1 | 2;
+          createdAt: number;
+          expiresAt: number;
+          holder?: PublicIdentity;
+        },
+      ][];
+      issued: [string, { revoked: boolean; credentialRoot: Uint8Array }][];
+      completed?: [
+        string,
+        { root: Uint8Array; qualification: SignedQualification; until: number },
+      ][];
+    };
+    if (
+      data.version !== 1 ||
+      data.purpose !== "veilpass:issuer-state:v1" ||
+      !/^[0-9a-f]{64}$/.test(data.seed) ||
+      !(data.registryId instanceof Uint8Array) ||
+      data.registryId.length !== 32 ||
+      typeof data.active !== "boolean" ||
+      !Array.isArray(data.offers) ||
+      data.offers.length > 128 ||
+      !Array.isArray(data.issued)
+    )
+      throw new Error("Invalid issuer state");
+    const issuer = new IssuerAuthority(clock, data.lifetime);
+    issuer.#key.lock();
+    const seed = Uint8Array.from(data.seed.match(/../g) || [], (n) =>
+      parseInt(n, 16),
+    );
+    try {
+      issuer.#key = new LocalSigningKey(seed, data.identity.method);
+    } finally {
+      seed.fill(0);
+    }
+    core.assertValidVerificationMethodRef(data.identity.method);
+    if (
+      !samePoint(
+        issuer.#key.publicIdentity().publicKey,
+        data.identity.publicKey,
+      )
+    )
+      throw new Error("Issuer key mismatch");
+    for (const [id, state] of data.issued) {
+      if (
+        !/^[0-9a-f]{64}$/.test(id) ||
+        typeof state.revoked !== "boolean" ||
+        !(state.credentialRoot instanceof Uint8Array) ||
+        state.credentialRoot.length !== 32
+      )
+        throw new Error("Invalid issuer registry state");
+    }
+    for (const [id, offer] of data.offers) {
+      if (
+        !/^[0-9a-f]{64}$/.test(id) ||
+        (offer.level !== 1 && offer.level !== 2) ||
+        !Number.isSafeInteger(offer.createdAt) ||
+        !Number.isSafeInteger(offer.expiresAt) ||
+        offer.createdAt < 0 ||
+        offer.expiresAt !== offer.createdAt + 300
+      )
+        throw new Error("Invalid pending offer");
+      if (offer.holder)
+        core.assertValidVerificationMethodRef(offer.holder.method);
+    }
+    issuer.#registryId = Uint8Array.from(data.registryId);
+    issuer.#active = data.active;
+    issuer.#offers = new Map(data.offers);
+    issuer.#issued = new Map(data.issued);
+    if (data.completed) {
+      if (!Array.isArray(data.completed) || data.completed.length > 128)
+        throw new Error("Invalid issuance retry state");
+      for (const [id, entry] of data.completed)
+        if (
+          !/^[0-9a-f]{64}$/.test(id) ||
+          !(entry.root instanceof Uint8Array) ||
+          entry.root.length !== 32 ||
+          !Number.isSafeInteger(entry.until)
+        )
+          throw new Error("Invalid issuance retry entry");
+      issuer.#completed = new Map(data.completed);
+    }
+    return issuer;
   }
   statusReader(): StatusReader {
     return {
@@ -274,6 +454,14 @@ export class Holder {
   }
   publicIdentity() {
     return this.#key.publicIdentity();
+  }
+  credentials() {
+    return [...this.#credentials].map(([id, q]) => ({
+      id,
+      level: Number(q.claims.level),
+      issuedAt: Number(q.credential.issuedAt),
+      expiresAt: Number(q.credential.expiresAt),
+    }));
   }
   request(offer: Offer): EnrollmentRequest {
     const now = checkedTime(this.clock);
@@ -385,7 +573,9 @@ export class Holder {
         data.credentials.length > 64
       )
         throw new Error();
-      const seed = new Uint8Array(Buffer.from(data.seed, "hex"));
+      const seed = Uint8Array.from(data.seed.match(/../g) || [], (n) =>
+        parseInt(n, 16),
+      );
       let key: LocalSigningKey;
       try {
         key = new LocalSigningKey(seed, data.method);

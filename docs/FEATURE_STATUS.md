@@ -1,8 +1,11 @@
 # What works, how to test it, and what comes next
 
-Updated 19 October 2026. This is a local developer preview with a real, separately tested Midnight contract lifecycle. The V2 browser sandbox uses generated Compact execution; it does not generate a ZK proof or submit a V2 transaction.
+Updated 20 October 2026. This is a local developer preview with a real, separately tested Midnight contract lifecycle. The V2 browser sandbox uses generated Compact execution; it does not generate a ZK proof or submit a V2 transaction.
 
 The separate `/live` page now provides real browser proving, submission, confirmation and chain-backed SDK verification against a configured deployment. See [live V2 setup](LIVE_V2.md); the ordinary preview reports unconfigured until a live deployment is supplied.
+
+
+The new signed flow is documented in [SIGNED_ISSUANCE.md](SIGNED_ISSUANCE.md): browser holder keys and encrypted recovery, authenticated holder-bound issuance, encrypted durable issuer state, a separate V3 proof-backed contract and verifier, and local-network evidence. Use Node 24.22.0 and the root npm workspace. Public Preprod setup is in [PREPROD_SETUP.md](PREPROD_SETUP.md). Earlier V2 sample sections below describe their separate behavior.
 
 ## Working features
 
@@ -46,7 +49,7 @@ Only use sample data in the V2 workbench: its server knows the witnesses. The le
 
 ## Automated checks and local startup
 
-Use Node 22.22.0 or newer compatible Node 22, installed dependencies and the pinned Compact toolchain.
+Use Node 24.22.0, installed dependencies and the pinned Compact toolchain.
 
 ```sh
 nvm use

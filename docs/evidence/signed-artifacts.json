@@ -1,0 +1,44 @@
+{
+  "recordedAt": "2026-10-20T07:41:06.245Z",
+  "compiler": "0.31.1",
+  "runtime": "0.16.0",
+  "qualificationContractSha256": "2c18499a8df3f76314b2df92012d2d447d756169ba859bf3def04f47effceea4",
+  "generatedContractSha256": "f4ff61945bf140a03fa18bf6858b29f35417308c4dbfdbfa7a56447f11e5ee3b",
+  "sources": {
+    "qualification": "596ff1f297c063f45ea2660835e1b71965a8d617affb4fd074c9c244a01e111e",
+    "authorization": "59761dc76851c539e1f5e905dfb916cf51129ce6270627d42b4b6bf1c80fbc8a"
+  },
+  "files": {
+    "keys/authorize.prover": {
+      "bytes": 85127087,
+      "sha256": "4ecfdc4dfad72775703de2e025f841d9c54c05497c03a0b6ab82e18e7e99cebe",
+      "modifiedAt": "2026-10-20T07:24:38.207Z"
+    },
+    "keys/authorize.verifier": {
+      "bytes": 2311,
+      "sha256": "019173608abb9b4c57acf38d1cf3c7680e7d882dc63c3bc7039b87d9715e47d8",
+      "modifiedAt": "2026-10-20T07:24:38.207Z"
+    },
+    "keys/publishStatus.prover": {
+      "bytes": 2820490,
+      "sha256": "59e8777cabc0c13507095a530b46e7a7bfea8b02130af215128ba915ad0db88b",
+      "modifiedAt": "2026-10-20T07:24:40.653Z"
+    },
+    "keys/publishStatus.verifier": {
+      "bytes": 2119,
+      "sha256": "28b78ac0811b55937f5ee0d7eb0f0cb625aebb7c64060df2d6e433739a9ad2bf",
+      "modifiedAt": "2026-10-20T07:24:40.653Z"
+    },
+    "keys/deactivate.prover": {
+      "bytes": 2820133,
+      "sha256": "b72cce31963c9db62d61dcc980305c9062ce56204def3856ef0649fa36fb5873",
+      "modifiedAt": "2026-10-20T07:24:39.425Z"
+    },
+    "keys/deactivate.verifier": {
+      "bytes": 2119,
+      "sha256": "cc28456ca12f07287f40b32a2c1df24d72b50539b22e0ba6059d1800a89377f7",
+      "modifiedAt": "2026-10-20T07:24:39.425Z"
+    }
+  },
+  "note": "Local artifacts. Transaction confirmations are recorded separately in signed-network.json."
+}

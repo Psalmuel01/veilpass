@@ -42,3 +42,7 @@ The public site now occupies `/`; the existing proof-backed wallet workflow move
 ## Live V2 path
 
 `/live` keeps an imported qualification in browser memory and uses `lifecycle-midnight.ts` for real wallet/prover/transaction operations. `/api/live` only receives policy/challenge/presentation context; operator configuration pins deployment, network, root, endpoints and local verifier artifacts. `MidnightChainAdapter` binds a successful indexed transaction to its exact typed consumed-key insertion and checks current canonical root/status/head freshness. See [LIVE_V2.md](LIVE_V2.md) for the compiler-specific parsing boundary, trusted indexer model and reproduction commands. The generated workbench and reference pages remain separate.
+
+## Signed V3 extension
+
+The root Node 24 npm workspace now includes browser holder custody, an operator-authenticated encrypted SQLite issuer, private status-tree membership and a separately versioned V3 ledger/verifier. One native WASM runtime is shared across providers and contracts. The V3 confirmed local-network lifecycle passed; V2 types/keys are not repurposed. Read SIGNED_ISSUANCE.md for trust boundaries, operational status-root publication and remaining public deployment gates.
