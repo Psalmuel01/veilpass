@@ -31,8 +31,8 @@ export function AppShell({ children, section = 'Overview', environment = 'Local 
     return () => { document.body.style.overflow = previousOverflow; window.removeEventListener('keydown', keyboard); menuButton.current?.focus(); };
   }, [open]);
   const links = [
-    {label: 'Overview', href: '/lifecycle', icon: LayoutGrid},
-    {label: 'Live verification', href: '/live', icon: ShieldCheck},
+    {label: 'Sample lifecycle', href: '/lifecycle', icon: LayoutGrid},
+    {label: 'Local proof demo', href: '/live', icon: ShieldCheck},
     {label: 'Holder wallet', href: '/holder', icon: LockKeyhole},
     {label: 'Signed issuer', href: '/issuer', icon: Building2},
     {label: 'Credential wallet', href: '/lifecycle#credential', icon: WalletCards},

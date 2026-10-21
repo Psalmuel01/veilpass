@@ -7,6 +7,18 @@ const config = {
   outputFileTracingRoot: path.resolve(webRoot, '../..'),
   devIndicators: false,
   experimental: { externalDir: true },
+  async redirects() {
+    if (process.env.VEILPASS_HOSTED_BACKEND !== '1' || !process.env.VEILPASS_FRONTEND_ORIGIN) return [];
+    const frontend = new URL(process.env.VEILPASS_FRONTEND_ORIGIN);
+    if (frontend.protocol !== 'https:' || frontend.username || frontend.password || frontend.pathname !== '/' || frontend.search || frontend.hash)
+      throw new Error('Frontend must be an HTTPS origin without credentials or a path');
+    if (process.env.RENDER_EXTERNAL_URL && frontend.origin === new URL(process.env.RENDER_EXTERNAL_URL).origin)
+      throw new Error('Backend page redirects must target a separate frontend');
+    // Only page routes redirect. API routes and generated assets remain on the backend.
+    return ['/', '/holder', '/issuer', '/lifecycle', '/live', '/wallet', '/developers', '/hackathon', '/community'].map(source => ({
+      source, destination: frontend.origin + (source === '/' ? '/' : source), permanent: false,
+    }));
+  },
   async rewrites() {
     const backend = process.env.VEILPASS_BACKEND_ORIGIN;
     if (!backend) return [];
