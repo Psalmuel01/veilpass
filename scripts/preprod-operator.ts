@@ -115,7 +115,7 @@ async function deploy(addresses:{shieldedCoinPublicKey:string;shieldedEncryption
  await writeFile(path.join(directory,'deployment-config.json'),encodeWire({network:'preprod',contractAddress:result.contractAddress,domain:hex(domain),appA:hex(appA),appB:hex(appB),trust}),{mode:0o600});
  phase='Deployment confirmed: '+result.contractAddress+'. Run read-only release acceptance before enabling the hosted network.';
 }
-const walletClient=await readFile(new URL('../packages/network/wallet-connection.mjs',import.meta.url),'utf8');
+
 const html=`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>VeilPass Preprod operator</title><style>body{font:18px system-ui;background:#101625;color:#edf2ff;max-width:850px;margin:5vh auto;padding:24px}button{padding:14px;margin:8px;background:#b3c3ff;border:0;border-radius:8px;cursor:pointer}pre{white-space:pre-wrap;word-break:break-word;font-size:14px}#status{padding:20px;background:#202c46}small{color:#bbcae8}</style><h1>VeilPass · Preprod deployment</h1><p>Private operator console. The public website remains on Vercel. This page connects to your installed Lace; wallet passwords and seeds stay in Lace.</p><p>No transaction is submitted until you approve it in Lace and click the separate submission button.</p><button id="connect">1. Connect Lace on Preprod</button><button id="deploy" disabled>2. Prepare deployment for review</button><button id="submit" disabled>3. Submit approved deployment</button><p id="status">Ready. No transaction submitted.</p><h2>Deployment plan</h2><pre id="plan"></pre><small>Operator keys stay in an owner-only ignored file on this Mac. Back up that file privately. A confirmed deployment does not enable public proofs automatically.</small><script type="module" nonce="${session}">
 import { connectWithTimeout } from "/wallet-client.mjs";
 const $=id=>document.getElementById(id);let api,handling=false,pendingSubmit;
@@ -132,7 +132,7 @@ const server=createServer(async(req,res)=>{
  if(req.url===`/open/${session}`&&req.method==='GET')return send(303,'',{location:'/', 'set-cookie':`vp_operator=${session}; HttpOnly; SameSite=Strict; Path=/`});
  if(!req.headers.cookie?.split(';').map(x=>x.trim()).includes(`vp_operator=${session}`))return send(403,{});
  if(req.method==='GET'&&req.url==='/')return send(200,html,{'content-type':'text/html; charset=utf-8'});
- if(req.method==='GET'&&req.url==='/wallet-client.mjs')return send(200,walletClient,{'content-type':'text/javascript; charset=utf-8'});
+ if(req.method==='GET'&&req.url==='/wallet-client.mjs')return send(200,await readFile(new URL('../packages/network/wallet-connection.mjs',import.meta.url),'utf8'),{'content-type':'text/javascript; charset=utf-8'});
  if(req.method==='GET'&&req.url==='/state')return send(200,{plan,phase,command});
  if(req.method!=='POST'||req.headers.origin!==origin||req.headers['content-type']!=='application/json')return send(403,{});
  let raw='',bytes=0;for await(const chunk of req){bytes+=chunk.length;if(bytes>32000000)return send(413,{});raw+=chunk.toString();}

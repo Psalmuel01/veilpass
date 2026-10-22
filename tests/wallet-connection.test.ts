@@ -2,6 +2,14 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { connectWithTimeout } from '../packages/network/wallet-connection.mjs';
 afterEach(()=>vi.useRealTimers());
 describe('installed-wallet request deadlines',()=>{
+ it('allows a human approval beyond thirty seconds while bounding configuration separately',async()=>{
+  vi.useFakeTimers();
+  const initial={connect:()=>new Promise(resolve=>setTimeout(()=>resolve({getConfiguration:async()=>({networkId:'preprod'})}),45000))};
+  const connected=connectWithTimeout(initial,'preprod');
+  await vi.advanceTimersByTimeAsync(45001);await expect(connected).resolves.toBeDefined();
+  const stalled=expect(connectWithTimeout({connect:async()=>({getConfiguration:()=>new Promise(()=>{})})},'preprod')).rejects.toThrow('network configuration');
+  await vi.advanceTimersByTimeAsync(30001);await stalled;
+ });
  it('ends a stalled approval and permits an explicit later retry',async()=>{
   vi.useFakeTimers();
   const initial={connect:vi.fn().mockImplementationOnce(()=>new Promise(()=>{})).mockResolvedValue({getConfiguration:async()=>({networkId:'preprod'})})};
