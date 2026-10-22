@@ -14,17 +14,36 @@ For a complete feature inventory, browser walkthrough, test commands and priorit
 - **Verifier SDK:** strongly typed challenges, contextual binding, expiry/current-status checks, atomic durable replay consumption and explicit execution modes. Default mode refuses generated-execution results.
 - **Product/reference surfaces:** local lifecycle workbench, hackathon/community reference pages, developer portal and a two-origin HTTP integration harness. These use generated Compact execution and the SDK; they do not generate V2 ZK proofs.
 
-**Remaining production gates:** persistent hosted signed issuance, institutional issuer accounts, Preprod deployment, installed-wallet acceptance, key rotation/reissuance, independent review and external pilot. The new signed V3 flow is separate from V2. This is a tested protocol extension, not a production credential platform. Workbench server knows the sample witnesses.
+**Remaining production gates:** confirmed Preprod deployment and hosted proof acceptance, institutional issuer onboarding, installed-wallet acceptance, operational key rotation/reissuance, independent review and external pilot. Hosted signed issuance already uses the Render API and durable Neon storage. The new signed V3 flow is separate from V2. This is a tested protocol extension, not a production credential platform. Workbench server knows the sample witnesses.
 
 The interface now includes persistent system-aware dark mode and self-hosted Space Grotesk typography. It has been rebuilt with a dedicated public website, an ivory/ink/ultramarine workspace, responsive navigation, focused verification, and a restyled wallet. See [UI rebuild notes](docs/UI_REDESIGN.md).
 
 ## Signed issuance, holder custody and V3
 
-The signed flow now includes `/holder` and `/issuer`: device-generated holder keys, operator-authenticated holder-bound enrollment, real issuer/holder signatures, encrypted browser storage and recovery, durable encrypted SQLite authority state, safe issuance retries and irreversible revocation. See the [signed workflow guide](docs/SIGNED_ISSUANCE.md).
+The signed flow now includes `/holder` and `/issuer`: device-generated holder keys, operator-authenticated holder-bound enrollment, real issuer/holder signatures, encrypted browser storage and recovery, durable encrypted authority state (Neon for the hosted service; SQLite for local development), safe issuance retries and irreversible revocation. See the [signed workflow guide](docs/SIGNED_ISSUANCE.md).
 
 A separate V3 contract and verifier use the official credential constraints, private active-status membership, pinned circuit/issuer keys, ledger-time request windows and durable replay protection. Actual local-network deployment, both proof-backed policies, independent confirmed-transaction verification and revocation passed; see [V3 network evidence](docs/evidence/signed-network.json). V2 remains a separate flow.
 
-The app now uses **Node 24.22.0** and one npm workspace lockfile so all Midnight components share one WASM runtime. The browser now passes the [complete signed proof lifecycle](docs/evidence/signed-browser-network.json) using a disposable connector wallet; installed-wallet acceptance and a configured persistent deployment remain required. Hosted public issuance, institutional account onboarding, key rotation, independent review and the external pilot are not complete. Start with [Preprod account and wallet setup](docs/PREPROD_SETUP.md).
+The app now uses **Node 24.22.0** and one npm workspace lockfile so all Midnight components share one WASM runtime. The browser now passes the [complete signed proof lifecycle](docs/evidence/signed-browser-network.json) using a disposable connector wallet; installed-wallet acceptance and a configured persistent deployment remain required. The hosted credential journey is available; institutional issuer onboarding, operational key rotation, independent review and the external pilot remain incomplete. Start with [Preprod account and wallet setup](docs/PREPROD_SETUP.md).
+
+## Hosted deployment and confirmation
+
+The public website is [useveilpass.vercel.app](https://useveilpass.vercel.app/). Vercel serves the interface, Render runs the backend, and Neon stores durable encrypted issuer state. GitHub pushes deploy the application services; a Midnight contract requires its own confirmed chain transaction.
+
+The [terminal operator guide](docs/PREPROD_TERMINAL.md) explains the dedicated Preprod wallet, encrypted recovery, DUST registration and deployment. Funding is confirmed in [operator evidence](docs/evidence/preprod-terminal.json); this receipt alone does not confirm contract deployment.
+
+To check completion without starting another wallet process:
+
+```sh
+# Written only after deployContract returns a confirmed deployment:
+cat .private/preprod-terminal/deployment.json
+# Independently check deployed contract state and pinned verifier keys:
+npm run preprod:release -- .private/hosted-preprod/render.env .private/preprod-terminal/deployment-config.json
+```
+
+A missing `deployment.json` means the terminal tool has not recorded confirmation. An attempt file or transaction reference alone is insufficient. The independent release check writes `docs/evidence/preprod-release.json` only on success. Do not start a second `bootstrap`, `register`, `deploy` or wallet `status` process while the existing operator run is active. Keep all `.private` contents out of Git and chat.
+
+Contract confirmation is one milestone. Hosted two-application proofs, revocation acceptance, installed-wallet tests and external review remain separate release gates; the hosted readiness endpoint deliberately keeps `productionReady: false` until those gates are addressed.
 
 ## Run it
 
