@@ -14,4 +14,5 @@ if (process.env.VEILPASS_BUILD_PROOFS === "1") {
   run("scripts/signed-artifacts.mjs");
   run("scripts/signed-assets.mjs");
 } else run("integrations/issuance/compile.mjs", "--authorization");
+run("scripts/preprod-assets.mjs");
 run("node_modules/next/dist/bin/next", "build", "apps/web");

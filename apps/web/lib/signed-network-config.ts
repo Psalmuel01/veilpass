@@ -20,7 +20,7 @@ export async function signedNetworkConfig(): Promise<SignedNetworkConfig> {
   const c = decodeWire(
     await readFile(
       process.env.VEILPASS_SIGNED_NETWORK_CONFIG ||
-        path.join(signedProjectRoot(), ".private/signed-network.json"),
+        path.join(signedProjectRoot(), process.env.VEILPASS_HOSTED_BACKEND === "1" ? "deploy/preprod/network.json" : ".private/signed-network.json"),
       "utf8",
     ),
   ) as SignedNetworkConfig;
@@ -58,4 +58,13 @@ export async function signedNetworkConfig(): Promise<SignedNetworkConfig> {
   )
     throw new Error("Pinned issuer required");
   return c;
+}
+
+// Authentication stays in the backend; this value is never returned in public config.
+export function signedOperatorIndexer(config: SignedNetworkConfig): string {
+  if (process.env.VEILPASS_HOSTED_BACKEND !== "1") return config.indexerUri;
+  const token=process.env.BLOCKFROST_PROJECT_ID;
+  if (!token) throw new Error("Operator indexer unavailable");
+  const url=new URL("https://midnight-preprod.blockfrost.io/api/v0");
+  url.searchParams.set("project_id",token);return url.href;
 }

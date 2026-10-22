@@ -1,0 +1,8 @@
+{
+  "network": "preprod",
+  "tokenFreeConfiguration": true,
+  "twoDurableChallenges": true,
+  "productionFrontServer": true,
+  "publicHosted": false,
+  "chainSubmission": false
+}

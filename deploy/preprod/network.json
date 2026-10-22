@@ -1,0 +1,39 @@
+{
+  "network": "preprod",
+  "contractAddress": "5120e2bc49267ad91653edb9806a010da0bb0428d78acd9dbf0e994a058cd24a",
+  "domain": "7665696c706173733a70726570726f643a7369676e65643a7633000000000000",
+  "appA": "7665696c706173733a617070726f7665642d747261696e696e673a7633000000",
+  "appB": "7665696c706173733a70726f66657373696f6e616c2d6c6576656c3a76330000",
+  "trust": {
+    "method": {
+      "controllerAddress": {
+        "bytes": {
+          "$veilpass": "bytes",
+          "value": "054157c89c7b84bb886723f289ee81919c54eb24e81d0336cf8050a3c77c9e22"
+        }
+      },
+      "methodId": {
+        "$veilpass": "bytes",
+        "value": "d3e909d4b0796f2af689e05541250227598b9696c040c168b8b80df04be90cef"
+      }
+    },
+    "publicKey": {
+      "x": {
+        "$veilpass": "bigint",
+        "value": "17297661903605014969620359013392266213944253598267364092094721386315681956675"
+      },
+      "y": {
+        "$veilpass": "bigint",
+        "value": "18824851447219891116964228154444288674922261639512552327858626967481959192649"
+      }
+    },
+    "registryId": {
+      "$veilpass": "bytes",
+      "value": "4bf35f71bf7d55502a12c3bedd4ecd893a0445308f68969f3c89907619c3d6b8"
+    }
+  },
+  "indexerUri": "https://veilpass-preprod.onrender.com/api/preprod/indexer",
+  "indexerWsUri": "wss://veilpass-preprod.onrender.com/api/preprod/indexer/ws",
+  "proofServer": "http://127.0.0.1:6300",
+  "deploymentHeight": 3085824
+}

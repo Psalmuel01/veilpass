@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "url": "https://github.com/Psalmuel01/veilpass/releases/download/preprod-v3-20261022/veilpass-v3-preprod-artifacts.tar.gz",
+  "bytes": 90114044,
+  "sha256": "dc3a7f3895886d0d0ad471dd9c1094bd974601d90ca9408b9da2cb1071274b50",
+  "authorizationSourceSha256": "59761dc76851c539e1f5e905dfb916cf51129ce6270627d42b4b6bf1c80fbc8a",
+  "files": {
+    "keys/authorize.prover": {
+      "bytes": 85127087,
+      "sha256": "4ecfdc4dfad72775703de2e025f841d9c54c05497c03a0b6ab82e18e7e99cebe"
+    },
+    "keys/authorize.verifier": {
+      "bytes": 2311,
+      "sha256": "019173608abb9b4c57acf38d1cf3c7680e7d882dc63c3bc7039b87d9715e47d8"
+    },
+    "zkir/authorize.bzkir": {
+      "bytes": 5753,
+      "sha256": "c5ab781111be85515e5c255766a0df7f0d591e434af30d83ab43fb5d5ddc9010"
+    },
+    "keys/publishStatus.prover": {
+      "bytes": 2820490,
+      "sha256": "59e8777cabc0c13507095a530b46e7a7bfea8b02130af215128ba915ad0db88b"
+    },
+    "keys/publishStatus.verifier": {
+      "bytes": 2119,
+      "sha256": "28b78ac0811b55937f5ee0d7eb0f0cb625aebb7c64060df2d6e433739a9ad2bf"
+    },
+    "zkir/publishStatus.bzkir": {
+      "bytes": 255,
+      "sha256": "6ded3d4d65cee65d7b5a9d83db7bd90303a53bead349680da349a804ea7d5304"
+    },
+    "keys/deactivate.prover": {
+      "bytes": 2820133,
+      "sha256": "b72cce31963c9db62d61dcc980305c9062ce56204def3856ef0649fa36fb5873"
+    },
+    "keys/deactivate.verifier": {
+      "bytes": 2119,
+      "sha256": "cc28456ca12f07287f40b32a2c1df24d72b50539b22e0ba6059d1800a89377f7"
+    },
+    "zkir/deactivate.bzkir": {
+      "bytes": 173,
+      "sha256": "8b8cc4863878fc362404f6f2d866f95df4522fb3dbb52263b59b9de9d4a879b3"
+    },
+    "zkir/authorize.zkir": {
+      "bytes": 65705,
+      "sha256": "dc1aaa5c2a2cccec38415af03b8e7448d8c77ead7495d9ad04fd899790780d79"
+    },
+    "zkir/publishStatus.zkir": {
+      "bytes": 3991,
+      "sha256": "847a7fa92afe49d499f1f61c8a3cb31e6d48630fcb136eff938754371be76dc8"
+    },
+    "zkir/deactivate.zkir": {
+      "bytes": 2537,
+      "sha256": "1cde1224079c7148c5e42765fc2f38f139dc030821daae77a87be3309b2e904d"
+    }
+  },
+  "qualificationSourceSha256": "596ff1f297c063f45ea2660835e1b71965a8d617affb4fd074c9c244a01e111e",
+  "generatedContractSha256": "f4ff61945bf140a03fa18bf6858b29f35417308c4dbfdbfa7a56447f11e5ee3b"
+}

@@ -9,4 +9,5 @@ if (missing.length) {
 }
 execFileSync(process.execPath, ['integrations/issuance/compile.mjs'], { stdio: 'inherit' });
 execFileSync(process.execPath, ['integrations/issuance/compile.mjs', '--authorization'], { stdio: 'inherit' });
+execFileSync(process.execPath, ['scripts/preprod-assets.mjs'], { stdio: 'inherit' });
 execFileSync(process.execPath, ['node_modules/next/dist/bin/next', 'build', 'apps/web'], { stdio: 'inherit' });

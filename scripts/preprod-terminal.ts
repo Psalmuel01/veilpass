@@ -6,6 +6,7 @@ import { parseEnv } from 'node:util';
 import path from 'node:path';
 import { gzipSync, gunzipSync } from 'node:zlib';
 import { firstValueFrom, filter, timeout } from 'rxjs';
+import { boundedDustWallet } from '../packages/network/dust-fee.js';
 import pino from 'pino';
 import { WebSocket } from 'ws';
 import { MidnightWalletProvider, WalletSeeds, logger as sdkLogger, type EnvironmentConfiguration } from '@midnight-ntwrk/testkit-js';
@@ -38,8 +39,8 @@ for(const method of ['log','info','warn','error','debug'] as const)console[metho
 globalThis.WebSocket=WebSocket as unknown as typeof globalThis.WebSocket;
 setNetworkId('preprod');
 const [envFile,action]=process.argv.slice(2);
-if(['register','deploy','bootstrap'].includes(action)&&!process.argv.includes('--submit'))throw Error('Mutation requires --submit');
-if(!envFile || !['init','status','register','deploy','bootstrap'].includes(action))throw Error('Usage: preprod-terminal <private-env-file> init|status|register|deploy|bootstrap [--submit]');
+if(['register','deploy','bootstrap','acceptance'].includes(action)&&!process.argv.includes('--submit'))throw Error('Mutation requires --submit');
+if(!envFile || !['init','status','register','deploy','bootstrap','acceptance'].includes(action))throw Error('Usage: preprod-terminal <private-env-file> init|status|register|deploy|bootstrap|acceptance [--submit]');
 const env=parseEnv(await readFile(envFile,'utf8'));
 const password=env.VEILPASS_ISSUER_STORAGE_KEY,token=env.BLOCKFROST_PROJECT_ID;
 if(!password || !token)throw Error('Existing private storage key and Blockfrost project required');
@@ -104,7 +105,7 @@ try{
    const saved=JSON.parse(gunzipSync(Buffer.concat([decipher.update(bytes.subarray(28)),decipher.final()]),{maxOutputLength:134217728}).toString());
    if(saved.network!=='preprod'||saved.address!==address||saved.states.length!==3)throw Error('Wallet checkpoint identity mismatch');
    const cfg={indexerClientConnection:{indexerHttpUrl:config.indexer,indexerWsUrl:config.indexerWS},provingServerUrl:new URL(config.proofServer),networkId:'preprod',relayURL:new URL(config.nodeWS),txHistoryStorage:new InMemoryTransactionHistoryStorage(WalletEntrySchema,mergeWalletEntries),costParameters:{feeBlocksMargin:5},batchUpdates:{size:500,timeout:50,spacing:0}};
-   const restored=await WalletFacade.init({configuration:cfg,shielded:()=>ShieldedWallet(cfg).restore(saved.states[0]),unshielded:()=>UnshieldedWallet(cfg).restore(saved.states[1]),dust:()=>DustWallet(cfg).restore(saved.states[2])});
+   const restored=await WalletFacade.init({configuration:cfg,shielded:()=>ShieldedWallet(cfg).restore(saved.states[0]),unshielded:()=>UnshieldedWallet(cfg).restore(saved.states[1]),dust:()=>boundedDustWallet(cfg).restore(saved.states[2])});
    const previous=wallet;await previous.stop();wallet=await MidnightWalletProvider.withWallet(quiet,config,restored,previous.zswapSecretKeys,previous.dustSecretKey,previous.unshieldedKeystore);
    operatorLog('Restored encrypted operator synchronization checkpoint.');
   }catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
@@ -123,6 +124,10 @@ try{
   const coins=state.unshielded.availableCoins.filter(c=>c.utxo.type===unshieldedToken().raw && c.meta.registeredForDustGeneration===false);
   const report={checkedAt:new Date().toISOString(),network:'preprod',unshieldedAddress:address,nightBaseUnits:night.toString(),dustBaseUnits:dust.toString(),unregisteredNightOutputs:coins.length,synced:true};
   await writeFile(path.join(directory,'wallet-status.json'),JSON.stringify(report,null,2)+'\n',{mode:0o600});operatorLog(JSON.stringify(report,null,2));
+  if(action==='acceptance'){
+   stage='running real Preprod authorization acceptance';
+   await (await import('./preprod-acceptance.js')).preprodAcceptance(wallet,config,env as Record<string,string>,directory,operatorLog);
+  }
   if(action==='register'||(action==='bootstrap'&&coins.length>0)){
    if(!process.argv.includes('--submit'))throw Error('Registration requires --submit');
    if(!coins.length)throw Error('No unregistered test NIGHT available');

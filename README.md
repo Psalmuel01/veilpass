@@ -43,6 +43,8 @@ npm run preprod:release -- .private/hosted-preprod/render.env .private/preprod-t
 
 A missing `deployment.json` means the terminal tool has not recorded confirmation. An attempt file or transaction reference alone is insufficient. The independent release check writes `docs/evidence/preprod-release.json` only on success. Do not start a second `bootstrap`, `register`, `deploy` or wallet `status` process while the existing operator run is active. Keep all `.private` contents out of Git and chat.
 
+Hosted builds now install the exact public proving assets from a hash-pinned GitHub release. A restricted Render HTTP/WebSocket gateway keeps Blockfrost authentication server-side; its read-only checks are recorded in [gateway evidence](docs/evidence/preprod-gateway.json). Public activation and authorization acceptance remain separate gates.
+
 Contract confirmation is one milestone. Hosted two-application proofs, revocation acceptance, installed-wallet tests and external review remain separate release gates; the hosted readiness endpoint deliberately keeps `productionReady: false` until those gates are addressed.
 
 ## Run it

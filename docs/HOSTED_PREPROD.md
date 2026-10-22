@@ -1,39 +1,28 @@
-# Hosted Preprod release
+# Hosted Preprod proof flow
 
-Status: Render Free backend deployed on 2026-10-20; public frontend remains a preview while integration acceptance and Preprod proving are incomplete. Local proof evidence does not establish a public Preprod contract deployment.
+Use https://useveilpass.vercel.app as the public website. Render supplies issuer and verifier APIs plus a restricted HTTP/WebSocket indexer gateway; Neon stores encrypted issuer state and durable verifier challenges. The deployed V3 contract address is recorded in [deployment evidence](evidence/preprod-terminal.json).
 
-Provider selected: Render. The authenticated account can access the GitHub repository. Deployment configuration lives in `deploy/render/`. The live backend is https://veilpass-preprod.onrender.com (service `srv-dbbn1hc9v7es73fp60t0`), deployed from commit `28c0f941412ad13c90f0de094e0ac8a963c3eaaa` on the Free plan. Render automatic deployment is set to After CI Checks Pass. Blockfrost connectivity from `.env.prepod` passed for both RPC and indexer; this does not establish contract compatibility. The operator requires free plans only and explicitly authorized a temporary Docker restart followed by shutdown. Render Free uses the existing Neon Free project for external Postgres; no paid compute or disk was provisioned.
+Public proving files come from the immutable, hash-pinned release in `deploy/preprod/artifacts.json`. Both hosted builds verify the archive, every artifact and the contract sources/generated code before publishing `/zk-signed`. A source change requires a matching reviewed artifact release and, when verifier keys change, a new contract deployment. Never rebuild random keys for the existing contract.
 
-The existing Neon `veilpass` Free project is now initialized with encrypted authority state and durable challenge/rate-limit tables. Private Render configuration is retained in owner-only `.private/hosted-preprod/render.env`, excluded from Git and Docker. The approved variables are stored in Render. Its first deployment succeeded and startup verified the pinned persistent issuer identity; the public hosted HTTP journey passed signed holder enrollment/issuance, both local signature policies and revocation; see `evidence/hosted-journey.json`. This is not a network proof. Vercel Production now has `VEILPASS_BACKEND_ORIGIN=https://veilpass-preprod.onrender.com`; the production redeployment `6ozuEvpJJYYFj8MsDwieAjjniSpF` is Ready and assigned to `useveilpass.vercel.app`. Browser inspection confirmed public trust JSON on the direct Render issuer endpoint. The frontend issuer URL returns the pinned trust JSON, and the actual hosted signed-issuance/revocation journey passed. Free-tier cold starts still require bounded retries. Actual proof trials on proof-server 8.1.3 were OOM-killed at both 512 MiB and 2 GiB; this blocks Render Free hosted proving, not the separate issuance/database work.
+The Render gateway accepts only exact read-only Midnight.js 4.1.1 operation documents. Contract queries are pinned to VeilPass; broad transaction subscriptions cannot start before its deployment. Origins, payloads, operations, request rate, connection count, lifetime, output and buffering are bounded. The Blockfrost token is injected only upstream on the backend. It is never returned in browser settings or shipped in assets.
 
-## Release architecture
+The explicit `VEILPASS_SIGNED_NETWORK=1` backend setting activates public network settings, challenges and gateway access. Keep it disabled until the real Preprod acceptance runner passes. Vercel forwards `/api/signed-network` to Render. This setting does not imply production readiness, installed-wallet acceptance or a completed external pilot.
 
-- Keep the public frontend at https://useveilpass.vercel.app, automatically deployed from GitHub main.
-- Run the signed issuer and verifier on Node 24 with external Postgres for durable encrypted authority state, challenges and rate limits. Local development retains SQLite. Render Free needs no persistent disk with this adapter.
-- Keep Blockfrost credentials server-side. Proxy only the GraphQL operations and subscriptions actually required by the pinned SDK; do not expose an unrestricted upstream proxy.
-- Provide HTTPS proving behind bounded requests, concurrency limits and an explicit user acknowledgement that the prover receives private witnesses. Do not expose an unauthenticated raw prover or claim browser-only privacy for remote proving.
-- Store generated proving assets as versioned artifacts; record their hashes and pin verification keys independently on the verifier. Git pushes must not generate new issuer identities or deploy replacement contracts automatically.
+## Holder setup
 
-## Required operator inputs
+1. Open the public Holder page and create or restore an encrypted holder wallet.
+2. Request enrollment from the issuer; an authorized operator approves and issues the holder-bound credential.
+3. Install/unlock a compatible Midnight wallet on Preprod and ensure it has spendable DUST.
+4. Run a trusted local proof server, pinned to 8.1.3, on the holder's own machine:
 
-- Connect the operator-created Neon Free project. No paid resources or chargeable overages are authorized.
-- Create/select a Midnight Preprod Blockfrost project; enter its token through the provider secret UI or an ignored local file.
-- Approve Lace connection and deployment transactions. Keep recovery phrases and wallet keys out of chat and source control.
-- Select the initial trusted issuer/operator and the recovery contact/process.
+```sh
+docker run --rm --name veilpass-holder-prover --memory=6g \
+  -p 127.0.0.1:6300:6300 midnightntwrk/proof-server:8.1.3
+```
 
-## Ordered implementation and acceptance
+5. Connect the installed wallet, select the application policy and request a fresh challenge. Approve the transaction in the wallet when prompted. Leave the prover running until proof generation completes.
+6. Verify the confirmed receipt. Each challenge is consumed once; retry with a new challenge after expiry or rejection. A changed issuer status root requires a fresh authorization.
 
-1. Add explicit public HTTPS origin validation, bounded bodies, request deadlines, authentication and durable abuse controls. Preserve local development behavior and disabled Vercel defaults until hosted mode is explicitly configured.
-2. Package the backend, persistent volume and prover with health/readiness checks. Validate restoration of the encrypted database and storage key together; validate challenge persistence across restarts.
-3. Implement a constrained Blockfrost HTTP/WebSocket gateway and test token redaction, origin enforcement, upstream failures and subscription cleanup.
-4. Integrate remote proving with consent, TLS, request limits, cancellation and safe retries. Ensure private payloads are not logged.
-5. Provision secrets and hosting; verify network compatibility against the current Midnight support matrix and run the read-only provider check.
-6. Confirm funded wallet DUST generation; deploy V3 through an explicitly approved wallet transaction. Record network, contract address, transaction, issuer registry, circuit-key hashes and deployment configuration.
-7. Publish signed configuration and versioned assets. Connect the hosted frontend to the deployed services; remove preview notices only for capabilities that actually work.
-8. Test with installed Lace: approvals, rejection, disconnect, incorrect network, slow proof, retry after confirmed submission and refresh/recovery.
-9. Run two independent application authorizations, replay rejection and on-chain status publication followed by revocation rejection. Record actual Preprod references.
-10. Verify GitHub-triggered deployment from a fresh checkout, database preservation, rollback, uptime checks, backup recovery and secret rotation. Complete accessibility review, independent security review and an issuer/two-application pilot before a production-readiness claim.
+The loopback prover is holder infrastructure; the public application remains on Vercel. Render Free cannot run this prover within its memory allowance. Private proof witnesses must remain on the holder-controlled machine. Stop the temporary container when finished. A phone alone cannot run this Docker-based holder setup; mobile proof generation remains unverified.
 
-## Completion rule
-
-A successful Vercel build is frontend deployment only. The release is accepted only after the hosted browser journey and persistence/recovery checks pass against the recorded Preprod contract. Mainnet is a separate release decision.
+Revocation changes the hosted credential status immediately, but network verifiers also need the new status root published to Preprod by the contract administrator. Until automated publication is implemented and tested, do not promise immediate chain revocation after clicking the issuer button. The acceptance runner explicitly publishes both issuance and revocation roots.

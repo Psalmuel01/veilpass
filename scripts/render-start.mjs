@@ -23,15 +23,18 @@ if (process.env.VEILPASS_HOSTED_BACKEND === "1") {
 }
 // Serving the configured application is separate from enabling hosted issuance,
 // network verification or remote proving. Their explicit gates remain enforced.
+const applicationPort=Number(port)===65535?65534:Number(port)+1;
+const { renderFront }=await import('./render-front.mjs');
 const child = spawn(process.execPath, [
   "node_modules/next/dist/bin/next", "start", "apps/web",
-  "--hostname", "0.0.0.0", "--port", port,
+  "--hostname", "127.0.0.1", "--port", String(applicationPort),
 ], { stdio: "inherit", env: {
   ...process.env,
   VEILPASS_ISSUER_DIRECTORY: path.join(data, "issuer"),
   VEILPASS_VERIFIER_DIRECTORY: path.join(data, "verifiers"),
 } });
+const front=await renderFront(Number(port),applicationPort,process.env.VEILPASS_BIND_HOST || "0.0.0.0");
 for (const signal of ["SIGTERM", "SIGINT"])
   process.on(signal, () => child.kill(signal));
 child.on("error", () => { console.error("Service could not start"); process.exit(1); });
-child.on("exit", (code, signal) => process.exit(code ?? (signal ? 1 : 0)));
+child.on("exit", (code, signal) => { front.close();process.exit(code ?? (signal ? 1 : 0)); });

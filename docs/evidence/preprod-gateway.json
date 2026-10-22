@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-22T07:02:09.424Z",
+  "network": "preprod",
+  "contractAddress": "5120e2bc49267ad91653edb9806a010da0bb0428d78acd9dbf0e994a058cd24a",
+  "httpReadPassed": true,
+  "websocketReadPassed": true,
+  "wrongContractRejected": true,
+  "untrustedOriginRejected": true,
+  "introspectionRejected": true,
+  "tokenAbsentFromResponses": true,
+  "chainSubmission": false,
+  "publicHostedGateway": false,
+  "note": "Real Blockfrost reads through the local instance of the deployment gateway; public hosted acceptance is separate."
+}

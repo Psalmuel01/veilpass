@@ -4,6 +4,7 @@ import { serviceRequestAllowed, admitServiceRequest } from "../../../lib/service
 import path from "node:path";
 import {
   signedNetworkConfig,
+  signedOperatorIndexer,
   signedProjectRoot,
 } from "../../../lib/signed-network-config";
 export const runtime = "nodejs";
@@ -109,7 +110,7 @@ export async function POST(request: NextRequest) {
       deactivate: await readFile(path.join(assets, "deactivate.verifier")),
     };
     const chain = new SignedMidnightAdapter({
-      indexerUrl: config.indexerUri,
+      indexerUrl: signedOperatorIndexer(config),
       contractAddress: config.contractAddress,
       networkDomain: config.domain,
       trust: config.trust,
