@@ -8,6 +8,24 @@
     "indexedStatus": "SUCCESS",
     "blockHeight": 3085347
   },
-  "deploymentConfirmed": false,
-  "note": "Funding is not DUST registration or contract deployment. Encrypted wallet backups and checkpoints remain ignored."
+  "deploymentConfirmed": true,
+  "note": "Dedicated operator funding and contract deployment confirmed. Independent deployed-state acceptance is recorded in preprod-release.json. Hosted proof acceptance remains pending.",
+  "deployment": {
+    "confirmedAt": "2026-10-22T06:19:33.175Z",
+    "network": "preprod",
+    "contractAddress": "5120e2bc49267ad91653edb9806a010da0bb0428d78acd9dbf0e994a058cd24a",
+    "transactionReference": "00a287e83877045c6dc9573848e203e6e34f380ff87e1519f1905e015b571c9d49",
+    "issuerFingerprint": "52552b8a73de3b266948ab0f080a00b415a9bc8228f20c51204da1087ee50ba8",
+    "authorityVersion": "40",
+    "root": "27484b39b93eab6349f57abc6919f8719f8a9ce1e017387bd559de85a8c2d8a0",
+    "domain": "7665696c706173733a70726570726f643a7369676e65643a7633000000000000",
+    "appA": "7665696c706173733a617070726f7665642d747261696e696e673a7633000000",
+    "appB": "7665696c706173733a70726f66657373696f6e616c2d6c6576656c3a76330000",
+    "verifierKeys": {
+      "authorize": "019173608abb9b4c57acf38d1cf3c7680e7d882dc63c3bc7039b87d9715e47d8",
+      "publishStatus": "28b78ac0811b55937f5ee0d7eb0f0cb625aebb7c64060df2d6e433739a9ad2bf",
+      "deactivate": "cc28456ca12f07287f40b32a2c1df24d72b50539b22e0ba6059d1800a89377f7"
+    },
+    "status": "confirmed"
+  }
 }

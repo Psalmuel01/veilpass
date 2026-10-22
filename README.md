@@ -14,7 +14,7 @@ For a complete feature inventory, browser walkthrough, test commands and priorit
 - **Verifier SDK:** strongly typed challenges, contextual binding, expiry/current-status checks, atomic durable replay consumption and explicit execution modes. Default mode refuses generated-execution results.
 - **Product/reference surfaces:** local lifecycle workbench, hackathon/community reference pages, developer portal and a two-origin HTTP integration harness. These use generated Compact execution and the SDK; they do not generate V2 ZK proofs.
 
-**Remaining production gates:** confirmed Preprod deployment and hosted proof acceptance, institutional issuer onboarding, installed-wallet acceptance, operational key rotation/reissuance, independent review and external pilot. Hosted signed issuance already uses the Render API and durable Neon storage. The new signed V3 flow is separate from V2. This is a tested protocol extension, not a production credential platform. Workbench server knows the sample witnesses.
+**Remaining production gates:** hosted Preprod proof acceptance, institutional issuer onboarding, installed-wallet acceptance, operational key rotation/reissuance, independent review and external pilot. Hosted signed issuance already uses the Render API and durable Neon storage. The new signed V3 flow is separate from V2. This is a tested protocol extension, not a production credential platform. Workbench server knows the sample witnesses.
 
 The interface now includes persistent system-aware dark mode and self-hosted Space Grotesk typography. It has been rebuilt with a dedicated public website, an ivory/ink/ultramarine workspace, responsive navigation, focused verification, and a restyled wallet. See [UI rebuild notes](docs/UI_REDESIGN.md).
 
@@ -30,7 +30,7 @@ The app now uses **Node 24.22.0** and one npm workspace lockfile so all Midnight
 
 The public website is [useveilpass.vercel.app](https://useveilpass.vercel.app/). Vercel serves the interface, Render runs the backend, and Neon stores durable encrypted issuer state. GitHub pushes deploy the application services; a Midnight contract requires its own confirmed chain transaction.
 
-The [terminal operator guide](docs/PREPROD_TERMINAL.md) explains the dedicated Preprod wallet, encrypted recovery, DUST registration and deployment. Funding is confirmed in [operator evidence](docs/evidence/preprod-terminal.json); this receipt alone does not confirm contract deployment.
+The [terminal operator guide](docs/PREPROD_TERMINAL.md) explains the dedicated Preprod wallet, encrypted recovery, DUST registration and deployment. The V3 contract is confirmed on Preprod at `5120e2bc49267ad91653edb9806a010da0bb0428d78acd9dbf0e994a058cd24a`. See [funding and deployment evidence](docs/evidence/preprod-terminal.json) and the successful [independent deployed-state check](docs/evidence/preprod-release.json). Hosted proof acceptance remains pending.
 
 To check completion without starting another wallet process:
 

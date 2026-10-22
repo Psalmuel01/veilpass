@@ -36,3 +36,7 @@ npm run preprod:release -- .private/hosted-preprod/render.env .private/preprod-t
 `registration.json` records submission, not independent confirmation. `deployment.json` is written after the deployment API reports confirmation and contains the contract address and transaction reference. Independently run the release check above to validate the current chain state, issuer/status root, application/domain pins and verifier keys. Its success report is `docs/evidence/preprod-release.json`. A missing deployment receipt or a lone attempt file must be treated as pending or unresolved, not successful.
 
 The initial DUST scan may take tens of minutes or longer. Recovery checkpoints reduce restart work. Never remove attempt files or retry a transaction merely because a browser page or terminal timed out.
+
+## Confirmed deployment
+
+The V3 contract deployed on 22 October 2026 at `5120e2bc49267ad91653edb9806a010da0bb0428d78acd9dbf0e994a058cd24a`; deployment transaction `00a287e83877045c6dc9573848e203e6e34f380ff87e1519f1905e015b571c9d49`. The independent release check passed for the active contract, issuer/domain/application settings, status root and all three verifier keys. See [deployment receipt](evidence/preprod-terminal.json) and [release acceptance](evidence/preprod-release.json). Public hosted authorization proofs and revocation acceptance are still separate pending milestones.
