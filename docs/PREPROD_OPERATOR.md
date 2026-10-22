@@ -16,7 +16,7 @@ The prepare/check command reads the current hosted authority without modifying i
 The proof-server 8.1.3 synthetic trial succeeded with a 6 GiB limit. For the ceremony:
 
 ```sh
-docker run -d --rm --name veilpass-preprod-prover -p 127.0.0.1:6301:6300 --memory=6g --cpus=2 midnightntwrk/proof-server:8.1.3
+docker run -d --rm --name veilpass-preprod-prover -p 127.0.0.1:6300:6300 -p 127.0.0.1:6301:6300 --memory=6g --cpus=2 midnightntwrk/proof-server:8.1.3
 npm run preprod:operator -- .private/hosted-preprod/render.env
 ```
 
@@ -40,3 +40,5 @@ Do not set `VEILPASS_SIGNED_NETWORK=1` from this draft. Public configuration sti
 ## Connection troubleshooting
 
 Lace can display an unlocked account in its sidebar while a separate Authorize DApp window is still locked. Complete the popup's own unlock and authorization flow. An incorrect-password message is a wallet authentication failure; VeilPass cannot bypass it. Keep passwords private. The connection helper now reports whether approval or network configuration is waiting, allows two minutes for approval and 30 seconds for the network configuration, and prevents overlapping connection clicks. After a timeout, close stale wallet requests before explicitly reconnecting. No timeout triggers automatic transaction submission.
+
+Both loopback ports map to the same prover: 6300 supports Lace’s usual local setting and 6301 is used by this operator console. Confirm the actual wallet configuration before attributing a connection failure to proving. A `midnight-authenticator` channel shutdown after authorization is a connector failure, not a confirmed deployment; close stale requests and inspect the wallet version and network configuration. The operator console displays only public wallet names/API versions for this diagnosis.

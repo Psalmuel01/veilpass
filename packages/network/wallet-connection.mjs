@@ -7,6 +7,10 @@ export async function connectWithTimeout(initial, network, onStatus = (_message)
       return await Promise.race([Promise.resolve().then(operation), new Promise((_, reject) => {
         timer = setTimeout(() => reject(Error(message)), deadline);
       })]);
+    } catch (error) {
+      if (typeof error?.message === 'string' && error.message.includes('midnight-authenticator') && error.message.includes('shutdown'))
+        throw Error('Lace closed its authentication channel. Reopen Lace, close stale approval windows, then reconnect.');
+      throw error;
     } finally { clearTimeout(timer); }
   }
   onStatus('Waiting for wallet connection approval…');

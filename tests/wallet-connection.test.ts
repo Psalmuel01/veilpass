@@ -2,6 +2,11 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { connectWithTimeout } from '../packages/network/wallet-connection.mjs';
 afterEach(()=>vi.useRealTimers());
 describe('installed-wallet request deadlines',()=>{
+ it('explains a wallet authentication-channel shutdown without retrying automatically',async()=>{
+  const connect=vi.fn(async()=>{throw Error("Remote API with channel 'midnight-authenticator' was shutdown: object can no longer be used.")});
+  await expect(connectWithTimeout({connect},'preprod')).rejects.toThrow('Lace closed its authentication channel');
+  expect(connect).toHaveBeenCalledTimes(1);
+ });
  it('allows a human approval beyond thirty seconds while bounding configuration separately',async()=>{
   vi.useFakeTimers();
   const initial={connect:()=>new Promise(resolve=>setTimeout(()=>resolve({getConfiguration:async()=>({networkId:'preprod'})}),45000))};
