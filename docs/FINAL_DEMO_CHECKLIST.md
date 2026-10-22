@@ -11,6 +11,8 @@
 
 ## Video preparation
 
+A 3:30, 1080p30 American-voice review cut is exported locally at `docs/video/final/veilpass-preprod-technical-review.mp4`, with SRT captions, included source excerpts, narration and timeline. Technical checks measured −15.93 LUFS and −1.98 dBTP. The contact sheet was inspected; full owner playback and fresh-holder footage remain pending. Media stays outside Git under the existing ignore rule.
+
 The editable timecoded script is `scripts/video-final/story.json`; narration generation is `scripts/video-final/narrate.py`. Voice: natural American English, Ava. Scene descriptions form the shot list. Historical hosted footage must retain its 21 October recording label; Preprod transaction evidence is from 22 October. These are two separately recorded boundaries. Do not show a fabricated wallet approval or describe local policy checks as network proofs.
 
 Fresh holder creation needs the owner to enter a disposable vault passphrase in the browser. Automatic approval review explicitly requires user entry for a new vault credential. No password or passphrase should be sent in chat. Existing historical footage can support an honestly labeled review cut while this step is pending.
