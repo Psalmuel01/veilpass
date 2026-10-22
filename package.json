@@ -42,7 +42,8 @@
     "preprod:compatibility": "node scripts/preprod-compatibility.mjs",
     "preprod:release": "node --import tsx scripts/preprod-release.ts",
     "preprod:operator": "node --import tsx scripts/preprod-operator.ts",
-    "preprod:subscription": "node scripts/preprod-subscription.mjs"
+    "preprod:subscription": "node scripts/preprod-subscription.mjs",
+    "preprod:terminal": "node --import tsx scripts/preprod-terminal.ts"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-js": "2.5.1",

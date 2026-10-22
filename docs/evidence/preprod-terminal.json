@@ -1,0 +1,13 @@
+{
+  "network": "preprod",
+  "operator": "dedicated terminal test wallet",
+  "unshieldedAddress": "mn_addr_preprod1xq32c7fykrdmkuhm4alww426jy8rssp2hg3wjfjfawuujz7a7jxqcyw8ra",
+  "funding": {
+    "source": "official Preprod faucet",
+    "transactionId": "008eee8261cd58990fa06a3c2376e117e06c889c365889dfb67c38abc3a66903d5",
+    "indexedStatus": "SUCCESS",
+    "blockHeight": 3085347
+  },
+  "deploymentConfirmed": false,
+  "note": "Funding is not DUST registration or contract deployment. Encrypted wallet backups and checkpoints remain ignored."
+}

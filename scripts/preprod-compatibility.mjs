@@ -35,6 +35,12 @@ const source = await readFile(new URL('../node_modules/@midnight-ntwrk/midnight-
 const documents = [...source.matchAll(/"((?:\\.|[^"\\])*)": \w+Document/g)]
   .map(match => JSON.parse('"'+match[1]+'"'));
 if (documents.length < 10) throw Error('Pinned SDK document extraction failed');
+const walletSource = await readFile(new URL('../node_modules/@midnight-ntwrk/wallet-sdk-indexer-client/dist/graphql/generated/gql.js', import.meta.url), 'utf8');
+const walletDocuments = [...walletSource.matchAll(/'((?:\\.|[^'\\])*)': types\./g)]
+  .map(match => JSON.parse('"'+match[1].replace(/"/g,'\\"')+'"'));
+if (walletDocuments.length < 8) throw Error('Wallet SDK document extraction failed');
+documents.push(...walletDocuments);
+
 const fields = '__typename address state ... on ContractCall { entryPoint }';
 documents.push(
   `query VeilPassState($address: HexEncoded!) { block { height hash timestamp } contractAction(address: $address) { ${fields} } }`,

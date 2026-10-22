@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-10-22T01:52:32.842Z",
+  "checkedAt": "2026-10-22T05:38:51.096Z",
   "network": "preprod",
   "midnightJs": "4.1.1",
   "schemaCompatible": true,
-  "indexedHeight": 3083154,
+  "indexedHeight": 3085417,
   "checks": [
     {
       "operation": "BLOCK_HASH_QUERY",
@@ -51,6 +51,46 @@
     },
     {
       "operation": "UNSHIELDED_BALANCE_SUB",
+      "errors": []
+    },
+    {
+      "operation": "BlockHash",
+      "errors": []
+    },
+    {
+      "operation": "Connect",
+      "errors": []
+    },
+    {
+      "operation": "Disconnect",
+      "errors": []
+    },
+    {
+      "operation": "FetchTermsAndConditions",
+      "errors": []
+    },
+    {
+      "operation": "TransactionHistoryDetail",
+      "errors": []
+    },
+    {
+      "operation": "TransactionStatus",
+      "errors": []
+    },
+    {
+      "operation": "DustLedgerEvents",
+      "errors": []
+    },
+    {
+      "operation": "ShieldedTransactions",
+      "errors": []
+    },
+    {
+      "operation": "UnshieldedTransactions",
+      "errors": []
+    },
+    {
+      "operation": "ZswapEvents",
       "errors": []
     },
     {
