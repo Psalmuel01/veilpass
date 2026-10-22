@@ -1,0 +1,58 @@
+[
+  {
+    "id": "hook",
+    "start": 0,
+    "duration": 15,
+    "title": "Only what matters.",
+    "text": "Why should proving one qualification mean revealing your entire identity? With Veil Pass, it does not. Prove what qualifies you. Reveal nothing else."
+  },
+  {
+    "id": "intro",
+    "start": 15,
+    "duration": 15,
+    "title": "Private credentials. Practical verification.",
+    "text": "Veil Pass is a privacy-preserving credential protocol built on Midnight. Organizations issue signed qualifications. Individuals prove eligibility without sharing the entire credential."
+  },
+  {
+    "id": "issuance",
+    "start": 30,
+    "duration": 25,
+    "title": "The issuer attests. You hold the key.",
+    "text": "A developer creates a private credential wallet, with signing keys generated on their device. An authorized issuer approves enrollment and signs a qualification bound to that holder. The holder saves it in an encrypted vault, with an encrypted recovery backup. Here is our genuine hosted issuance flow."
+  },
+  {
+    "id": "policyA",
+    "start": 55,
+    "duration": 25,
+    "title": "One requirement. One private answer.",
+    "text": "A hackathon needs evidence of approved training. Veil Pass binds its request to a specific application and policy. The hosted interface shows local credential checks. Separately, our terminal operator completed a real Midnight Preprod proof and confirmed authorization. The verifier receives the result, without needing the full credential."
+  },
+  {
+    "id": "policyB",
+    "start": 80,
+    "duration": 20,
+    "title": "Same qualification. A different policy.",
+    "text": "The same test credential also meets a professional community's higher qualification requirement. A separate challenge produces a second confirmed Preprod authorization. One qualification, multiple policies, without another certificate upload. Wallet activity and timing remain observable."
+  },
+  {
+    "id": "preprod",
+    "start": 100,
+    "duration": 20,
+    "title": "Real code. Confirmed on Midnight.",
+    "text": "Compact enforces issuer authenticity, holder authorization, private eligibility, active status and replay protection. Our V3 contract and both policy authorizations are confirmed on Midnight Preprod. This recorded execution used a dedicated terminal operator."
+  },
+  {
+    "id": "security",
+    "start": 120,
+    "duration": 25,
+    "title": "Valid once. Revocable when needed.",
+    "text": "Reusing a consumed challenge is rejected. The authorized issuer can revoke a qualification, then publish the changed status to Midnight. After restoring the encrypted holder backup, a fresh authorization fails the active-membership constraint. The invalid request is rejected before any blockchain transaction is submitted."
+  },
+  {
+    "id": "closing",
+    "start": 145,
+    "duration": 35,
+    "title": "Private by design. Verifiable on Midnight.",
+    "text": "Veil Pass connects signed issuance, private eligibility proofs, reusable verification and enforceable revocation. Ninety-one root tests and thirty-nine signed-module tests passed. We have real Preprod execution and a developer verifier integration. Public-browser proofs, installed-wallet acceptance, institutional onboarding, independent review and an external pilot remain next. Explore the live website and inspect the evidence. Veil Pass. Prove what qualifies you. Reveal nothing else."
+  }
+]

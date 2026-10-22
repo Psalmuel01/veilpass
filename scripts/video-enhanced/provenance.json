@@ -1,0 +1,19 @@
+{
+  "repository": "https://github.com/Psalmuel01/veilpass",
+  "reviewedRevision": "b7e2320c8cdeecf9092b8bf27ad9732eb1b1612e",
+  "hostedFootageRecordedAt": "2026-10-21T11:00:47.349Z",
+  "preprodAcceptanceCheckedAt": "2026-10-22T14:39:49.358Z",
+  "publicCanonicalRecheck": "All four transactions SUCCESS; deployed verifier pins checked through public /api/preprod-evidence",
+  "sources": {
+    "docs/video/final/veilpass-preprod-technical-review.mp4": "80a912789bace43c7e9dd3ee4057fc6d632fba23a9b8de52036fea21b1fd6648",
+    ".cache/video-hosted/hosted-browser-raw.webm": "319363014eed4cbff77bba1cb3a86d8d48bcbf449c9ddcf20eb6778adf316010",
+    "docs/evidence/preprod-authorization.json": "7b72cab464796de9f4be870d35d39e3969d9dfd91baa7b84b1784b19b28a3ee9",
+    "docs/evidence/preprod-terminal.json": "180125b8f5297cede2cfcd9baa4d025e78171bdad0a2768c503342dd25add741",
+    "integrations/issuance/authorization.compact": "59761dc76851c539e1f5e905dfb916cf51129ce6270627d42b4b6bf1c80fbc8a",
+    "integrations/issuance/src/verifier.ts": "c8ed3928f525f75bd2207540c055dcae5cd762fe7da84f9eb3eb9442394df83e",
+    "docs/screenshots/theme/hackathon-dark.png": "53520f24cb8b7a6e8a5ceb8fa8d4b10d57124a838d9ccc9e6070d96f4460ac2c",
+    "docs/screenshots/theme/community-dark.png": "2b49797b64462adcd99ca4742dde3ac95e374e321d10fe3e728900ce93913675"
+  },
+  "truthfulness": "Hosted local credential checks and dedicated-terminal-operator Preprod proofs are separately labeled. No fabricated UI, transaction or installed-wallet approval.",
+  "referenceInterfaceNote": "Genuine repository screenshots of the two local reference applications; labeled recorded reference interfaces, not public-browser ZK execution."
+}

@@ -55,3 +55,5 @@ apps/web/public/zk-signed/
 apps/web/.next-preprod-integration/
 
 apps/web/.next-final-demo/
+
+scripts/video-enhanced/__pycache__/
