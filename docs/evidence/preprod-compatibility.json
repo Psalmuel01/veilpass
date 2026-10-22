@@ -1,0 +1,67 @@
+{
+  "checkedAt": "2026-10-22T01:52:32.842Z",
+  "network": "preprod",
+  "midnightJs": "4.1.1",
+  "schemaCompatible": true,
+  "indexedHeight": 3083154,
+  "checks": [
+    {
+      "operation": "BLOCK_HASH_QUERY",
+      "errors": []
+    },
+    {
+      "operation": "TX_ID_QUERY",
+      "errors": []
+    },
+    {
+      "operation": "DEPLOY_TX_QUERY",
+      "errors": []
+    },
+    {
+      "operation": "DEPLOY_CONTRACT_STATE_TX_QUERY",
+      "errors": []
+    },
+    {
+      "operation": "LATEST_CONTRACT_TX_BLOCK_HEIGHT_QUERY",
+      "errors": []
+    },
+    {
+      "operation": "TXS_FROM_BLOCK_SUB",
+      "errors": []
+    },
+    {
+      "operation": "CONTRACT_STATE_QUERY",
+      "errors": []
+    },
+    {
+      "operation": "CONTRACT_STATE_SUB",
+      "errors": []
+    },
+    {
+      "operation": "BOTH_STATE_QUERY",
+      "errors": []
+    },
+    {
+      "operation": "UNSHIELDED_BALANCE_QUERY",
+      "errors": []
+    },
+    {
+      "operation": "QUERY_UNSHIELDED_BALANCES_WITH_OFFSET",
+      "errors": []
+    },
+    {
+      "operation": "UNSHIELDED_BALANCE_SUB",
+      "errors": []
+    },
+    {
+      "operation": "VeilPassState",
+      "errors": []
+    },
+    {
+      "operation": "VeilPassAuthorization",
+      "errors": []
+    }
+  ],
+  "chainSubmission": false,
+  "note": "Read-only GraphQL validation, not proof or wallet acceptance."
+}

@@ -1,0 +1,15 @@
+{
+  "network": "offline-synthetic",
+  "proofServer": "8.1.3",
+  "compiler": "0.31.1",
+  "runtime": "0.16.0",
+  "circuit": "authorize",
+  "proofSucceeded": true,
+  "elapsedMs": 63197,
+  "containerMemoryLimitGiB": 6,
+  "observedMemoryGiB": 2.748,
+  "peakMemoryMeasured": false,
+  "submittedToChain": false,
+  "scope": "Actual synthetic V3 proof on holder-controlled Mac; not a public Preprod transaction or continuous hosted prover. Temporary container removed and Docker stopped after test.",
+  "recordedAt": "2026-10-22T01:57:30Z"
+}

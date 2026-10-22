@@ -38,7 +38,11 @@
     "test:signed:browser": "VEILPASS_SIGNED_BROWSER=only node --import tsx scripts/signed-network-e2e.ts",
     "signed:artifacts": "node scripts/signed-artifacts.mjs",
     "signed:assets": "node scripts/signed-assets.mjs",
-    "test:signed:api": "node --import tsx scripts/signed-network-api-check.mjs"
+    "test:signed:api": "node --import tsx scripts/signed-network-api-check.mjs",
+    "preprod:compatibility": "node scripts/preprod-compatibility.mjs",
+    "preprod:release": "node --import tsx scripts/preprod-release.ts",
+    "preprod:operator": "node --import tsx scripts/preprod-operator.ts",
+    "preprod:subscription": "node scripts/preprod-subscription.mjs"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-js": "2.5.1",
@@ -75,7 +79,8 @@
     "typescript": "5.9.3",
     "vite": "7.3.7",
     "vitest": "5.0.5",
-    "ws": "8.22.0"
+    "ws": "8.22.0",
+    "graphql": "16.14.2"
   },
   "overrides": {
     "@midnight-ntwrk/ledger-v8": "8.1.0",

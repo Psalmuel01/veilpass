@@ -1,0 +1,8 @@
+{
+  "checkedAt": "2026-10-22T02:04:59.972Z",
+  "network": "preprod",
+  "protocol": "graphql-transport-ws",
+  "subscriptionDelivered": true,
+  "indexedHeight": 3083278,
+  "chainSubmission": false
+}

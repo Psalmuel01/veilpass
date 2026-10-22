@@ -1,3 +1,4 @@
+import { connectWithTimeout } from "../../../packages/network/wallet-connection.mjs";
 import "./bind-fetch";
 import type { ConnectedAPI } from "@midnight-ntwrk/dapp-connector-api";
 import { CompiledContract } from "@midnight-ntwrk/compact-js";
@@ -63,10 +64,7 @@ export async function connectSignedWallet(
     throw new Error(
       "Install a Midnight wallet, then refresh wallet discovery.",
     );
-  const api = await initial.connect(config.network);
-  if ((await api.getConfiguration()).networkId !== config.network)
-    throw new Error(`Switch your wallet to ${config.network}.`);
-  return api;
+  return connectWithTimeout(initial, config.network);
 }
 export async function proveSigned(
   api: ConnectedAPI,
