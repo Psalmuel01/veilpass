@@ -1,3 +1,7 @@
+# Current signed V3 scope
+
+The deployed signed V3 flow uses holder-generated keys, issuer signatures, encrypted vault recovery, private eligibility and active-status membership. The issuer knows claims; transaction timing and wallet metadata remain public. A trusted prover can observe supplied private witnesses. Browser compromise can expose an unlocked vault. Status changes require confirmed publication and invalidate older receipts. See [current deployment boundaries](FINAL_DEPLOYMENT_REPORT.md). The material below describes the earlier protocol and must be read in that historical scope.
+
 # Threat model
 
 Scope: trusted verifier pins the genuine contract and domain; cryptographic/runtime assumptions hold. Workbench is local developer execution with server-known witnesses. No production security audit has been performed.

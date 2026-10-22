@@ -6,6 +6,10 @@ VeilPass explores reusable developer qualifications: a training issuer commits a
 
 For a complete feature inventory, browser walkthrough, test commands and prioritized roadmap, see [feature status and testing guide](docs/FEATURE_STATUS.md).
 
+## Current Preprod acceptance — 22 October 2026
+
+The signed V3 lifecycle has now passed on real Midnight Preprod: published active status, two confirmed eligibility authorizations, independent verification, durable replay rejection, confirmed revocation and a fresh revoked-credential circuit rejection after encrypted backup recovery. See the [recorded acceptance evidence](docs/evidence/preprod-authorization.json) and [final deployment report](docs/FINAL_DEPLOYMENT_REPORT.md). This was a dedicated terminal operator test using a synthetic credential. Installed-wallet and hosted-browser proof acceptance remain pending; public proof activation stays disabled.
+
 ## What actually works
 
 - **Existing proof-backed path (`/wallet`):** approved university batch, private graduation predicate, scoped replay protection, encrypted browser vault, wallet/provider integration and historical local Midnight network evidence.
@@ -24,7 +28,7 @@ The signed flow now includes `/holder` and `/issuer`: device-generated holder ke
 
 A separate V3 contract and verifier use the official credential constraints, private active-status membership, pinned circuit/issuer keys, ledger-time request windows and durable replay protection. Actual local-network deployment, both proof-backed policies, independent confirmed-transaction verification and revocation passed; see [V3 network evidence](docs/evidence/signed-network.json). V2 remains a separate flow.
 
-The app now uses **Node 24.22.0** and one npm workspace lockfile so all Midnight components share one WASM runtime. The browser now passes the [complete signed proof lifecycle](docs/evidence/signed-browser-network.json) using a disposable connector wallet; installed-wallet acceptance and a configured persistent deployment remain required. The hosted credential journey is available; institutional issuer onboarding, operational key rotation, independent review and the external pilot remain incomplete. Start with [Preprod account and wallet setup](docs/PREPROD_SETUP.md).
+The app now uses **Node 24.22.0** and one npm workspace lockfile so all Midnight components share one WASM runtime. The browser now passes the [complete signed proof lifecycle](docs/evidence/signed-browser-network.json) using a disposable connector wallet; installed-wallet and hosted-browser Preprod acceptance remain required. The hosted credential journey is available; institutional issuer onboarding, operational key rotation, independent review and the external pilot remain incomplete. Start with [Preprod account and wallet setup](docs/PREPROD_SETUP.md).
 
 ## Hosted deployment and confirmation
 
@@ -43,9 +47,9 @@ npm run preprod:release -- .private/hosted-preprod/render.env .private/preprod-t
 
 A missing `deployment.json` means the terminal tool has not recorded confirmation. An attempt file or transaction reference alone is insufficient. The independent release check writes `docs/evidence/preprod-release.json` only on success. Do not start a second `bootstrap`, `register`, `deploy` or wallet `status` process while the existing operator run is active. Keep all `.private` contents out of Git and chat.
 
-Hosted builds now install the exact public proving assets from a hash-pinned GitHub release. A restricted Render HTTP/WebSocket gateway keeps Blockfrost authentication server-side; its read-only checks are recorded in [gateway evidence](docs/evidence/preprod-gateway.json). Public activation and authorization acceptance remain separate gates.
+Hosted builds now install the exact public proving assets from a hash-pinned GitHub release. A restricted Render HTTP/WebSocket gateway keeps Blockfrost authentication server-side; its read-only checks are recorded in [gateway evidence](docs/evidence/preprod-gateway.json). Terminal authorization acceptance has passed; public browser activation remains a separate gate.
 
-Contract confirmation is one milestone. Hosted two-application proofs, revocation acceptance, installed-wallet tests and external review remain separate release gates; the hosted readiness endpoint deliberately keeps `productionReady: false` until those gates are addressed.
+Contract confirmation is one milestone. Hosted-browser proofs, installed-wallet tests and external review remain separate release gates; the hosted readiness endpoint deliberately keeps `productionReady: false` until those gates are addressed.
 
 ## Run it
 

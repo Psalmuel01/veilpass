@@ -18,9 +18,11 @@ The public summary requires material Midnight progress during the applicable wav
 - Historical legacy network evidence: `docs/evidence/local-e2e.json` only; not V2/Preprod proof.
 - Pilot: `PILOT_RESULTS.md`; no external participants.
 
-## Release/submission gaps
+## Current release/submission gaps — 22 October 2026
 
-Integrate official signed credentials/holder keys, scalable authenticated issuance and issuer/status lifecycle. Independently review the implemented V2 chain adapter/browser flow, deploy on Preprod and operate two independently deployed verifier applications. Keep dependency audit current (the latest recorded audit has zero known advisories). Conduct external pilot. Create and verify pitch deck and demo video. Confirm official rubric, eligible contribution window, team eligibility/registration, repository topic and third-party license provenance. Do not claim those items complete.
+Signed issuance, holder keys, encrypted recovery, persistent hosted state and the real V3 Preprod lifecycle are implemented. See [final deployment report](FINAL_DEPLOYMENT_REPORT.md) and [final demo checklist](FINAL_DEMO_CHECKLIST.md). The terminal test confirmed two policies, replay protection and revocation. Installed-wallet and hosted-browser proof acceptance, persistent prover hosting, independent review, issuer governance and an external pilot remain open. The updated judges' video is being prepared; do not call it complete before export and review.
+
+The earlier rules review above is historical. Reconfirm the current eligible wave, deadline, rubric, participant registration, repository topic and licensing before submission. No entry has been submitted.
 
 ## Licensing
 

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "problem",
+    "start": 0,
+    "duration": 20,
+    "title": "Qualifications open doors. Oversharing should not.",
+    "text": "Every time we apply for an opportunity or join a professional community, we are asked to prove what we know. Too often, that means sharing an entire certificate. What if an application could confirm that you qualify, without collecting the whole credential? That is why we built Veil Pass.",
+    "visual": "Actual homepage, with restrained certificate-to-eligibility motion graphic."
+  },
+  {
+    "id": "introduction",
+    "start": 20,
+    "duration": 20,
+    "title": "Private credentials. Real Midnight execution.",
+    "text": "Veil Pass is a privacy-preserving credential protocol built on Midnight. Organizations issue signed qualifications. Holders control their keys; applications verify specific requirements. Let us see the hosted credential experience and independently checked public Preprod execution.",
+    "visual": "Current hosted website and real holder interface; label the two demonstration boundaries."
+  },
+  {
+    "id": "holder",
+    "start": 40,
+    "duration": 12,
+    "title": "The holder creates the key.",
+    "text": "First, the holder creates a private credential wallet. The signing key is generated on their device. An encrypted vault and recovery backup protect their qualification.",
+    "visual": "Authentic holder creation and encrypted recovery controls; never reveal a passphrase."
+  },
+  {
+    "id": "issuance",
+    "start": 52,
+    "duration": 13,
+    "title": "The issuer attests. The holder owns.",
+    "text": "Our sample issuer approves a holder-bound enrollment. The holder signs the request; the issuer signs the qualification. The issuer confirms the achievement. The holder controls the key.",
+    "visual": "Actual authorized hosted issuance and received credential; label sample issuer."
+  },
+  {
+    "id": "hackathon",
+    "start": 65,
+    "duration": 30,
+    "title": "Application A \u00b7 Hackathon eligibility",
+    "text": "A hackathon needs to know whether a developer completed approved training. In our public Preprod test, a fresh challenge binds the request to that application and policy. Midnight's Compact circuit checks the issuer and holder signatures, the private qualification, and active status. A dedicated test operator submits the proof-backed transaction. The independent verifier accepts its confirmed result, rather than receiving the full credential.",
+    "visual": "Recorded actual Preprod Policy A transaction, live canonical verification and block evidence. Operator submission, not an installed-wallet approval."
+  },
+  {
+    "id": "community",
+    "start": 95,
+    "duration": 23,
+    "title": "Application B \u00b7 Professional community",
+    "text": "Now the same test credential is used for a professional community requiring a higher qualification level. It receives a different challenge and a separate confirmed authorization. One qualification, different requirements, without another certificate upload. Less disclosure does not mean complete anonymity.",
+    "visual": "Actual Policy B authorization and different reference; same recorded synthetic credential."
+  },
+  {
+    "id": "replay",
+    "start": 118,
+    "duration": 20,
+    "title": "A consumed request cannot authorize twice.",
+    "text": "Privacy is only part of the design. Each authorization is bound to its application, policy and challenge. Once a verifier consumes that challenge, trying to use it again is rejected. Consumption is stored durably, so restarting the service does not make an old request usable again.",
+    "visual": "Genuine replay rejection and consumed challenge verification; preserve execution mode label."
+  },
+  {
+    "id": "revocation",
+    "start": 138,
+    "duration": 25,
+    "title": "Revoked by the issuer. Enforced by the protocol.",
+    "text": "The authorized issuer revokes the test credential. The administrator then publishes the changed status root to Midnight Preprod. We restore the original encrypted holder backup and attempt a fresh authorization. It fails the actual active-membership constraint, even though the holder still has the signed credential. Updating only the issuer database would not be enough for network revocation.",
+    "visual": "Actual issuer action, confirmed publishStatus reference and real fresh revoked-authorization rejection."
+  },
+  {
+    "id": "technical",
+    "start": 163,
+    "duration": 25,
+    "title": "Inspectable contract. Reproducible evidence.",
+    "text": "Compact enforces issuer and holder signatures, private eligibility, active-status membership and replay protection. Inspect the Preprod contract, confirmed transactions, pinned verifier keys and reproducible tests in our repository. Our TypeScript verifier connects these checks to applications. Wallet activity and timing remain observable.",
+    "visual": "Actual Compact source, passing tests, verified deployment evidence and actual explorer when available."
+  },
+  {
+    "id": "closing",
+    "start": 188,
+    "duration": 22,
+    "title": "Prove what qualifies you. Reveal nothing else.",
+    "text": "Veil Pass is deployed on Midnight Preprod, with hosted signed issuance and a verified network lifecycle. Installed-wallet acceptance, independent review and an external pilot remain next. Private verification, built for real opportunities. Veil Pass. Prove what qualifies you. Reveal nothing else.",
+    "visual": "Canonical website, real proof references, honest remaining gates and GitHub link."
+  }
+]

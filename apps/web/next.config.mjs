@@ -27,7 +27,7 @@ const config = {
       throw new Error('Backend must be an HTTPS origin without credentials or a path');
     // Override only these existing API routes. No arbitrary upstream URLs or
     // caller-supplied proxy paths; browser and frontend assets stay on Vercel.
-    return { beforeFiles: ['issuance', 'signed-network', 'readiness'].map(name => ({
+    return { beforeFiles: ['issuance', 'signed-network', 'readiness', 'preprod-evidence'].map(name => ({
       source: `/api/${name}`, destination: `${url.origin}/api/${name}`,
     })) };
   },

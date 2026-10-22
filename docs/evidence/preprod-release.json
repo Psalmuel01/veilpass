@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-22T06:31:29.100Z",
+  "checkedAt": "2026-10-22T14:41:51.672Z",
   "network": "preprod",
   "contractAddress": "5120e2bc49267ad91653edb9806a010da0bb0428d78acd9dbf0e994a058cd24a",
   "issuerFingerprint": "52552b8a73de3b266948ab0f080a00b415a9bc8228f20c51204da1087ee50ba8",
@@ -10,8 +10,8 @@
     "root": "27484b39b93eab6349f57abc6919f8719f8a9ce1e017387bd559de85a8c2d8a0",
     "domain": "7665696c706173733a70726570726f643a7369676e65643a7633000000000000",
     "active": true,
-    "statusVersion": "0",
-    "observedAt": 1792650672
+    "statusVersion": "6",
+    "observedAt": 1792680096
   },
   "verifierKeys": {
     "authorize": "019173608abb9b4c57acf38d1cf3c7680e7d882dc63c3bc7039b87d9715e47d8",

@@ -53,3 +53,5 @@ apps/web/public/zk-signed/
 .next-release-readiness/
 
 apps/web/.next-preprod-integration/
+
+apps/web/.next-final-demo/

@@ -1,32 +1,31 @@
 import Link from 'next/link';
 import { ArrowUpRight, GraduationCap, ShieldCheck } from 'lucide-react';
 import { AppShell } from '../../components/app-shell';
-const integration = `import { createVeilPassVerifier } from './packages/sdk';
-import { FileChallengeStore } from './packages/sdk/file-store';
-
-const verifier = createVeilPassVerifier({
-  audience: AUDIENCE_HEX,
-  networkDomain: NETWORK_DOMAIN_HEX,
+const integration = `import { createSignedVerifier } from './integrations/issuance/src/verifier';
+// chain: SignedMidnightAdapter pinned to the actual V3 contract,
+// issuer/domain and all three deployed verifier keys.
+// database: PostgresStorage with a stable shared database.
+const verifier = createSignedVerifier({
+  audience: APPLICATION_A_HEX,
+  domain: PREPROD_DOMAIN_HEX,
   contractAddress: PINNED_CONTRACT_HEX,
-  policyId: 'approved-training',
-  store: new FileChallengeStore(PRIVATE_DIRECTORY),
-  chain: confirmedMidnightAdapter,
+  policy: 1,
+  chain: pinnedSignedMidnightAdapter,
+  store: database.challengeStore(PINNED_CONTRACT_HEX + ':1'),
 });
-
-const challenge = await verifier.createChallenge(120);
-const result = await verifier.verifyPresentation({
-  version: 2,
+const challenge = await verifier.createChallenge(300);
+const result = await verifier.verify({
+  version: 3,
   challengeId: challenge.id,
   transactionReference: confirmedTransactionId,
 });
-
 if (result.valid && result.eligible) {
   // Authorize one action in your authenticated application session.
 }`;
 export default function Developers() {
   return <AppShell section="Developers"><main className="vp-docs"><header className="vp-docs-header"><span className="vp-eyebrow">VEILPASS FOR DEVELOPERS</span><h1>A better question.<br/><span>A smaller data footprint.</span></h1><p>Build eligibility into your application with contextual challenges, explicit trust boundaries, and a focused TypeScript API.</p><nav className="vp-docs-tabs" aria-label="Documentation sections"><a href="#quickstart">Quickstart</a><a href="#integration">Integration</a><a href="#policies">Policies</a><a href="#security">Security</a></nav></header>
-      <section className="vp-docs-section" id="quickstart"><h2>Start with the repository</h2><p>The SDK is an unpublished, private source package at <code>packages/sdk</code>. Compile the lifecycle bindings before using it. The package name is reserved for local development; no npm publication is claimed.</p><pre className="vp-docs-code">{`nvm use\nnpm ci\nnpm run contract:check\nnpm run lifecycle:check\nnpm test\nVEILPASS_WORKBENCH=1 npm run dev`}</pre><div className="vp-docs-callout">Node 22.22.0 · Compact 0.31.1 · runtime 0.16.0. The local sandbox runs generated circuit constraints with sample data. A real proof-backed flow requires the corresponding proof artifacts, wallet, providers, and deployed contract.</div></section>
-      <section className="vp-docs-section" id="integration"><h2>Integrate a verifier</h2><p>Create a challenge on your server, have the holder authorize its exact context, and inspect the result. Eligibility authorizes a specific action; your application owns session authentication.</p><pre className="vp-docs-code">{integration}</pre><h3>Bring an authenticated chain adapter</h3><p>Default SDK mode accepts confirmed Midnight authorization only. The adapter must authenticate a successful finalized transaction at the configured contract, inspect its exact public inputs, and read current canonical status. A holder-provided transaction reference or cached Boolean does not establish verification. The supplied V2 sandbox adapter explicitly runs in generated-execution mode; the separate live adapter checks real confirmed transactions against pinned circuit verifier keys and current canonical state.</p></section>
+      <section className="vp-docs-section" id="quickstart"><h2>Start with the repository</h2><p>The SDK is an unpublished, private source package at <code>packages/sdk</code>. Compile the lifecycle bindings before using it. The package name is reserved for local development; no npm publication is claimed.</p><pre className="vp-docs-code">{`nvm use\nnpm ci\nnpm run contract:check\nnpm run lifecycle:check\nnpm test\nVEILPASS_WORKBENCH=1 npm run dev`}</pre><div className="vp-docs-callout">Node 24.22.0 · Compact 0.31.1 · runtime 0.16.0. The local sandbox runs generated circuit constraints with sample data. A real proof-backed flow requires the corresponding proof artifacts, wallet, providers, and deployed contract.</div></section>
+      <section className="vp-docs-section" id="integration"><h2>Integrate a V3 verifier</h2><p><Link href="/evidence">Inspect actual Preprod execution and live transaction checks →</Link></p><p>Create a challenge on your server, have the holder authorize its exact context, and inspect the result. Eligibility authorizes a specific action; your application owns session authentication.</p><pre className="vp-docs-code">{integration}</pre><h3>Bring an authenticated chain adapter</h3><p>Default SDK mode accepts confirmed Midnight authorization only. The adapter must authenticate a successful finalized transaction at the configured contract, inspect its exact public inputs, and read current canonical status. A holder-provided transaction reference or cached Boolean does not establish verification. The supplied V2 sandbox adapter explicitly runs in generated-execution mode; the separate live adapter checks real confirmed transactions against pinned circuit verifier keys and current canonical state.</p></section>
       <section className="vp-docs-section" id="live"><h2>Run live V2 verification</h2><p>The live page imports the qualification in browser memory, generates a proof through a holder-controlled loopback prover, requests wallet approval, waits for confirmation and sends only the transaction reference to the server-side SDK.</p><pre className="vp-docs-code">{`npm run lifecycle:compile
 # Docker Desktop and Chrome required
 npm run demo:live
@@ -36,7 +35,7 @@ npm run test:live:browser`}</pre><p>The demo launches a disposable local chain a
       <section className="vp-docs-section" id="errors"><h2>Failures with a clear next step.</h2><table><tbody>{[
         ['CHALLENGE_EXPIRED', 'Request a fresh challenge.'], ['REPLAY', 'Reject reuse. Do not repeat the authorized action.'], ['STATUS_CHANGED', 'Request a fresh authorization against current status.'], ['STALE_STATE', 'Retry after canonical state becomes available.'], ['UNCONFIRMED', 'Check transaction finality, contract and execution mode.'], ['BINDING', 'Reject audience, policy, nonce or deadline substitution.'], ['ISSUER_INACTIVE', 'Deny eligibility.'], ['MALFORMED', 'Reject incompatible presentations.'],
       ].map(([code, text]) => <tr key={code}><td>{code}</td><td>{text}</td></tr>)}</tbody></table></section>
-      <section className="vp-docs-section" id="security"><h2>Privacy begins with honest boundaries.</h2><p>The SDK receives challenge IDs and authorization references, not raw credentials. V2 request hashes contain no universal holder-derived identifier. Public batches, challenge context, wallet metadata and timing can still correlate activity.</p><h3>Credential trust and custody</h3><p>The current V2 batch is authenticated through a constructor-pinned Merkle root, rather than VC signatures. Sample secrets are bearer material known by the sample issuer and sandbox server. Official signed-credential integration, holder-owned binding and scalable issuance remain in development.</p><h3>Revocation and freshness</h3><p>New authorizations check current contract status. The SDK rejects a historical authorization after it observes any batch status change. Canonical state age is bounded; an observation-to-action race remains. This does not revoke tokens another application already issued.</p><h3>Storage and session boundaries</h3><p>Challenge consumption uses atomic durable local files. Multi-host deployments need shared transactional storage. The sample workspace is local-only and expires after one hour or process restart. Its browser pages share one origin; the separate HTTP harness exercises two verifier origins. No external pilot or production deployment is implied.</p></section>
+      <section className="vp-docs-section" id="security"><h2>Privacy begins with honest boundaries.</h2><p>The SDK receives challenge IDs and authorization references, not raw credentials. V2 request hashes contain no universal holder-derived identifier. Public batches, challenge context, wallet metadata and timing can still correlate activity.</p><h3>Credential trust and custody</h3><p>The V3 flow checks issuer and holder signatures with private qualification and active-status membership constraints. Holder signing keys are generated on the device and protected in an encrypted vault. The issuer still knows the claims it certifies; network metadata can correlate activity. The separate V2 sample remains historical.</p><h3>Revocation and freshness</h3><p>New authorizations check current contract status. The SDK rejects a historical authorization after it observes any batch status change. Canonical state age is bounded; an observation-to-action race remains. This does not revoke tokens another application already issued.</p><h3>Storage and session boundaries</h3><p>Hosted V3 challenge consumption uses atomic shared Neon/Postgres storage. Local development can use SQLite. The sample workspace is local-only and expires after one hour or process restart. Its browser pages share one origin; the separate HTTP harness exercises two verifier origins. No external pilot or production deployment is implied.</p></section>
       <footer className="vp-app-footer"><span>Source guides: docs/SDK_GUIDE.md · docs/THREAT_MODEL.md</span><Link href="/holder">Back to workspace →</Link></footer>
     </main></AppShell>;
 }

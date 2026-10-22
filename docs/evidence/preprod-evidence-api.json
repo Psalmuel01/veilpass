@@ -1,0 +1,9 @@
+{
+  "checkedAt": "2026-10-22T15:01:14.639Z",
+  "scope": "Loopback production build with live canonical Preprod reads",
+  "fourConfirmedTransactions": true,
+  "pinsVerified": true,
+  "wrongOriginRejected": true,
+  "publicHosted": false,
+  "productionReady": false
+}
