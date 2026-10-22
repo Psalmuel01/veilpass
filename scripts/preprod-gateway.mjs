@@ -1,10 +1,11 @@
+import { preprodNetworkEnabled } from '../packages/network/preprod-enabled.mjs';
 import { WebSocket, WebSocketServer } from 'ws';
 import { gatewayDocuments, validateGatewayOperation } from './preprod-gateway-policy.mjs';
 import { readFile } from 'node:fs/promises';
 export async function preprodGateway(server,env=process.env){
  const config=JSON.parse(await readFile('deploy/preprod/network.json','utf8'));
  const address=config.contractAddress,documents=await gatewayDocuments();
- const enabled=()=>env.VEILPASS_SIGNED_NETWORK==='1'&&!!env.BLOCKFROST_PROJECT_ID;
+ const enabled=()=>preprodNetworkEnabled(env)&&!!env.BLOCKFROST_PROJECT_ID;
  const origins=new Set([env.VEILPASS_PUBLIC_ORIGIN,env.VEILPASS_FRONTEND_ORIGIN].filter(Boolean));
  const buckets=new Map();let active=0;
  const admit=(key)=>{const now=Date.now(),slot=buckets.get(key);if(buckets.size>4096){for(const [k,v]of buckets)if(v.until<now)buckets.delete(k);if(buckets.size>4096)return false;}if(!slot||slot.until<now){buckets.set(key,{count:1,until:now+60000});return true;}return ++slot.count<=60;};

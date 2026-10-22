@@ -1,6 +1,6 @@
 # What works, how to test it, and what comes next
 
-Updated 20 October 2026. This is a local developer preview with a real, separately tested Midnight contract lifecycle. The V2 browser sandbox uses generated Compact execution; it does not generate a ZK proof or submit a V2 transaction.
+Updated 22 October 2026. The public website uses Vercel, a Render Free API and Neon persistence. V3 is deployed and independently verified on Midnight Preprod; actual two-policy authorization and replay checks have passed, with final revocation-proof acceptance and public activation still under validation. See [hosted Preprod setup](HOSTED_PREPROD.md) and [partial network evidence](evidence/preprod-authorization-partial.json). The V2 browser sandbox uses generated Compact execution; it does not generate a ZK proof or submit a V2 transaction.
 
 The separate `/live` page now provides real browser proving, submission, confirmation and chain-backed SDK verification against a configured deployment. See [live V2 setup](LIVE_V2.md); the ordinary preview reports unconfigured until a live deployment is supplied.
 

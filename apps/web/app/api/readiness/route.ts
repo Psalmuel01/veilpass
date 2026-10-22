@@ -1,3 +1,4 @@
+import { preprodNetworkEnabled } from '../../../../../packages/network/preprod-enabled.mjs';
 import { NextRequest, NextResponse } from "next/server";
 import { hostedServiceConfigured, serviceRequestAllowed, admitServiceRequest } from "../../../lib/service-access";
 export const dynamic = "force-dynamic";
@@ -18,7 +19,7 @@ export async function GET(request: NextRequest) {
       (process.env.VEILPASS_ISSUER_STORAGE_KEY?.length || 0) >= 32 &&
       (process.env.VEILPASS_ISSUER_ADMIN_TOKEN?.length || 0) >= 32;
     return NextResponse.json({ status: issuer ? "issuer-ready" : "unavailable", issuer,
-      database: true, networkConfigured: process.env.VEILPASS_SIGNED_NETWORK === "1",
+      database: true, networkConfigured: preprodNetworkEnabled(),
       productionReady: false, acceptance: "Preprod contract, installed wallet and external review require separate evidence" },
       { status: issuer ? 200 : 503, headers });
   } catch {

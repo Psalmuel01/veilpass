@@ -60,4 +60,10 @@ This rotates **storage encryption**, not the credential signing key. A signing-k
 
 ## External acceptance
 
-Before public production use: record an actual Preprod deployment, obtain sufficiently capable trusted proving infrastructure, test installed Lace and mobile browsers, commission an independent security review, and run a consenting issuer/two-application pilot. Track issuance attempts/successes, proof and verification latency, rejection reasons and recovery success using aggregate measurements. Do not log private credentials or proof witnesses. External pilot results and independent findings must come from real participants; local regression tests are not a substitute.
+The V3 Preprod deployment is confirmed in `evidence/preprod-terminal.json`. Before public production use: complete hosted proof acceptance, ensure an available trusted prover/status publisher, test installed Lace and mobile browsers, commission an independent security review, and run a consenting issuer/two-application pilot. Track issuance attempts/successes, proof and verification latency, rejection reasons and recovery success using aggregate measurements. Do not log private credentials or proof witnesses. External pilot results and independent findings must come from real participants; local regression tests are not a substitute.
+
+## Preprod status publication
+
+After issuance or revocation changes, run the dedicated operator's `publish --submit` command from [the hosted guide](HOSTED_PREPROD.md). It skips matching roots, rechecks freshness before submission and records canonical confirmation. Issuer API revocation alone does not update the contract root. Do not promise network revocation until publication confirms. Keep operator wallets and administrator secrets off Vercel/Render. Never run two operator wallet processes concurrently.
+
+Public network activation is versioned in `deploy/preprod/activation.json` after complete acceptance; `VEILPASS_SIGNED_NETWORK=0` is an emergency backend kill switch. Git pushes carry reviewed config/artifact pins without generating new contracts or issuer identities.

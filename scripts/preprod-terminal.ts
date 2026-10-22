@@ -39,8 +39,8 @@ for(const method of ['log','info','warn','error','debug'] as const)console[metho
 globalThis.WebSocket=WebSocket as unknown as typeof globalThis.WebSocket;
 setNetworkId('preprod');
 const [envFile,action]=process.argv.slice(2);
-if(['register','deploy','bootstrap','acceptance'].includes(action)&&!process.argv.includes('--submit'))throw Error('Mutation requires --submit');
-if(!envFile || !['init','status','register','deploy','bootstrap','acceptance'].includes(action))throw Error('Usage: preprod-terminal <private-env-file> init|status|register|deploy|bootstrap|acceptance [--submit]');
+if(['register','deploy','bootstrap','acceptance','publish'].includes(action)&&!process.argv.includes('--submit'))throw Error('Mutation requires --submit');
+if(!envFile || !['init','status','register','deploy','bootstrap','acceptance','publish'].includes(action))throw Error('Usage: preprod-terminal <private-env-file> init|status|register|deploy|bootstrap|acceptance|publish [--submit]');
 const env=parseEnv(await readFile(envFile,'utf8'));
 const password=env.VEILPASS_ISSUER_STORAGE_KEY,token=env.BLOCKFROST_PROJECT_ID;
 if(!password || !token)throw Error('Existing private storage key and Blockfrost project required');
@@ -124,6 +124,10 @@ try{
   const coins=state.unshielded.availableCoins.filter(c=>c.utxo.type===unshieldedToken().raw && c.meta.registeredForDustGeneration===false);
   const report={checkedAt:new Date().toISOString(),network:'preprod',unshieldedAddress:address,nightBaseUnits:night.toString(),dustBaseUnits:dust.toString(),unregisteredNightOutputs:coins.length,synced:true};
   await writeFile(path.join(directory,'wallet-status.json'),JSON.stringify(report,null,2)+'\n',{mode:0o600});operatorLog(JSON.stringify(report,null,2));
+  if(action==='publish'){
+   stage='publishing hosted status to Preprod';
+   await (await import('./preprod-publish.js')).publishPreprodStatus(wallet,config,env as Record<string,string>,directory,operatorLog);
+  }
   if(action==='acceptance'){
    stage='running real Preprod authorization acceptance';
    await (await import('./preprod-acceptance.js')).preprodAcceptance(wallet,config,env as Record<string,string>,directory,operatorLog);

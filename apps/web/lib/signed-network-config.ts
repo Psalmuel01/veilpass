@@ -1,3 +1,4 @@
+import { preprodNetworkEnabled } from '../../../packages/network/preprod-enabled.mjs';
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { existsSync } from "node:fs";
@@ -12,7 +13,7 @@ export function signedProjectRoot(cwd = process.cwd()) {
 }
 import type { SignedNetworkConfig } from "./signed-midnight";
 export async function signedNetworkConfig(): Promise<SignedNetworkConfig> {
-  if (process.env.VERCEL || process.env.VEILPASS_SIGNED_NETWORK !== "1")
+  if (process.env.VERCEL || !preprodNetworkEnabled())
     throw new Error("Signed network is not configured");
   const { decodeWire } = await import(
     "../../../integrations/issuance/src/wire"

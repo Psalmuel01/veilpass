@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "url": "https://github.com/Psalmuel01/veilpass/releases/download/preprod-v3-20261022/veilpass-v3-preprod-artifacts.tar.gz",
-  "bytes": 90114044,
-  "sha256": "dc3a7f3895886d0d0ad471dd9c1094bd974601d90ca9408b9da2cb1071274b50",
+  "url": "https://github.com/Psalmuel01/veilpass/releases/download/preprod-v3-20261022/veilpass-v3-preprod-artifacts-portable.tar.gz",
+  "bytes": 90112177,
+  "sha256": "c888658dca0c7d42f146862fb44817d089c1140907698576775f8af2b6260924",
   "authorizationSourceSha256": "59761dc76851c539e1f5e905dfb916cf51129ce6270627d42b4b6bf1c80fbc8a",
   "files": {
     "keys/authorize.prover": {

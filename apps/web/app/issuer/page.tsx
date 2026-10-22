@@ -40,7 +40,7 @@ export default function IssuerControls() {
         );
       } else {
         setNotice(
-          "Credential revoked. Subsequent checks against this issuer will reject it.",
+          "Credential revoked in the issuer service. Publish the updated status root to Preprod before relying on network revocation.",
         );
         setId("");
         setConfirmRevoke(false);

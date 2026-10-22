@@ -1,4 +1,5 @@
 // Synthetic acceptance against the existing public Preprod deployment.
+import {submitAndConfirm} from '../packages/network/confirmed-submit.js';
 import assert from 'node:assert/strict';
 import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
@@ -29,7 +30,7 @@ export async function preprodAcceptance(wallet:MidnightWalletProvider,environmen
  const providers:MidnightProviders<'authorize'|'publishStatus'|'deactivate',string,PrivateStateV3>={
   zkConfigProvider:zk,privateStateProvider:states,publicDataProvider:indexerPublicDataProvider(environment.indexer,environment.indexerWS),
   proofProvider:{async proveTx(tx,options){log('Generating the contract proof with the trusted loopback prover.');return httpClientProofProvider(environment.proofServer,zk,{timeout:300000}).proveTx(tx,options);}},walletProvider:{getCoinPublicKey:()=>wallet.getCoinPublicKey(),getEncryptionPublicKey:()=>wallet.getEncryptionPublicKey(),async balanceTx(tx,ttl){log('Balancing the contract transaction with DUST.');const result=await wallet.balanceTx(tx,ttl);log('DUST balancing completed.');return result;}},
-  midnightProvider:{async submitTx(tx){const id=++count;await writeFile(path.join(directory,`acceptance-submission-${id}.json`),JSON.stringify({recordedAt:new Date().toISOString(),transactionReference:tx.identifiers()[0]}),{mode:0o600,flag:'wx'});return wallet.submitTx(tx);}},
+  midnightProvider:{async submitTx(tx){const id=++count;await writeFile(path.join(directory,`acceptance-submission-${id}.json`),JSON.stringify({recordedAt:new Date().toISOString(),transactionReference:tx.identifiers()[0]}),{mode:0o600,flag:'wx'});log('Submitting once and waiting for canonical indexed confirmation.');return submitAndConfirm(wallet,tx,environment.indexer);}},
  };
  const compiled=CompiledContract.make('veilpass-signed-v3',Contract).pipe(CompiledContract.withWitnesses(witnessesV3),CompiledContract.withCompiledFileAssets(assets));
  const contract=await findDeployedContract(providers,{compiledContract:compiled,contractAddress:deployment.contractAddress,privateStateId:'acceptance',initialPrivateState:{admin:keys.admin} as PrivateStateV3});
@@ -45,6 +46,7 @@ export async function preprodAcceptance(wallet:MidnightWalletProvider,environmen
   const trust=await issuer(),offer=await issuer({action:'approve',level:2,holder:holder.publicIdentity()});
   const credential=await issuer({action:'issue',request:holder.request(offer)});id=holder.accept(credential,trust);
   await writeFile(path.join(directory,'acceptance-credential.json'),JSON.stringify({id,synthetic:true}),{mode:0o600});
+  await writeFile(path.join(directory,'acceptance-holder.backup.json'),await holder.backup(env.VEILPASS_ISSUER_STORAGE_KEY),{mode:0o600,flag:'wx'});
   const membership=await issuer(undefined,id,true) as {root:Uint8Array;path:StatusPath};
   log('Publishing the hosted issuer status root on Preprod.');
   const published=await contract.callTx.publishStatus(membership.root);assert.equal(published.public.status,'SucceedEntirely');statusTransaction=published.public.txId;
@@ -64,11 +66,14 @@ export async function preprodAcceptance(wallet:MidnightWalletProvider,environmen
   log('Revoking only the synthetic credential and publishing its new status root.');
   await issuer({action:'revoke',id});revoked=true;const after=await issuer(undefined,id,true) as {root:Uint8Array;path:StatusPath};
   const update=await contract.callTx.publishStatus(after.root);assert.equal(update.public.status,'SucceedEntirely');revocationTransaction=update.public.txId;
-  await assert.rejects(verifiers[1].verify(presentations[1]),/Status changed/);
+  const oldAuthorization=await chain.authorization(presentations[1].transactionReference),newSnapshot=await chain.currentState();
+  assert(oldAuthorization&&oldAuthorization.snapshot.root!==newSnapshot.root&&oldAuthorization.snapshot.statusVersion!==newSnapshot.statusVersion,'Revocation must change the confirmed status snapshot');
+  let receiptRejection='';try{await verifiers[1].verify(presentations[1]);}catch(error){receiptRejection=error instanceof Error?error.message:'Unknown';}
+  assert(/Status changed|expired/i.test(receiptRejection),'Old receipt must fail after revocation');
   const challenge=await verifiers[0].createChallenge(300),witness=holder.present(id,{domain:fromHex(deployment.domain),audience:fromHex(deployment.appA),policy:1n,challenge:fromHex(challenge.nonce),expiresAt:BigInt(challenge.expiresAt)});
   await states.set('acceptance',{witness,path:after.path,admin:keys.admin});await assert.rejects(contract.callTx.authorize(fromHex(deployment.appA),1n,fromHex(challenge.nonce),witness.proof.createdAt,BigInt(challenge.expiresAt)),/not active/);
   const current=await providers.publicDataProvider.queryContractState(deployment.contractAddress);assert(current&&ledger(current.data).statusVersion>=2n);
-  const evidence={checkedAt:new Date().toISOString(),network:'preprod',contractAddress:deployment.contractAddress,issuerOrigin:origin,statusTransaction,authorizationTransactions:transactions,revocationTransaction,twoPoliciesVerified:true,durableReplayRejected:true,revokedCredentialRejected:true,oldReceiptRejectedAfterStatusChange:true,statusHandleAndClaimsRootAbsentFromPublicTransaction:true,installedWalletAcceptance:false,hostedBrowserProofAcceptance:false,productionReady:false,note:'Actual Preprod transactions, hosted authenticated issuance and Neon-backed verifier replay storage. Dedicated terminal operator, synthetic holder; not installed-wallet or external-pilot acceptance.'};
+  const evidence={checkedAt:new Date().toISOString(),network:'preprod',contractAddress:deployment.contractAddress,issuerOrigin:origin,statusTransaction,authorizationTransactions:transactions,revocationTransaction,twoPoliciesVerified:true,durableReplayRejected:true,revokedCredentialRejected:true,oldReceiptRejectedAfterStatusChange:true,confirmedStatusSnapshotChanged:true,oldReceiptRejectionReason:receiptRejection,statusHandleAndClaimsRootAbsentFromPublicTransaction:true,installedWalletAcceptance:false,hostedBrowserProofAcceptance:false,productionReady:false,note:'Actual Preprod transactions, hosted authenticated issuance and Neon-backed verifier replay storage. Dedicated terminal operator, synthetic holder; not installed-wallet or external-pilot acceptance.'};
   await writeFile('docs/evidence/preprod-authorization.json',JSON.stringify(evidence,null,2)+'\n');log('PASS: both actual Preprod authorizations, replay checks and revocation acceptance.');
  }finally{
   if(id&&!revoked){try{await issuer({action:'revoke',id});log('Synthetic credential revoked after incomplete acceptance; publish the latest status root before enabling proofs.');}catch{log('Acceptance cleanup needs operator reconciliation; synthetic credential reference is in the private acceptance record.');}}

@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-10-22T07:33:51.834Z",
+  "network": "preprod",
+  "contractAddress": "5120e2bc49267ad91653edb9806a010da0bb0428d78acd9dbf0e994a058cd24a",
+  "statusTransaction": "00c0c1684e7b16c5d79148df7a49b4910cd7a22b3490680cea1c209b2be15a0d39",
+  "authorizationTransactions": [
+    "0047b965cdeb6194216c9456ad14044c665f022e843d1c30f413f7c03aa9333811",
+    "00068121377e45eec3e6dd8242766d151a3c84d6f71f065a8d091d5e0fedef59ba"
+  ],
+  "revocationTransaction": "00025867f2d290510b80d0e1a6dbbc646a6aa4d4dd1bc8c66975751b408cb4cbee",
+  "allFourTransactionsIndexedSuccess": true,
+  "twoPoliciesVerified": true,
+  "durableReplayRejected": true,
+  "syntheticCredentialRevoked": true,
+  "revokedCredentialFreshProofRejected": false,
+  "oldReceiptRejectionReason": "Challenge expired or invalid",
+  "complete": false,
+  "note": "Partial actual Preprod acceptance; final fresh revoked-proof rejection remains pending. Earlier live assertions verified both policies and replay rejection before expiry."
+}

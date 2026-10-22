@@ -1,0 +1,6 @@
+{
+  "enabled": false,
+  "network": "preprod",
+  "contractAddress": "5120e2bc49267ad91653edb9806a010da0bb0428d78acd9dbf0e994a058cd24a",
+  "acceptanceSha256": null
+}
