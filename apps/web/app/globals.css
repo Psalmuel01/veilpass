@@ -753,3 +753,6 @@ html[data-theme="dark"] .legacy-wallet .flow-card-top > span { background: #232e
 .vp-holder-controls summary { cursor: pointer; font-weight: 600; }
 
 .vp-sidebar { overflow-y: auto; }
+
+.vp-holder-controls .vp-prover-consent { display: flex; align-items: flex-start; gap: 12px; margin-block: 16px; line-height: 1.6; }
+.vp-holder-controls .vp-prover-consent input { width: 18px; height: 18px; flex: 0 0 18px; margin: 4px 0 0; padding: 0; accent-color: var(--vp-blue); }

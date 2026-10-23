@@ -1,4 +1,5 @@
 "use client";
+import { proverPolicy, requireProverConsent } from "../../../../packages/network/prover-policy.mjs";
 import { serviceResponse } from "../../lib/service-response";
 import { useEffect, useRef, useState } from "react";
 import { holderError } from "../../lib/holder-error";
@@ -40,6 +41,8 @@ export default function HolderWallet() {
   const [wallets, setWallets] = useState<[string, string][]>([]);
   const [walletName, setWalletName] = useState("");
   const [stage, setStage] = useState("");
+  const [proverEndpoint, setProverEndpoint] = useState<ReturnType<typeof proverPolicy>>();
+  const [proverConsent, setProverConsent] = useState("");
   function lock() {
     selection.current++;
     holder.current?.lock();
@@ -47,6 +50,7 @@ export default function HolderWallet() {
     pending.current = undefined;
     networkPresentation.current = undefined;
     setStage("");
+    setProverConsent("");
     setRecords(undefined);
     setIdentity("");
     setResult("");
@@ -259,6 +263,8 @@ export default function HolderWallet() {
     networkConfig.current = m.decodeWire(
       await response.text(),
     ) as SignedNetworkConfig;
+    setProverEndpoint(proverPolicy(networkConfig.current.proofServer, networkConfig.current.trustedProverOrigin));
+    setProverConsent("");
     setWallets(
       Object.entries(window.midnight || {})
         .filter(([, w]) => typeof w.connect === "function")
@@ -285,12 +291,19 @@ export default function HolderWallet() {
     if (!response.ok) throw new Error(data.error);
     return data;
   }
+  function requireConsent() {
+    if (!networkConfig.current) throw new Error("Load the network configuration first.");
+    requireProverConsent(proverPolicy(networkConfig.current.proofServer, networkConfig.current.trustedProverOrigin), proverConsent);
+  }
   async function proveCredential(id: string) {
     const h = holder.current,
       connected = wallet.current,
       config = networkConfig.current;
     if (!h || !connected || !config)
       throw new Error("Unlock your holder and connect a wallet first.");
+    requireConsent();
+    const consentOrigin = proverConsent;
+    setProverConsent("");
     networkPresentation.current = undefined;
     setStage("preparing");
     const challenge = (await networkAction("challenge")) as ChallengeV3;
@@ -314,7 +327,9 @@ export default function HolderWallet() {
       config,
       challenge,
       setStage,
+      consentOrigin,
     );
+    setProverConsent("");
     setNotice(
       "Authorization confirmed on Midnight. Verify its transaction with the independent verifier. You can retry verification without generating another proof.",
     );
@@ -506,7 +521,7 @@ export default function HolderWallet() {
                     {walletName && (
                       <button
                         className="vp-button vp-button-blue"
-                        disabled={busy}
+                        disabled={busy || (proverEndpoint?.kind === "trusted-remote" && proverConsent !== proverEndpoint.origin)}
                         onClick={() =>
                           void run(() => proveCredential(record.id))
                         }
@@ -520,7 +535,7 @@ export default function HolderWallet() {
                   <summary>Proof-backed V3 verification</summary>
                   <p>
                     Requires a configured V3 deployment, current published
-                    status root, a holder-controlled local prover and an
+                    status root, a holder-controlled prover or explicitly trusted HTTPS prover, and an
                     installed wallet. Local signature checks above do not
                     authorize an application.
                   </p>
@@ -531,6 +546,15 @@ export default function HolderWallet() {
                   >
                     Load network and discover wallets
                   </button>
+                  {proverEndpoint?.kind === "trusted-remote" && (
+                    <div className="vp-alert">
+                      <p>Trusted prover: <code>{proverEndpoint.origin}</code></p>
+                      <p>This service receives private credential and presentation inputs to generate the proof. Your holder signing seed is not sent. Use it only if you trust its operator.</p>
+                      <label className="vp-prover-consent"><input type="checkbox" checked={proverConsent === proverEndpoint.origin}
+                        disabled={busy} onChange={event => setProverConsent(event.target.checked ? proverEndpoint.origin : "")} />
+                        I trust this prover with my private proof inputs for this authorization.</label>
+                    </div>
+                  )}
                   {wallets.map(([id, name]) => (
                     <button
                       key={id}
@@ -550,6 +574,7 @@ export default function HolderWallet() {
                         onClick={() => {
                           wallet.current = undefined;
                           setWalletName("");
+                          setProverConsent("");
                           networkPresentation.current = undefined;
                           setStage("");
                         }}

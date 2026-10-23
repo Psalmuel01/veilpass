@@ -23,7 +23,7 @@ docker run --rm --name veilpass-holder-prover --memory=6g \
 5. Connect the installed wallet, select the application policy and request a fresh challenge. Approve the transaction in the wallet when prompted. Leave the prover running until proof generation completes.
 6. Verify the confirmed receipt. Each challenge is consumed once; retry with a new challenge after expiry or rejection. A changed issuer status root requires a fresh authorization.
 
-The loopback prover is holder infrastructure; the public application remains on Vercel. Render Free cannot run this prover within its memory allowance. Private proof witnesses must remain on the holder-controlled machine. Stop the temporary container when finished. A phone alone cannot run this Docker-based holder setup; mobile proof generation remains unverified.
+The loopback prover is holder infrastructure; the public application remains on Vercel. Render Free cannot run this prover within its memory allowance. For this loopback option, private proof witnesses remain on the holder-controlled machine. Stop the temporary container when finished. A phone alone cannot run this Docker-based holder setup; mobile proof generation remains unverified.
 
 Revocation changes the hosted credential status immediately, but network verifiers also need the new status root published to Preprod by the contract administrator. Until automated publication is implemented and tested, do not promise immediate chain revocation after clicking the issuer button. The acceptance runner explicitly publishes both issuance and revocation roots.
 
@@ -40,3 +40,15 @@ npm run preprod:terminal -- .private/hosted-preprod/render.env publish --submit
 ```
 
 The operator validates the pinned contract and issuer, skips unchanged roots, checks again before submission that the issuer root has not changed during proving, submits once, and confirms the new root against the indexer. Attempt records block blind retries. Run this only when another operator wallet process is not active. Continuous status publication still requires an available trusted operator machine.
+
+## Explicitly trusted HTTPS prover support
+
+The dApp can now use either its holder-controlled loopback prover or an operator-pinned HTTPS prover. Remote proving is **not activated** by this code change. No remote service has been provisioned or accepted.
+
+Once a suitable trusted service actually exists, set `VEILPASS_TRUSTED_PROVER_ORIGIN` on the backend to its bare public HTTPS origin (no credentials, path, query string or fragment). This replaces the dApp's default prover URL in public configuration. The server and browser apply the same destination policy. An unpinned remote endpoint, HTTP downgrade, credentials in the URL, private IP literal or mismatched origin is rejected. The release activation gate still applies independently.
+
+Before the dApp prepares private presentation inputs, a holder must explicitly consent to that exact prover origin for the authorization attempt. The checkbox resets when configuration changes, the holder locks, the connection is forgotten or an attempt starts. A remote prover can see private credential/presentation inputs; holder signing seeds are not proof witnesses. Consent is a privacy decision, not an authentication or endpoint-security mechanism.
+
+Remote infrastructure must independently provide TLS, appropriate CORS, access controls, abuse/resource limits, bounded execution, no private-payload logging and tested V3/prover compatibility. Origin pinning does not establish those controls or prove operator trustworthiness. Do not expose the raw proof container publicly and call it a production service. Lace's own transaction-balancing prover configuration is separate from the dApp's prover; installed-wallet acceptance must validate both.
+
+At the current $0 budget, no persistent suitable remote prover is available in this project. Previous local trials were OOM-killed at 512 MiB and 2 GiB; the synthetic trial succeeded with a 6 GiB container limit (not a measured peak). See `evidence/free-prover-feasibility.json` and `evidence/prover-capacity-mac.json`. Render Free also sleeps and is explicitly described as unsuitable for production by [Render's documentation](https://render.com/docs/free).

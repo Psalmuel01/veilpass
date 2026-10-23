@@ -30,6 +30,10 @@ A separate V3 contract and verifier use the official credential constraints, pri
 
 The app now uses **Node 24.22.0** and one npm workspace lockfile so all Midnight components share one WASM runtime. The browser now passes the [complete signed proof lifecycle](docs/evidence/signed-browser-network.json) using a disposable connector wallet; installed-wallet and hosted-browser Preprod acceptance remain required. The hosted credential journey is available; institutional issuer onboarding, operational key rotation, independent review and the external pilot remain incomplete. Start with [Preprod account and wallet setup](docs/PREPROD_SETUP.md).
 
+## Trusted prover integration
+
+The browser and backend now support an explicitly pinned HTTPS prover as well as the default holder-controlled loopback service. Remote proving requires origin-specific holder consent before private inputs are prepared. This integration passes 97 root tests and a production build, but no remote prover is provisioned and public network activation remains disabled. See [release blockers](docs/RELEASE_BLOCKERS.md) and the [hosting guide](docs/HOSTED_PREPROD.md).
+
 ## Hosted deployment and confirmation
 
 The public website is [useveilpass.vercel.app](https://useveilpass.vercel.app/). Vercel serves the interface, Render runs the backend, and Neon stores durable encrypted issuer state. GitHub pushes deploy the application services; a Midnight contract requires its own confirmed chain transaction.

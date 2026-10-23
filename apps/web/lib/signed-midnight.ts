@@ -1,3 +1,4 @@
+import { proverPolicy, requireProverConsent } from "../../../packages/network/prover-policy.mjs";
 import { connectWithTimeout } from "../../../packages/network/wallet-connection.mjs";
 import "./bind-fetch";
 import type { ConnectedAPI } from "@midnight-ntwrk/dapp-connector-api";
@@ -49,6 +50,7 @@ export type SignedNetworkConfig = {
   indexerUri: string;
   indexerWsUri: string;
   proofServer: string;
+  trustedProverOrigin?: string;
   trust: IssuerTrust;
 };
 const compiled = CompiledContract.make("veilpass-signed-v3", Contract).pipe(
@@ -74,6 +76,7 @@ export async function proveSigned(
   config: SignedNetworkConfig,
   challenge: ChallengeV3,
   onStage: (stage: Stage) => void,
+  consentOrigin?: string,
 ) {
   onStage("preparing");
   if (
@@ -91,14 +94,9 @@ export async function proveSigned(
     throw new Error(
       "V3 request context changed or expired. Request a new challenge.",
     );
-  const local = new URL(config.proofServer);
-  if (
-    !["http:", "https:"].includes(local.protocol) ||
-    !["localhost", "127.0.0.1", "[::1]"].includes(local.hostname) ||
-    local.username ||
-    local.password
-  )
-    throw new Error("A holder-controlled loopback prover is required.");
+  const prover = proverPolicy(config.proofServer, config.trustedProverOrigin);
+  // This happens before holder.present, provider creation or any network call.
+  requireProverConsent(prover, consentOrigin);
   const checkNetwork = async () => {
     if ((await api.getConfiguration()).networkId !== config.network)
       throw new Error("Wallet network changed. Reconnect before retrying.");

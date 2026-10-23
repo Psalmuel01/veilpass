@@ -1,0 +1,12 @@
+{
+  "scope": "Trusted remote prover configuration support; no remote service provisioned",
+  "rootTestsPassed": 97,
+  "rootAndWebTypecheckPassed": true,
+  "productionBuildPassed": true,
+  "exactOriginPinningTested": true,
+  "unconsentedProofRejectedBeforeWitnessAndWalletCalls": true,
+  "remoteProofAcceptance": false,
+  "installedWalletAcceptance": false,
+  "publicNetworkActivated": false,
+  "productionReady": false
+}

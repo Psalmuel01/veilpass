@@ -1,6 +1,6 @@
 # Current signed V3 scope
 
-The deployed signed V3 flow uses holder-generated keys, issuer signatures, encrypted vault recovery, private eligibility and active-status membership. The issuer knows claims; transaction timing and wallet metadata remain public. A trusted prover can observe supplied private witnesses. Browser compromise can expose an unlocked vault. Status changes require confirmed publication and invalidate older receipts. See [current deployment boundaries](FINAL_DEPLOYMENT_REPORT.md). The material below describes the earlier protocol and must be read in that historical scope.
+The deployed signed V3 flow uses holder-generated keys, issuer signatures, encrypted vault recovery, private eligibility and active-status membership. The issuer knows claims; transaction timing and wallet metadata remain public. A trusted prover can observe supplied private witnesses. Browser compromise can expose an unlocked vault. Status changes require confirmed publication and invalidate older receipts. See [current deployment boundaries](FINAL_DEPLOYMENT_REPORT.md). An optional operator-pinned HTTPS prover requires explicit holder consent before presentation construction; that operator receives private proof inputs. The default remains holder-controlled loopback. Consent does not replace endpoint authentication, resource limits or independent review. The material below describes the earlier protocol and must be read in that historical scope.
 
 # Threat model
 

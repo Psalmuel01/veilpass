@@ -1,3 +1,4 @@
+import { proverPolicy } from "../../../packages/network/prover-policy.mjs";
 import { preprodNetworkEnabled } from '../../../packages/network/preprod-enabled.mjs';
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -45,12 +46,15 @@ export async function signedNetworkConfig(): Promise<SignedNetworkConfig> {
     )
       throw new Error("Public endpoints must not contain access tokens");
   }
-  if (
-    !["localhost", "127.0.0.1", "[::1]"].includes(
-      new URL(c.proofServer).hostname,
-    )
-  )
-    throw new Error("Local prover required");
+  const trustedOrigin = process.env.VEILPASS_TRUSTED_PROVER_ORIGIN;
+  // Operator configuration chooses the destination; browser input cannot override it.
+  if (trustedOrigin) {
+    c.proofServer = trustedOrigin;
+    c.trustedProverOrigin = trustedOrigin;
+  } else {
+    delete c.trustedProverOrigin;
+  }
+  proverPolicy(c.proofServer, c.trustedProverOrigin);
   if (
     typeof c.trust?.publicKey?.x !== "bigint" ||
     typeof c.trust?.publicKey?.y !== "bigint" ||
