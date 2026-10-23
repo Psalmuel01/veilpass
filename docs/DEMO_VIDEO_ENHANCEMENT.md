@@ -20,3 +20,5 @@ The latest public repository revision was checked before scripting. The live pub
 Media dimensions, duration, full-frame decode, subtitle words/timing, blank frames and final encoded audio levels are checked by `validate.py`; exact results are in `validation.json`. The entire timeline is reviewed through timestamped frame sheets. A human full-speed playback and listening review is distinct from these checks and is not claimed as completed by an automated export.
 
 Final media validation: exactly 180 seconds, H.264 1920×1080 at 30 fps, 48 kHz AAC; −16.02 LUFS and −1.87 dBTP. All 5,400 frames decode, no blank frames, 35 subtitle phrases matching the narration and zero overlaps. Local deliverables: `docs/video/enhanced/`. The original 3:30 baseline is preserved.
+
+Calendar dates have been removed from the rendered video: recording labels, deployment confirmation timestamp and fictional certificate birth date. Recorded-footage and confirmed-execution labels remain.

@@ -89,7 +89,7 @@ def hook(im,u):
  if u<9:
   x=470+40*(1-ease(u/.8));roundbox(im,(x,220,x+980,820),'#FFFFFF',28,outline='#E0E3EC')
   text(im,'DEVELOPER QUALIFICATION',(x+55,265),33,INK)
-  fields=['Name: Alex Example','Date of birth: 01 / 01 / 2000','Address: Private residence','Certificate: Approved training']
+  fields=['Name: Alex Example','Contact: Private contact details','Address: Private residence','Certificate: Approved training']
   for j,label in enumerate(fields):
    a=1-smooth((u-2-j*.6)/.7)
    if a:
@@ -128,7 +128,7 @@ def scene_picture(s,u):
   at=3.5+min(u,5.5) if u<7 else 10.7+min(u-7,4)
   p=smooth((u-6.7)/.5)
   footage(im,at,(80,235,1760,650),1.03+.035*u/15,focus=(.52,.48))
-  chip(im,'HOSTED PRODUCT · 21 OCT 2026',(110,252),'#273759',20)
+  chip(im,'HOSTED PRODUCT · RECORDED FOOTAGE',(110,252),'#273759',20)
   if u>8:chip(im,'Holder-controlled keys',(1160,790),BLUE,27)
  elif id=='issuance':
   # Actual creation outcome, issuer enrollment and signed credential arrival.
@@ -138,7 +138,7 @@ def scene_picture(s,u):
   else:at=68.5+(u-20)*1.15;label='Encrypted recovery';focus=(.62,.65)
   footage(im,at,(80,235,1760,650),1.12+.025*ease(u/25),focus)
   chip(im,label,(110,255),BLUE,25)
-  text(im,'GENUINE HOSTED FLOW · SYNTHETIC HOLDER · 21 OCT',(100,851),20,PALE)
+  text(im,'GENUINE HOSTED FLOW · SYNTHETIC HOLDER',(100,851),20,PALE)
   # Explicit conceptual card transfer overlays a real, recognizable interface.
   if 9<u<12:
    p=ease((u-9)/3);x=1230-500*p;y=320+140*p
@@ -175,7 +175,6 @@ def scene_picture(s,u):
     code(im,'Actual confirmed deployment · docs/evidence/preprod-terminal.json',[
      'V3 deployment confirmed · Midnight Preprod · block 3085824',
      deployment['transactionReference'],
-     'Confirmed at: '+deployment['confirmedAt'],
      'Deployed contract:',deployment['contractAddress']],(80,240,1760,400))
    reference(im,'DEPLOYED V3 CONTRACT',E['contractAddress'],775,3085824)
   else:
